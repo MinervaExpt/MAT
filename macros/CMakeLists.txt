@@ -1,5 +1,5 @@
 add_executable(madd madd.cxx)
-target_link_libraries(madd PlotUtils ${ROOT_LIBRARIES})
+target_link_libraries(madd MAT ${ROOT_LIBRARIES})
 install(TARGETS madd DESTINATION bin)
 
 #add_executable(TransWarpExtraction TransWarpExtraction.cxx)
