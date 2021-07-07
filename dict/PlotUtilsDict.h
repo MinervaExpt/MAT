@@ -41,9 +41,9 @@
 // (since it otherwise doesn't know which specific version of these templated classes to instantiate)
 // see: http://root.cern.ch/root/roottalk/roottalk10/0035.html
 // somehow std::map<>s seem to be instantiated somewhere else, so explicit instantiation is not necessary?
-#ifdef __GCCXML__
-template class std::vector<PlotUtils::MnvEVD::Event>;                                       // the 'Events' typedef
-template class std::pair<std::string, std::vector<PlotUtils::MnvEVD::Event> >;              // the 'EventGroup' typedef
+//#ifdef __GCCXML__
+//template class std::vector<PlotUtils::MnvEVD::Event>;                                       // the 'Events' typedef
+//template class std::pair<std::string, std::vector<PlotUtils::MnvEVD::Event> >;              // the 'EventGroup' typedef
 
 template class std::map<std::string, std::vector<std::string> >;
 template class std::pair<std::string, std::vector<std::string> >;
@@ -57,6 +57,6 @@ template class std::pair< std::string, TMatrixT<double>* >;
 template class std::pair< std::string, PlotUtils::MnvVertErrorBand2D* >;
 template class std::pair< std::string, PlotUtils::MnvLatErrorBand2D* >;
 
-#endif
+//#endif
 #endif // PLOTUTILSDICT_H
 
