@@ -29,7 +29,6 @@
 #include "../PlotUtils/MnvVertErrorBand2D.h"
 #include "../PlotUtils/ChainWrapper.h"
 #include "../PlotUtils/TreeWrapper.h"
-#include "../PlotUtils/HyperDimLinearizer.h"
 #include "../PlotUtils/GridCanvas.h"
 
 //TODO: Do I need this?
