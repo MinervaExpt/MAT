@@ -3,10 +3,7 @@
 
 #include <iostream>
 #include "ChainWrapper.h"
-#include "FluxReweighter.h"
 #include "Math/Vector4D.h"
-#include "NSFDefaults.h"
-#include "PlotUtilsPhysicalConstants.h"
 
 
 namespace PlotUtils {

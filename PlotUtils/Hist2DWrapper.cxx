@@ -2,7 +2,7 @@
 #define HIST2DWRAPPER_CXX
 
 #include "Hist2DWrapper.h"
-#include "FluxSystematics.cxx" // PlotUtils::flux_reweighter
+#include "FluxSystematics.h" //flux_reweighter
 
 using namespace PlotUtils;
 
