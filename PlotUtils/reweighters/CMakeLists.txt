@@ -1,0 +1,2 @@
+#add_library(reweighters OBJECT FluxAndCVReweighter.cpp FSIReweighter.cpp GeantNeutronCVReweighter.cpp GENIEReweighter.cpp LowQ2PiReweighter.cpp LowRecoil2p2hReweighter.cpp MKReweighter.cpp RPAReweighter.cpp AMUDISReweighter.cpp)
+install(FILES Model.h Reweighter.h FluxAndCVReweighter.h GeantNeutronCVReweighter.h FSIReweighter.h LowRecoil2p2hReweighter.h LowQ2PiReweighter.h MINOSEfficiencyReweighter.h MKReweighter.h RPAReweighter.h GENIEReweighter.h AMUDISReweighter.h SuSAFromValencia2p2hReweighter.h DESTINATION include/PlotUtils/reweighters)

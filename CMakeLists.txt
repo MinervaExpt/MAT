@@ -73,7 +73,6 @@ MESSAGE("boost:$ENV{BOOSTDIR}")
 include_directories(PlotUtils $ENV{PLOTUTILSROOT} $ENV{BOOSTDIR}/include $ENV{BOOSTDIR})
 
 add_subdirectory(PlotUtils)
-add_subdirectory(data)
 add_subdirectory(macros)
 
 #Install setup script.  This adds the install location of PlotUtils to
