@@ -1,6 +1,5 @@
 <lcgdict>
   <!-- PlotUtils objects -->
-  <class name="PlotUtils::MnvAnaTuple" />
   <class name="PlotUtils::MnvEVD" />
   <class name="PlotUtils::MnvHist" />
   <class name="PlotUtils::MnvHistoConstrainer" />
@@ -17,12 +16,8 @@
   <class name="PlotUtils::MnvVertErrorBand" />
   <class name="PlotUtils::MnvVertErrorBand2D" />
   <class name="PlotUtils::MnvVertErrorBand3D" />
-  <class name="PlotUtils::TargetUtils" />
-  <class name="PlotUtils::MnvNormalizer" />
-  <class name="PlotUtils::POTCounter" />
   <class name="PlotUtils::ChainWrapper" />
   <class name="PlotUtils::TreeWrapper" />
-  <class name="PlotUtils::HyperDimLinearizer" />
   <class name="PlotUtils::GridCanvas" />
 
   <class name="PlotUtils::MnvEVD::Event" />
