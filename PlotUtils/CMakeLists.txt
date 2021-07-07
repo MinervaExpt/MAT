@@ -28,10 +28,6 @@ else(${ROOT_VERSION} VERSION_GREATER 6)
   set(DICTIONARY_NAME G__${PROJECT_NAME}_dict.cpp)
 endif(${ROOT_VERSION} VERSION_GREATER 6)
 
-add_subdirectory(SystCalcs)
-add_subdirectory(cuts)
-add_subdirectory(reweighters)
-
 #TODO: Does this give me something to link against to pick up type reflection information?
 #The secret ingredient to producing PlotUtils_dict.o seems to be creating an OBJECT library.
 add_library(${PROJECT_NAME}_dict OBJECT ${CMAKE_CURRENT_BINARY_DIR}/${DICTIONARY_NAME})
