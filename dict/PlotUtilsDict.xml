@@ -19,6 +19,7 @@
   <class name="PlotUtils::ChainWrapper" />
   <class name="PlotUtils::TreeWrapper" />
   <class name="PlotUtils::GridCanvas" />
+  <class name="PlotUtils::FluxReweighter" />
 
   <class name="PlotUtils::MnvEVD::Event" />
   <!-- exceptions -->

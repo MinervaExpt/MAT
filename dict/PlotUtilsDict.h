@@ -33,6 +33,7 @@
 #include "../PlotUtils/ChainWrapper.h"
 #include "../PlotUtils/TreeWrapper.h"
 #include "../PlotUtils/GridCanvas.h"
+#include "../PlotUtils/FluxReweighter.h"
 
 //TODO: Do I need this?
 #include "../PlotUtils/ErrorHandler.h"
