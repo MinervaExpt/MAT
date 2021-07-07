@@ -1,0 +1,43 @@
+Directory Structure:
+  - PlotUtils - Macros and classes to help with ROOT analysis and plotting.
+                If you want to include the file from another package, you should put it here.
+  - setup     - files used for setting up to use PlotUtils
+                contains files starting with '.', so use 'ls -a' to see them.
+  - macros    - Useful or illustrative macros using PlotUtils.  You may need to source the setup script for another package for them to work.
+
+
+Setup:
+  - build like normal
+        cd cmt
+        cmt config
+        source setup.sh
+        cmt make
+  - copy .rootlogon and .rootrc to ~
+      .rootlogon loads the libplotutils.so and puts PlotUtils in the include path.
+       it also includes suggested default style
+  - Work from whatever package you like.  Just add "use PlotUtils v* Ana" to the cmt/requirements file.
+
+Standalone with root6:
+
+- copy 
+cp setup/.rootlogon.C ~
+cp setup/.rootrc ~
+
+.rootlogon loads the libplotutils.so and puts PlotUtils in the include path.
+it also includes suggested default style
+
+On a mac you can build standalone as
+
+In top PlotUtils directory
+
+cmake build
+make
+
+# needed for PlotUtils to work standalone
+export LD_LIBRARY_PATH=${PLOTUTILSROOT}:${LD_LIBRARY_PATH}
+export DY_LIBRARY_PATH=${LD_LIBRARY_PATH} # need this on recent mac OS
+export PYTHONPATH=${PLOTUTILSROOT}/python:${PYTHONPATH}
+export PLOTUTILSTYPE="STANDALONE"
+export PLOTUTILSVERSION="ROOT6"
+export BOOSTDIR= location of Boost
+make -f OSXMakefile

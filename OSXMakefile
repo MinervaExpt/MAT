@@ -1,0 +1,62 @@
+# this came from Phil Rodrigues
+# HMS 1-6-2018 got C++ root version 6 to work on a mac building MnvH1D standalone
+# HMS - January 2018 - standalone PlotUtils based on version from Phil Rodrigues
+
+# to make this work you need to:
+
+# get boost from 
+
+# http://www.boost.org/
+
+# I put this in my PlotUtils directory and had no path issues
+
+# you need this setup (in setup/standalone.sh)
+# export LD_LIBRARY_PATH=${PLOTUTILSROOT}:${LD_LIBRARY_PATH}
+# export PYTHONPATH=${PLOTUTILSROOT}/python:${PYTHONPATH}
+# export PLOTUTILSTYPE="STANDALONE"
+# export PLOTUTILSVERSION="ROOT6"
+
+# and put setup/OSX.rootlogon.C in your rootlogin to load properly
+
+# How this was built;
+# installed root binary 6.14.2 on OSX 10.13.2 using XCode 9.2
+# installed boost in local directory
+
+# Changed CInt and Reflex to Cling
+# need to patch some bad C++ in MnvH2D and MnvH3D as root 6 is less forgiving.
+#
+# Used flags to remove PlotUtils/MnvRecoshifter as it brings in the whole MINERvA code stack.
+# set Wformat to 0 to remove format warnings due to calls to Form(
+
+EXTERNALINCLUDES := -I${BOOSTDIR}/include
+INCLUDES := $(EXTERNALINCLUDES) -I. -I`root-config --incdir` -I./PlotUtils
+CXXFLAGS := `root-config --cflags` $(INCLUDES)
+LDFLAGS  := -shared `root-config --glibs` -lCling -Wl
+
+# We're going to compile all the cxx files in PlotUtils/ into a library libplotutils.so
+SOURCES = $(wildcard PlotUtils/*.cxx)
+OBJS    = $(SOURCES:.cxx=.o)
+
+# How to make a .o file from a .cxx file
+%.o: %.cxx
+	g++ -g -Wformat=0 -DMNVROOT6=1 -DPLOTUTILS_STANDALONE  -fPIC -c -o $@ $< $(CXXFLAGS)
+
+# The target to be made when you just run 'make'
+all: libplotutils.so
+
+libplotutils.so: $(OBJS) plotutilsDict.o
+	g++ -o $@ $(LDFLAGS) $^
+
+# Make the reflex dictionary for all the PlotUtils classes. Phil found
+# this command by running the cmt make with 'make VERBOSE=1' and
+# copying the command from there. We need these dictionaries to be
+# able to use PlotUtils from python and to be able to read/write
+# PlotUtils classes to/from disk.
+#
+plotutilsDict.cxx: dict/PlotUtilsDict.h dict/PlotUtilsDict.xml
+	genreflex dict/PlotUtilsDict.h -o plotutilsDict.cxx --gccxmlopt='--gccxml-compiler g++ ' --select=dict/PlotUtilsDict.xml   --rootmap=plotutilsDict.rootmap --rootmap-lib=libplotutilsDict --rootmap-lib=libplotutils  -D_GNU_SOURCE -DGAUDI_V20_COMPAT  $(INCLUDES) -DMNVROOT6 -DPLOTUTILS_STANDALONE
+
+clean:
+	rm -f *.o *.so plotutilsDict.cxx PlotUtils/*.o
+
+.PHONY: clean

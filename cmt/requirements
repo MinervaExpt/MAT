@@ -1,0 +1,99 @@
+package PlotUtils
+version ${MINERVA_RELEASE}
+
+branches cmt PlotUtils dict setup macros python scripts bin app
+
+use Boost         v* LCG_Interfaces
+use Reflex        v* LCG_Interfaces
+use RELAX         v* LCG_Interfaces
+use ROOT          v* LCG_Interfaces
+use GaudiPolicy   v* Gaudi       # needed for 'merge_rootmap' command, C++ compilation options, some other stuff
+use MinervaKernel v* Event
+
+use MParamFiles   v*                 -no_auto_imports
+use Python        v* LCG_Interfaces
+
+include_dirs $(PLOTUTILSROOT)
+
+set PlotUtils "${PLOTUTILSROOT}/PlotUtils"
+
+# add the bin area to PATH
+path_prepend PATH "${PLOTUTILSROOT}/bin"
+
+# create the Reflex dictionary headers & .cpp files
+# for the PlotUtils classes.
+# (DON'T use the 'reflex_dictionary' pattern; that
+#  creates a separate library just for the dictionary
+#  stuff.  for our purposes it's preferable
+#  to bundle both the classes themselves and their
+#  dictionary declarations into the same library,
+#  as is done manually in the 'library plotutils'
+#  statement below.)
+apply_pattern reflex_dictionary_src \   
+              dictionary=plotutils \
+              headerfiles=$(PLOTUTILSROOT)/dict/PlotUtilsDict.h \   
+              selectionfile=$(PLOTUTILSROOT)/dict/PlotUtilsDict.xml
+
+#MERGE TOOL
+#Place your main analysis tool and it's tree name here.
+#This saves you from having to define them in merge tool
+set ANATREENAME "CC1P1Pi"
+set ANATOOLNAME "CC1P1PiAnalysis"
+
+# Build the MergeFiles application. The linker step links against
+# libplotutils, so we have to build it after the library. Hence the
+# _dependencies line
+
+macro_append ROOT_linkopts " -lHist -lReflex -lCintex  "
+
+application MergeFiles ../app/MergeTool.cxx
+macro MergeFiles_dependencies plotutils
+
+application MakeMHRWKineRenorm ../app/MakeMHRWKineRenorm.cxx 
+macro MakeMHRWKineRenorm_dependencies plotutils
+
+application MergeFilesWithVar ../app/MergeToolWithVar.cxx
+
+application madd ../macros/madd.cxx
+
+#Build test applications
+application DoesIOErrorHandlingWork.cpp ../test/DoesIOErrorHandlingWork.cpp
+application DoesMagicalIOErrorCrashWork.cpp ../test/DoesMagicalIOErrorCrashWork.cpp
+
+# we use a 'private' section to prevent the hacks in the
+# macros below from escaping into other packages...
+private
+
+# this is an ATROCIOUS hack.
+# unfortunately, the Makefile fragment for the Reflex dictionary generation
+# (AnalysisFramework/External/lcgcmt/LCG_Interfaces/ROOT/cmt/fragments/reflex_dictionary_generator)
+# hard-codes a 'Dict' on the end of the dictionary name that it puts into
+# the .rootmap file.
+# this line uses an (otherwise unused) macro to inject the
+# correct library name into the end of the gccxml command used
+# in the makefile, overriding the hard-coded one.
+# N.b.: the argument to '--rootmap-lib' MUST match the name of the
+# library created by the 'library' statement below.
+macro_append gccxml_cppflags " --rootmap-lib=libplotutils -D__GCC_XML__"
+
+# build the shared library containing both
+#  (1) the PlotUtils objects themselves, and
+#  (2) the Reflex dictionary factory stuff.
+# this allows the PlotUtils library to be loaded
+# by the ROOT interpreter (use the .rootlogon.C
+# in setup/ to do that, or use the Python bindings)
+# as well as built against for standalone compilable
+# macros.
+# (note that we have to link against the ROOT libraries
+# now or we'll get undefined symbol issues when trying
+# to use the PlotUtils library later.)
+macro_append shlibflags " `root-config --glibs` -lReflex -lCintex -Wl,--no-undefined -std=c++1y"
+library plotutils "-s=../PlotUtils" *.cxx "-s=../$(tag)/dict/plotutils" *.cpp
+
+# ensures the library gets into the InstallArea
+apply_pattern linker_library library=plotutils
+
+# also copy the Python libraries to the InstallArea
+apply_pattern install_python_modules
+
+# no really change

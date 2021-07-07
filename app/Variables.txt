@@ -1,0 +1,10 @@
+Header:
+*
+Truth: 
+mc_incoming mc_current
+mc_FSPartPDG
+NuECCQE:
+E
+HasFiducialVertex
+Meta:
+POT_*

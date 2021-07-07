@@ -1,0 +1,6 @@
+Flux 0 0
+Flux 1 1
+Flux 2 2
+Flux 3 4
+
+
