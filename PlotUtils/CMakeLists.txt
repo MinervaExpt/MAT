@@ -28,16 +28,17 @@ else(${ROOT_VERSION} VERSION_GREATER 6)
   set(DICTIONARY_NAME G__${PROJECT_NAME}_dict.cpp)
 endif(${ROOT_VERSION} VERSION_GREATER 6)
 
-#TODO: Does this give me something to link against to pick up type reflection information?
-#The secret ingredient to producing PlotUtils_dict.o seems to be creating an OBJECT library.
-add_library(${PROJECT_NAME}_dict OBJECT ${CMAKE_CURRENT_BINARY_DIR}/${DICTIONARY_NAME})
-#install(TARGETS ${PROJECT_NAME}_dict EXPORT ${PROJECT_NAME}Targets OBJECTS DESTINATION lib) 
+#Build a library from the dictionary source code ROOT generated.  I'll need it both to load
+#this project into the interpreter and to put some more information into libMAT.so.
+add_library(G__${PROJECT_NAME}Dict SHARED ${CMAKE_CURRENT_BINARY_DIR}/${DICTIONARY_NAME})
+target_link_libraries(G__${PROJECT_NAME}Dict ${ROOT_LIBRARIES})
+install(TARGETS G__${PROJECT_NAME}Dict EXPORT ${PROJECT_NAME}Targets DESTINATION lib)
 
-#Now, build libplotutils.  Note that this builds the ROOT dictionary for PlotUtils into libplotutils itself.
-add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} $<TARGET_OBJECTS:${PROJECT_NAME}_dict>)
-target_link_libraries(${PROJECT_NAME} ${ROOT_LIBRARIES})
+#Now, build libMAT
+add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
+target_link_libraries(${PROJECT_NAME} ${ROOT_LIBRARIES} G__${PROJECT_NAME}Dict)
 install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}Targets DESTINATION lib)
-install(FILES ${HEADER_FILES} ${SOURCE_FILES} DESTINATION include/PlotUtils) #Including SOURCE_FILES fo
+install(FILES ${HEADER_FILES} ${SOURCE_FILES} DESTINATION include/PlotUtils)
 install(EXPORT ${PROJECT_NAME}Targets DESTINATION lib/cmake/${PROJECT_NAME})
 
-export(TARGETS ${PROJECT_NAME} FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake)
+export(TARGETS ${PROJECT_NAME} G__${PROJECT_NAME}Dict FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake)
