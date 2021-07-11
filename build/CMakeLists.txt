@@ -70,7 +70,6 @@ PlotUtils/MnvH2D.cxx
 PlotUtils/MnvHadronReweight.cxx
 PlotUtils/MnvLatErrorBand.cxx
 PlotUtils/MnvLatErrorBand2D.cxx
-PlotUtils/MnvLatErrorBand3D.cxx
 PlotUtils/MnvNormalization.cxx
 PlotUtils/MnvNuclearModelWeight.cxx
 PlotUtils/MnvPlotter.cxx
@@ -78,7 +77,6 @@ PlotUtils/MnvRecoShifter.cxx
 PlotUtils/MnvTuneSystematics.cxx
 PlotUtils/MnvVertErrorBand.cxx
 PlotUtils/MnvVertErrorBand2D.cxx
-PlotUtils/MnvVertErrorBand3D.cxx
 PlotUtils/MinervaUniverse.cxx
 PlotUtils/MuonSystematics.cxx
 PlotUtils/MuonResolutionSystematics.cxx
@@ -150,7 +148,6 @@ PlotUtils/MnvH2D.h
 PlotUtils/MnvHadronReweight.h
 PlotUtils/MnvLatErrorBand.h
 PlotUtils/MnvLatErrorBand2D.h
-PlotUtils/MnvLatErrorBand3D.h
 PlotUtils/MnvNormalization.h
 #PlotUtils/MnvNormalizerME.h
 PlotUtils/MnvNuclearModelWeight.h
@@ -159,7 +156,6 @@ PlotUtils/MnvRecoShifter.h
 PlotUtils/MnvTuneSystematics.h
 PlotUtils/MnvVertErrorBand.h
 PlotUtils/MnvVertErrorBand2D.h
-PlotUtils/MnvVertErrorBand3D.h
 PlotUtils/MuonSystematics.h
 PlotUtils/MuonResolutionSystematics.h
 PlotUtils/NuclModUtils.h

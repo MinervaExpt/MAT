@@ -11,11 +11,9 @@
 	<class name="PlotUtils::MnvH2D" />
 	<class name="PlotUtils::MnvLatErrorBand" />
 	<class name="PlotUtils::MnvLatErrorBand2D" />
-	<class name="PlotUtils::MnvLatErrorBand3D" />
 	<class name="PlotUtils::MnvPlotter" />
 	<class name="PlotUtils::MnvVertErrorBand" />
 	<class name="PlotUtils::MnvVertErrorBand2D" />
-	<class name="PlotUtils::MnvVertErrorBand3D" />
 	<class name="PlotUtils::TargetUtils" />
 	<class name="PlotUtils::MnvNormalizer" />
 	<class name="PlotUtils::POTCounter" />
@@ -49,8 +47,6 @@
 	<class name="std::map< std::string, TMatrixT<double>* >" />
 	<class name="std::map< std::string, PlotUtils::MnvVertErrorBand2D* >" />
 	<class name="std::map< std::string, PlotUtils::MnvLatErrorBand2D* >" />
-	<class name="std::map< std::string, PlotUtils::MnvVertErrorBand3D* >" />
-	<class name="std::map< std::string, PlotUtils::MnvLatErrorBand3D* >" />
 
 	<class name="std::vector< TH1D* >" />
 	<class name="std::vector< TH2D* >" />

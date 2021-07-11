@@ -9,12 +9,10 @@
   <class name="PlotUtils::MnvH2D" />
   <class name="PlotUtils::MnvLatErrorBand" />
   <class name="PlotUtils::MnvLatErrorBand2D" />
-  <class name="PlotUtils::MnvLatErrorBand3D" />
   <class name="PlotUtils::MnvPlotter" />
   <class name="PlotUtils::MnvRecoShifter" />
   <class name="PlotUtils::MnvVertErrorBand" />
   <class name="PlotUtils::MnvVertErrorBand2D" />
-  <class name="PlotUtils::MnvVertErrorBand3D" />
   <class name="PlotUtils::ChainWrapper" />
   <class name="PlotUtils::TreeWrapper" />
   <class name="PlotUtils::GridCanvas" />
@@ -47,8 +45,6 @@
   <class name="std::map< std::string, TMatrixT<double>* >" />
   <class name="std::map< std::string, PlotUtils::MnvVertErrorBand2D* >" />
   <class name="std::map< std::string, PlotUtils::MnvLatErrorBand2D* >" />
-  <class name="std::map< std::string, PlotUtils::MnvVertErrorBand3D* >" />
-  <class name="std::map< std::string, PlotUtils::MnvLatErrorBand3D* >" />
 
   <!-- ... as well as the std::pair<>s they implement ... -->
   <class name="std::pair< std::string, PlotUtils::MnvLatErrorBand* >" />
@@ -56,8 +52,6 @@
   <class name="std::pair< std::string, TMatrixT<double>* >" />
   <class name="std::pair< std::string, PlotUtils::MnvVertErrorBand2D* >" />
   <class name="std::pair< std::string, PlotUtils::MnvLatErrorBand2D* >" />
-  <class name="std::pair< std::string, PlotUtils::MnvVertErrorBand3D* >" />
-  <class name="std::pair< std::string, PlotUtils::MnvLatErrorBand3D* >" />
 
   <class name="std::vector< TH1D* >" />
   <class name="std::vector< TH2D* >" />

@@ -41,7 +41,6 @@ namespace PlotUtils
 //	class MnvH2D;
 //	class MnvVertErrorBand;
 //	class MnvVertErrorBand2D;
-	class MnvVertErrorBand3D;
 
 
 	/*!
