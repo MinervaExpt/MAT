@@ -67,7 +67,6 @@ PlotUtils/MnvColors.cxx
 PlotUtils/MnvFluxConstraint.cxx
 PlotUtils/MnvH1D.cxx
 PlotUtils/MnvH2D.cxx
-PlotUtils/MnvH3D.cxx
 PlotUtils/MnvHadronReweight.cxx
 PlotUtils/MnvLatErrorBand.cxx
 PlotUtils/MnvLatErrorBand2D.cxx
@@ -148,7 +147,6 @@ PlotUtils/MnvColors.h
 PlotUtils/MnvFluxConstraint.h
 PlotUtils/MnvH1D.h
 PlotUtils/MnvH2D.h
-PlotUtils/MnvH3D.h
 PlotUtils/MnvHadronReweight.h
 PlotUtils/MnvLatErrorBand.h
 PlotUtils/MnvLatErrorBand2D.h

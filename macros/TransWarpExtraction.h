@@ -7,7 +7,6 @@
 #include "PlotUtils/MnvPlotter.h"
 #include "PlotUtils/MnvH1D.h"
 #include "PlotUtils/MnvH2D.h"
-#include "PlotUtils/MnvH3D.h"
 
 #include "TProfile.h"
 #include "TRandom3.h"
@@ -36,10 +35,8 @@ namespace PlotUtils
       void WriteOutput( std::string output_filename, bool b_WriteChi2Verbose = false, bool b_WriteLinearHists = false ); 
       bool UnfoldData( MnvH1D* &h_data_unfolded, MnvH1D* stat_varied, MnvH1D* h_reco, MnvH1D* h_truth, MnvH2D* h_migration, int num_iter ); 
       bool UnfoldData( MnvH2D* &h_data_unfolded, MnvH2D* stat_varied, MnvH2D* h_reco, MnvH2D* h_truth, MnvH2D* h_migration, int num_iter ); 
-      bool UnfoldData( MnvH3D* &h_data_unfolded, MnvH3D* stat_varied, MnvH3D* h_reco, MnvH3D* h_truth, MnvH2D* h_migration, int num_iter ); 
       TMatrixD UnfoldDummy( MnvH1D* stat_varied, MnvH1D* h_data_unfolded, MnvH1D* h_reco, MnvH1D* h_truth, MnvH2D* h_migration, int num_iter ); 
       TMatrixD UnfoldDummy( MnvH2D* stat_varied, MnvH2D* h_data_unfolded, MnvH2D* h_reco, MnvH2D* h_truth, MnvH2D* h_migration, int num_iter ); 
-      TMatrixD UnfoldDummy( MnvH3D* stat_varied, MnvH3D* h_data_unfolded, MnvH3D* h_reco, MnvH3D* h_truth, MnvH2D* h_migration, int num_iter ); 
       void CalcChi2();
       void MakeBinChi2Dists();
       void MakeMedianChi2Dists( double percentile = 0.5 );
@@ -52,10 +49,8 @@ namespace PlotUtils
       MnvH1D* LinearizeHist( MnvH* hist );
       void bookHistos( MnvH1D*& ret_hist, std::string filename, std::string hist_name );
       void bookHistos( MnvH2D*& ret_hist, std::string filename, std::string hist_name );
-      void bookHistos( MnvH3D*& ret_hist, std::string filename, std::string hist_name );
       MnvH* ScaleAverageUnfold( MnvH1D* avg_unfold, int num_iter );
       MnvH* ScaleAverageUnfold( MnvH2D* avg_unfold, int num_iter );
-      MnvH* ScaleAverageUnfold( MnvH3D* avg_unfold, int num_iter );
       void FillChi2Dists( int stat_uni, MnvH* h_data_unfolded, MnvH* input_truth, MnvH* unfoldtruth, int num_iter );
 
       double m_stat_scale;

@@ -16,7 +16,6 @@ import ROOT
 CLASSES_TO_LOAD = [
   "MnvH1D",
   "MnvH2D",
-  "MnvH3D",
   "MnvHist",
   "MnvHistoConstrainer",
   "MnvLatErrorBand",

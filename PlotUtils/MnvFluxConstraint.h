@@ -39,14 +39,13 @@ namespace PlotUtils
 	// some forward declarations
 //	class MnvH1D;
 //	class MnvH2D;
-	class MnvH3D;
 //	class MnvVertErrorBand;
 //	class MnvVertErrorBand2D;
 	class MnvVertErrorBand3D;
 
 
 	/*!
-	 * @brief A class which can apply a flux constraint to an MnvH1D, MnvH2D, or MnvH3D.
+	 * @brief A class which can apply a flux constraint to an MnvH1D, MnvH2D
 	 * @author J. Wolcott <jwolcott@fnal.gov>
 	 * For more information, see http://minerva-docdb.fnal.gov:8080/cgi-bin/ShowDocument?docid=10281
 	 *
@@ -168,7 +167,6 @@ namespace PlotUtils
 	// (that way the dictionary generation is complete)
 	template MnvH1D * MnvHistoConstrainer::ConstrainHisto<MnvH1D, MnvVertErrorBand>(const MnvH1D* inHisto) const;
 	template MnvH2D * MnvHistoConstrainer::ConstrainHisto<MnvH2D, MnvVertErrorBand2D>(const MnvH2D* inHisto) const;
-//	template MnvH3D * MnvHistoConstrainer::ConstrainHisto<MnvH3D, MnvVertErrorBand3D>(const MnvH3D* inHisto) const;  // not available until a bunch of stuff is copied to MnvH3D or the screwball inheritance structure is fixed
 
 	// /////////////////////////////////////////////////////////////////////////////////////////
 	//
