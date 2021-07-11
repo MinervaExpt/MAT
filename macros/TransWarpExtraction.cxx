@@ -7,7 +7,6 @@
 #include "PlotUtils/MnvPlotter.h"
 #include "PlotUtils/MnvH1D.h"
 #include "PlotUtils/MnvH2D.h"
-#include "PlotUtils/MnvH3D.h"
 
 #include "TFile.h"
 #include "TDirectory.h"
@@ -731,47 +730,6 @@ namespace PlotUtils
 
     return true;
   }
-  //All 3d methods are suspect.  Putting this here, but THINK CAREFULLY before using this
-  template <class MnvH> bool TransWarpExtraction<MnvH>::UnfoldData( MnvH3D* &h_data_unfolded, MnvH3D* stat_varied, MnvH3D* h_reco, MnvH3D* h_truth, MnvH2D* h_migration, int num_iter ) 
-  {
-    bool data_unfolded = false;
-    data_unfolded = unfold.UnfoldHisto3D(h_data_unfolded, h_migration, h_reco, h_truth, stat_varied, num_iter, false, false);
-    
-    if( !data_unfolded )
-    {
-      std::cout << "Unfolding failed for either data or MC. Please check " << std::endl;
-      return false;  
-    }
-
-    //MnvH3D doesn't have a method to push covariance matrix.  Removing this for now
-    //TMatrixD unfoldingCovMatrixOrig = UnfoldDummy( stat_varied, h_data_unfolded, h_reco, h_truth, h_migration, num_iter ); 
-
-    //h_data_unfolded->PushCovMatrix("unfoldingCov",unfoldingCovMatrixOrig);
-    
-    ////Getting hists and covariance matrix for average chi2 calculations
-    //if( !m_avg_data_unfolded[num_iter] ) m_avg_data_unfolded[num_iter] = new MnvH( h_data_unfolded->GetCVHistoWithStatError() );
-    //else
-    //{
-    //  TH3D* h_tmp_unfold = new TH2D(h_data_unfolded->GetCVHistoWithStatError());
-    //  m_avg_data_unfolded[num_iter]->Add( h_tmp_unfold ); 
-    //}
-
-    //int nCovCols = unfoldingCovMatrixOrig.GetNcols();
-    //int nCovRows = unfoldingCovMatrixOrig.GetNrows();
-    //if( !m_avg_unfoldingCovMatrices[num_iter] ) m_avg_unfoldingCovMatrices[num_iter] = new TMatrixD( nCovRows, nCovCols );
-    //TMatrixD* avg_unfoldingCovMatrix = m_avg_unfoldingCovMatrices[num_iter]; 
-
-    //for( int row = 0; row < nCovRows; ++row)
-    //{
-    //  for( int col = 0; col < nCovCols; ++col)
-    //  {
-    //    avg_unfoldingCovMatrix[0][row][col] += unfoldingCovMatrixOrig(row,col)/m_nStatUniverses;
-    //  }
-    //}
-    //m_avg_unfoldingCovMatrices[num_iter] = avg_unfoldingCovMatrix; 
-    
-    return true;
-  }
   template <class MnvH> TMatrixD TransWarpExtraction<MnvH>::UnfoldDummy( MnvH1D* stat_varied, MnvH1D* h_data_unfolded, MnvH1D* h_reco, MnvH1D* h_truth, MnvH2D* h_migration, int num_iter ) 
   {
     cout << "Getting the covariance of the unfolding" << endl;
@@ -819,40 +777,6 @@ namespace PlotUtils
     TH2D* hBGSubDataDummy = new TH2D(stat_varied->GetCVHistoWithStatError());
     TH2D* hMigrationDummy = new TH2D(h_migration->GetCVHistoWithStatError());
     unfold.UnfoldHisto2D(hUnfoldedDummy, unfoldingCovMatrixOrig, hMigrationDummy, hRecoDummy, hTruthDummy, hBGSubDataDummy, num_iter);
-
-    correctNbins=hUnfoldedDummy->fN;
-    matrixRows=unfoldingCovMatrixOrig.GetNrows();
-
-    if(correctNbins!=matrixRows){
-      cout << "****************************************************************************" << endl;
-      cout << "*  Fixing unfolding matrix size because of RooUnfold bug. From " << matrixRows << " to " << correctNbins << endl;
-      cout << "****************************************************************************" << endl;
-      // It looks like this, since the extra last two bins don't have any content
-      unfoldingCovMatrixOrig.ResizeTo(correctNbins, correctNbins);
-    }
-
-    for(int i=0; i<unfoldingCovMatrixOrig.GetNrows(); ++i) unfoldingCovMatrixOrig(i,i)=0;
-    delete hUnfoldedDummy;
-    delete hMigrationDummy;
-    delete hRecoDummy;
-    delete hTruthDummy;
-    delete hBGSubDataDummy;
-
-    return unfoldingCovMatrixOrig;
-  }
-  template <class MnvH> TMatrixD TransWarpExtraction<MnvH>::UnfoldDummy( MnvH3D* stat_varied, MnvH3D* h_data_unfolded, MnvH3D* h_reco, MnvH3D* h_truth, MnvH2D* h_migration, int num_iter ) 
-  {
-    cout << "Getting the covariance of the unfolding" << endl;
-    TMatrixD unfoldingCovMatrixOrig;
-    int correctNbins;
-    int matrixRows;  
-
-    TH3D* hUnfoldedDummy  = new TH3D(h_data_unfolded->GetCVHistoWithStatError());
-    TH3D* hRecoDummy      = new TH3D(h_reco->GetCVHistoWithStatError());
-    TH3D* hTruthDummy     = new TH3D(h_truth->GetCVHistoWithStatError());
-    TH3D* hBGSubDataDummy = new TH3D(stat_varied->GetCVHistoWithStatError());
-    TH2D* hMigrationDummy = new TH2D(h_migration->GetCVHistoWithStatError());
-    unfold.UnfoldHisto3D(hUnfoldedDummy, unfoldingCovMatrixOrig, hMigrationDummy, hRecoDummy, hTruthDummy, hBGSubDataDummy, num_iter);
 
     correctNbins=hUnfoldedDummy->fN;
     matrixRows=unfoldingCovMatrixOrig.GetNrows();
@@ -1292,39 +1216,6 @@ namespace PlotUtils
     h_unfolded->PushCovMatrix("unfoldingCov",*m_avg_unfoldingCovMatrices[num_iter]);
     return h_unfolded;
   }
-  template <class MnvH> MnvH* TransWarpExtraction<MnvH>::ScaleAverageUnfold( MnvH3D* avg_unfold, int num_iter )
-  {
-    //Scale the bin content by number of universes
-    MnvH* h_unfolded = (MnvH*)avg_unfold->Clone(Form("%s_Scaled",avg_unfold->GetName()));
-    h_unfolded->ClearAllErrorBands();
-    for( int bin = 0; bin < h_unfolded->fN; bin++){
-      h_unfolded->SetBinContent(bin,h_unfolded->GetBinContent(bin)/m_nStatUniverses);
-    }
-    //Scaling the covariance matrix
-    int nCovCols = m_avg_unfoldingCovMatrices[num_iter]->GetNcols();
-    int nCovRows = m_avg_unfoldingCovMatrices[num_iter]->GetNrows();
-
-    for( int row = 0; row < nCovRows; ++row)
-    {
-      for( int col = 0; col < nCovCols; ++col)
-      {
-        m_avg_unfoldingCovMatrices[num_iter][0][row][col] = m_avg_unfoldingCovMatrices[num_iter][0][row][col]/m_nStatUniverses;
-      }
-    }
-
-    //Scale bin error,  I'm assuming i'm doing this right...
-    for(uint su = 0; su<m_nStatUniverses; ++su) 
-    {
-      TH3D tmp_stat_hist = m_outputresults[num_iter][su]->GetCVHistoWithStatError();
-      for( int bin = 0; bin < h_unfolded->fN; bin++) 
-      {
-        if( su == 0 ) h_unfolded->SetBinError(bin,tmp_stat_hist.GetBinError(bin)/m_nStatUniverses);
-        else h_unfolded->SetBinError(bin,h_unfolded->GetBinError(bin)+tmp_stat_hist.GetBinError(bin)/m_nStatUniverses);
-      }
-    }   
-    h_unfolded->PushCovMatrix("unfoldingCov",*m_avg_unfoldingCovMatrices[num_iter]);
-    return h_unfolded;
-  }
 
   template <class MnvH> void TransWarpExtraction<MnvH>::bookHistos( MnvH1D*& ret_hist, string filename, string hist_name )
   {
@@ -1348,20 +1239,6 @@ namespace PlotUtils
       return;
     }
     ret_hist = (MnvH2D*)f->Get(hist_name.c_str());
-
-    if ( !ret_hist ){
-      Error("CrossSectionPlots",TString::Format("No histogram found with name %s",hist_name.c_str()));
-      return;
-    }
-  }
-  template <class MnvH> void TransWarpExtraction<MnvH>::bookHistos( MnvH3D*& ret_hist, string filename, string hist_name )
-  {
-    TFile *f = TFile::Open( filename.c_str(), "READ" );
-    if (f->IsZombie() || f->GetListOfKeys()->IsEmpty()){
-      Error("CrossSectionPlots","Could not get histogram ROOT file or it was empty.");
-      return;
-    }
-    ret_hist = (MnvH3D*)f->Get(hist_name.c_str());
 
     if ( !ret_hist ){
       Error("CrossSectionPlots",TString::Format("No histogram found with name %s",hist_name.c_str()));
@@ -1802,21 +1679,7 @@ int main( int argc, char **argv)
     }
     case 3: 
     {
-      TransWarpExtraction< MnvH3D > excelsior(data_file, data, data_truth_file, data_truth, reco_file, reco, truth_file, truth, migration_file, migration, iterations, exclude_chi2_bins, random_seed, num_uni, bIterLogScale );
-      excelsior.ClearInputErrorBands();
-      excelsior.ScalePOT( pot_scale ); 
-      excelsior.ScaleDataPOT( data_pot_norm ); 
-      excelsior.SetChi2MaxAndStep( max_chi2, step_chi2 );
-      excelsior.SetStatScale(stat_scale);
-      excelsior.Setup2DChi2Hists();
-      excelsior.UnfoldStatUniverses( );
-      //excelsior.CalcChi2( );//This doesn't exist for 3d yet.  So until then...
-      //excelsior.MakeBinChi2Dists( );
-      //excelsior.MakeMedianChi2Dists( );
-      //excelsior.MakeTruncatedChi2Dists( );
-      excelsior.MakeErrorHists( );
-      excelsior.MakeRatioHists( );
-      excelsior.WriteOutput( output_file, verbhist, bLinearize ); 
+      std::cout<<"3D TransWarpExtraction not available via 3D histos.\n"
       return 0;
     }
   }

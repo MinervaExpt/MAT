@@ -23,7 +23,7 @@
 # installed boost in local directory
 
 # Changed CInt and Reflex to Cling
-# need to patch some bad C++ in MnvH2D and MnvH3D as root 6 is less forgiving.
+# need to patch some bad C++ in MnvH2D as root 6 is less forgiving.
 #
 # Used flags to remove PlotUtils/MnvRecoshifter as it brings in the whole MINERvA code stack.
 # set Wformat to 0 to remove format warnings due to calls to Form(

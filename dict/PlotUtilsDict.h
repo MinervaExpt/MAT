@@ -22,7 +22,6 @@
 #include "../PlotUtils/HistogramUtils.h"
 #include "../PlotUtils/MnvH1D.h"
 #include "../PlotUtils/MnvH2D.h"
-#include "../PlotUtils/MnvH3D.h"
 #include "../PlotUtils/MnvLatErrorBand.h"
 #include "../PlotUtils/MnvLatErrorBand2D.h"
 #include "../PlotUtils/MnvLatErrorBand3D.h"
