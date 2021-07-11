@@ -8,14 +8,11 @@
 #pragma link C++ class PlotUtils::MnvVertErrorBand+;
 #pragma link C++ class PlotUtils::MnvH1D+;
 #pragma link C++ class PlotUtils::MnvH2D+;
-#pragma link C++ class PlotUtils::MnvH3D+;
 #pragma link C++ class PlotUtils::TreeWrapper+;
 #pragma link C++ class PlotUtils::ChainWrapper+;
 #pragma link C++ class PlotUtils::GridCanvas+;
 #pragma link C++ class PlotUtils::MnvLatErrorBand2D+;
-#pragma link C++ class PlotUtils::MnvLatErrorBand3D+;
 #pragma link C++ class PlotUtils::MnvVertErrorBand2D+;
-#pragma link C++ class PlotUtils::MnvVertErrorBand3D+;
 
 //NSF STUFF
 #pragma link C++ class PlotUtils::DefaultCVUniverse+;

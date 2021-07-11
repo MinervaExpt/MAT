@@ -78,24 +78,6 @@ class HistWrapper(object):
     self.hist = PlotUtils.MnvH2D('h_%s'%self.title,self.title,self.nXBins,self.xBins,self.nYBins,self.yBins)
     self.hist.SetDirectory(0)
 
-  def init3D(self,title,nXBins,xMin,xMax,nYBins,yMin,yMax,nZBins,zMin,zMax,systEvents):
-    self.title = title
-    self.dimensionality = 3
-    self.nXBins = nXBins
-    self.xMin = xMin
-    self.xMax = xMax
-    self.nYBins = nYBins
-    self.yMin = yMin
-    self.yMax = yMax
-    self.nZBins = nZBins
-    self.zMin = zMin
-    self.zMax = zMax
-    #self.systematicUniverses = systEvents
-    self.eventToUnivMap = {}
-
-    self.hist = PlotUtils.MnvH3D('h_%s'%self.title,self.title,self.nXBins,self.xMin,self.xMax,self.nYBins,self.yMin,self.yMax,self.nZBins,self.zMin,self.zMax)
-    self.hist.SetDirectory(0)
- 
   def SyncCVHistos(self):
     for error_band_name in self.hist.GetErrorBandNames():
       if self.dimensionality == 1:
