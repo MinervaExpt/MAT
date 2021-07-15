@@ -19,7 +19,7 @@
 #include <algorithm>
 #include <cassert>
 
-namespace PlotUtils
+namespace MAT
 {
   template <class UNIVERSE, class EVENT>
   Cutter<UNIVERSE, EVENT>::Cutter(reco_t&& recoPre, reco_t&& recoSideband,

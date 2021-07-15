@@ -15,7 +15,7 @@
 #include <iostream>
 #include <math.h>
 
-namespace PlotUtils
+namespace MAT
 {
 
 class MnvVertErrorBand3D : public TH3D

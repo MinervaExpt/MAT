@@ -1,7 +1,7 @@
 #ifndef MNV_NuclModUtils_h
 #define MNV_NuclModUtils_h 1
 
-namespace PlotUtils
+namespace MAT
 {
 
   //==========================================

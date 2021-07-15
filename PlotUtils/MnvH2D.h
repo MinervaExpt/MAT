@@ -15,7 +15,7 @@
 
  // let this loose to debug problems with operations
 
-namespace PlotUtils
+namespace MAT
 {
   class MnvH2D: public TH2D
   {

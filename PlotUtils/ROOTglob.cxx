@@ -20,7 +20,7 @@
 //c++ includes
 #include <algorithm>
 
-namespace PlotUtils
+namespace MAT
 {
   //Returns: A list of files that matched the regular expression regex.  If
   //         os is a TNetXNGSystem or something more exotic that uses special
@@ -85,7 +85,7 @@ namespace PlotUtils
       #ifndef NDEBUG //Only print out messages about missing directories in debug builds
       else
       {
-        std::cerr << "PlotUtils::glob(): Failed to open a directory named " << currentDir << " that was there a minute ago!  "
+        std::cerr << "MAT::glob(): Failed to open a directory named " << currentDir << " that was there a minute ago!  "
                   << "Was it moved or deleted while this program was running?  This is just a debugging message, so "
                   << "I'll just ignore this directory and move on..." << std::endl;
       }

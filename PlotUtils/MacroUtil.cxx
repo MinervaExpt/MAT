@@ -12,12 +12,12 @@
 #include <iostream>
 #include <cassert>
 
-using namespace PlotUtils;
+using namespace MAT;
 
 // Accumulate all POT in a "playlist" file
 double CountPOT(const std::string& fileName)
 {
-  PlotUtils::ChainWrapper meta("Meta");
+  MAT::ChainWrapper meta("Meta");
   meta.Add(fileName);
 
   const int nEntries = meta.GetEntries();

@@ -32,7 +32,7 @@
 // #define fgPalettesList TColor__PalettesList()
 
 using namespace std;
-using namespace PlotUtils;
+using namespace MAT;
 
 // Some weirdness copied from TColor::SetPalette()
 // namespace {
@@ -60,7 +60,7 @@ MnvPlotter::MnvPlotter()
     ApplyStyle( kDefaultStyle );
 }
 
-MnvPlotter::MnvPlotter( PlotUtils::t_PlotStyle style )
+MnvPlotter::MnvPlotter( MAT::t_PlotStyle style )
 {
 #if DO_GARBAGE_COLLECTION
     gROOT->GetListOfCleanups()->Add( &fTmpObjects );
@@ -170,7 +170,7 @@ void MnvPlotter::SetRootEnv()
 //================================================================
 // set the variables of this namespace to defaults and apply style
 //================================================================
-void MnvPlotter::ApplyStyle( PlotUtils::t_PlotStyle style /* = kDefaultStyle */ )
+void MnvPlotter::ApplyStyle( MAT::t_PlotStyle style /* = kDefaultStyle */ )
 {
   n_color_contours = 999;
 

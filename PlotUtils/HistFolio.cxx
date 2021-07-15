@@ -8,7 +8,7 @@
 
 #include "TKey.h"  // For loading HistFolio from file
 
-using namespace PlotUtils;
+using namespace MAT;
 
 //============================================================================
 //
@@ -25,7 +25,7 @@ HistFolio<HIST, CATEGORY>::HistFolio(std::string folio_name,
   assert(
       ("ERROR: If you do not specify a NamedCategory list in this CTOR"
        "then you cannot specify a template argument. Do "
-       "HistFolio<PlotUtils::MnvH1D>, or provide a category list.",
+       "HistFolio<MAT::MnvH1D>, or provide a category list.",
        std::is_same<int, CATEGORY>::value));
 }
 
@@ -332,7 +332,7 @@ bool HistFolio<HIST, CATEGORY>::by_value::operator()(
 // LoadHistFolio (not a member function)
 #ifndef __CINT__
 template <class HIST>
-HistFolio<HIST, int> PlotUtils::LoadHistFolioFromFile(TFile& f,
+HistFolio<HIST, int> MAT::LoadHistFolioFromFile(TFile& f,
                                                       std::string folio_name) {
   // 1. First find a source histogram with name == folio_name
   HIST* source_hist = FindSourceHist<HIST>(f, folio_name);
@@ -377,7 +377,7 @@ HistFolio<HIST, int> PlotUtils::LoadHistFolioFromFile(TFile& f,
 
 // Helper to LoadHistFolioFromFile (not a member function)
 template <class HIST>
-HIST* PlotUtils::FindSourceHist(TFile& f, std::string folio_name) {
+HIST* MAT::FindSourceHist(TFile& f, std::string folio_name) {
   TObject* obj;
   TKey* key;
   TIter next(f.GetListOfKeys());

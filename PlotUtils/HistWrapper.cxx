@@ -3,9 +3,9 @@
 
 #include "HistWrapper.h"
 
-#include "FluxSystematics.cxx"  // PlotUtils::flux_reweighter
+#include "FluxSystematics.cxx"  // MAT::flux_reweighter
 
-using namespace PlotUtils;
+using namespace MAT;
 
 // Default Constructor
 template <typename T>
@@ -17,7 +17,7 @@ template <typename T>
 HistWrapper<T>::HistWrapper(const char* hist_name, const char* title, int nBins,
                             double xmin, double xmax,
                             std::map<std::string, std::vector<T*> >& bands) {
-  hist = new PlotUtils::MnvH1D(hist_name, title, nBins, xmin, xmax);
+  hist = new MAT::MnvH1D(hist_name, title, nBins, xmin, xmax);
   hist->SetDirectory(0);
 
   for (typename std::map<std::string, std::vector<T*> >::const_iterator band =
@@ -37,7 +37,7 @@ template <typename T>
 HistWrapper<T>::HistWrapper(const char* hist_name, const char* title, int nBins,
                             std::vector<double> bins,
                             std::map<std::string, std::vector<T*> >& bands) {
-  hist = new PlotUtils::MnvH1D(hist_name, title, nBins, &bins[0]);
+  hist = new MAT::MnvH1D(hist_name, title, nBins, &bins[0]);
   hist->SetDirectory(0);
 
   for (typename std::map<std::string, std::vector<T*> >::const_iterator band =
@@ -85,7 +85,7 @@ HistWrapper<T>::HistWrapper(MnvH1D* h1d,
 template <typename T>
 HistWrapper<T>::HistWrapper(const char* hist_name, const char* title, int nBins,
                             double xmin, double xmax, std::vector<T*>& univs) {
-  hist = new PlotUtils::MnvH1D(hist_name, title, nBins, xmin, xmax);
+  hist = new MAT::MnvH1D(hist_name, title, nBins, xmin, xmax);
   hist->SetDirectory(0);
   std::vector<T*> tmpunivs;
 
@@ -108,7 +108,7 @@ HistWrapper<T>::HistWrapper(const char* hist_name, const char* title, int nBins,
                             std::vector<double> bins, std::vector<T*>& univs) {
   double* dbins = &bins[0];
 
-  hist = new PlotUtils::MnvH1D(hist_name, title, nBins, dbins);
+  hist = new MAT::MnvH1D(hist_name, title, nBins, dbins);
   hist->SetDirectory(0);
   std::vector<T*> tmpunivs;
 
@@ -157,7 +157,7 @@ template <typename T>
 HistWrapper<T>::HistWrapper(const char* hist_name, const char* title, int nBins,
                             std::vector<double> bins) {
   double* dbins = &bins[0];
-  hist = new PlotUtils::MnvH1D(hist_name, title, nBins, dbins);
+  hist = new MAT::MnvH1D(hist_name, title, nBins, dbins);
   hist->SetDirectory(0);
   assert(hist);
 }
@@ -166,7 +166,7 @@ HistWrapper<T>::HistWrapper(const char* hist_name, const char* title, int nBins,
 template <typename T>
 HistWrapper<T>::HistWrapper(const char* hist_name, const char* title, int nBins,
                             double xmin, double xmax) {
-  hist = new PlotUtils::MnvH1D(hist_name, title, nBins, xmin, xmax);
+  hist = new MAT::MnvH1D(hist_name, title, nBins, xmin, xmax);
   hist->SetDirectory(0);
   assert(hist);
 }
@@ -209,7 +209,7 @@ void HistWrapper<T>::SyncCVHistos() {
        bandname != bandnames.end(); ++bandname) {
     // std::cout << *bandname << std::endl;
     // band is a reference to the error band's CV histo
-    PlotUtils::MnvVertErrorBand& band =
+    MAT::MnvVertErrorBand& band =
         *(hist->GetVertErrorBand((*bandname).c_str()));
     // set the BAND's CV histo to the MnvH1D's CV histo
     band.TH1D::operator=(*theCVHisto);
@@ -314,7 +314,7 @@ void HistWrapper<T>::FillErrorBandsWithSysUni(std::vector<T*> univs, int nhists,
             << "be constructed with " << nflux_universes << " universes.\n  "
             << "Change this with MinervaUniverse::SetNFluxUniverses.\n";
       }
-      PlotUtils::flux_reweighter(univs.front()->GetPlaylist(),
+      MAT::flux_reweighter(univs.front()->GetPlaylist(),
                                  univs.front()->GetAnalysisNuPDG(), true,
                                  nflux_universes)
           .AddFluxErrorBand(hist);

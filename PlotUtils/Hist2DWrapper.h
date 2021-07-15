@@ -16,7 +16,7 @@
   systematics:
 
       std::map<std::string, std::vector<CVUniverse*>> error_bands = GetGenieSystematics<CVUniverse>(my_event_chain);
-      PlotUtils::HistWrapper<CVUniverse> my_hw("E_{#nu}", nbins, xmin, xmax, error_bands);
+      MAT::HistWrapper<CVUniverse> my_hw("E_{#nu}", nbins, xmin, xmax, error_bands);
       loop my_event_chain 
         loop band in error_bands 
           loop universe in band
@@ -34,7 +34,7 @@
   - virtual std::string ShortName() const = 0;
   - virtual std::string LatexName() const = 0;
   - virtual double GetWeight() const;
-  - PlotUtils::ChainWrapper& m_chw;
+  - MAT::ChainWrapper& m_chw;
   - double m_nsigma;
   - Long64_t m_entry;
 
@@ -51,7 +51,7 @@
 #include <vector>
 #include <map>
 
-namespace PlotUtils{
+namespace MAT{
   template <typename T>
   struct Hist2DWrapper
   {
@@ -80,7 +80,7 @@ namespace PlotUtils{
     #endif //__GCCXML__
 
     // Data members
-    PlotUtils::MnvH2D* hist;                        /*!< The MnvH2D that is created and filled */
+    MAT::MnvH2D* hist;                        /*!< The MnvH2D that is created and filled */
     std::map<const T*, TH2D*> univToHistMap;        /*!< The map between univs and TH2 */ 
     std::map<std::string, int> nhistsAssignedSoFar; /*!< Counter for nunivs in each band.*/ 
 

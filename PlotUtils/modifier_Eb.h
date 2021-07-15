@@ -18,7 +18,7 @@
 using namespace std;
 using namespace TMath;
 
-namespace PlotUtils{
+namespace MAT{
   class ChainWrapper;
 
   class KinematicsModifier
@@ -35,17 +35,17 @@ namespace PlotUtils{
     void CorrectQE( T* evt, V& muon, V& nucleon, int mode = 0 );
 
     template<class V>
-    void CorrectQE( PlotUtils::ChainWrapper* chw, Long64_t entry, V& muon, V &nucleon, int mode = 0 );
+    void CorrectQE( MAT::ChainWrapper* chw, Long64_t entry, V& muon, V &nucleon, int mode = 0 );
 
     template<class T, class V>
     V GetCorrectedMuon( T* evt, V muon, int mode = 0 );
     template<class V>
-    V GetCorrectedMuon( PlotUtils::ChainWrapper* chw, Long64_t entry, V muon, int mode = 0 );
+    V GetCorrectedMuon( MAT::ChainWrapper* chw, Long64_t entry, V muon, int mode = 0 );
 
     template<class T, class V>
     V GetCorrectedNucleon( T* evt, V nucleon, int mode = 0 );
     template<class V>
-    V GetCorrectedNucleon( PlotUtils::ChainWrapper* chw, Long64_t entry, V nucleon, int mode = 0 );
+    V GetCorrectedNucleon( MAT::ChainWrapper* chw, Long64_t entry, V nucleon, int mode = 0 );
 
     //energy should be in GeV
     template<class V>
@@ -242,7 +242,7 @@ void KinematicsModifier::CorrectQE( T* evt, V& muon, V &nucleon, int mode  )
 
 
 template<class V> 
-void KinematicsModifier::CorrectQE( PlotUtils::ChainWrapper* chw, Long64_t entry, V& muon, V &nucleon, int mode  )
+void KinematicsModifier::CorrectQE( MAT::ChainWrapper* chw, Long64_t entry, V& muon, V &nucleon, int mode  )
 {
   if( chw->GetInt("mc_intType", entry) != 1 && chw->GetInt("mc_current", entry)!=1 ) return;
   vector<double> ipV = chw->GetValueVector<double>("mc_incomingPartVec", entry);
@@ -294,7 +294,7 @@ V KinematicsModifier::GetCorrectedMuon( T* evt, V muon, int mode  )
 
 
 template<class V> 
-V KinematicsModifier::GetCorrectedMuon( PlotUtils::ChainWrapper* chw, Long64_t entry, V muon, int mode  )
+V KinematicsModifier::GetCorrectedMuon( MAT::ChainWrapper* chw, Long64_t entry, V muon, int mode  )
 {
   if( chw->GetInt("mc_intType", entry) != 1 && chw->GetInt("mc_current", entry)!=1 ) return muon;
   vector<double> ipV = chw->GetValueVector<double>("mc_incomingPartVec", entry);
@@ -349,7 +349,7 @@ V KinematicsModifier::GetCorrectedNucleon( T* evt, V nucleon, int mode  )
 
 
 template<class V>
-V KinematicsModifier::GetCorrectedNucleon( PlotUtils::ChainWrapper* chw, Long64_t entry, V nucleon, int mode  )
+V KinematicsModifier::GetCorrectedNucleon( MAT::ChainWrapper* chw, Long64_t entry, V nucleon, int mode  )
 {
   if( chw->GetInt("mc_intType", entry) != 1 && chw->GetInt("mc_current", entry)!=1 ) return nucleon;
   vector<double> ipV = chw->GetValueVector<double>("mc_incomingPartVec", entry);

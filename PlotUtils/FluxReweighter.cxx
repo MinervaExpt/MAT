@@ -23,11 +23,11 @@
 #include <algorithm> // tolower()
 
 namespace {
-  inline std::vector<TH1D*> GetVector(PlotUtils::MnvH1D* h)  {
+  inline std::vector<TH1D*> GetVector(MAT::MnvH1D* h)  {
     return std::vector<TH1D*>();
   }
 
-    inline std::vector<TH2D*> GetVector(PlotUtils::MnvH2D* h)  {
+    inline std::vector<TH2D*> GetVector(MAT::MnvH2D* h)  {
       return std::vector<TH2D*>();
     }
 
@@ -39,260 +39,260 @@ namespace {
     return new TH2D (h);
   }
 
-  PlotUtils::FluxReweighter* _flux_reweighter(std::string plist,int nu_pdg,
+  MAT::FluxReweighter* _flux_reweighter(std::string plist,int nu_pdg,
                                               bool use_nuE_constraint,
                                               int n_flux_universes) {
     if (plist == "minerva1") {
-      return new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+      return new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv5,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv5,
                                          n_flux_universes  );
     }
     else if (plist == "minerva5") {
-      return new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+      return new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv5,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv5,
                                          n_flux_universes  );
     }
     else if (plist == "minerva7") {
-      return new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+      return new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv5,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv5,
                                          n_flux_universes  );
     }
     else if (plist == "minerva9") {
-      return new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+      return new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv5,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv5,
                                          n_flux_universes  );
     }
     else if (plist == "minerva13" || plist == "minerva13C" || plist == "minerva13c"|| plist == "minerva13E"|| plist == "minerva13e" ) {
-      return new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+      return new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          "minerva13",
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv5,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv5,
                                          n_flux_universes  );
     }
     else if (plist == "2p2h") {
-      return new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+      return new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          "minerva2p2h",
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv5,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv5,
                                          n_flux_universes  );
     }
     else if(plist == "minervame1a" || plist == "minervame1A"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
     }
     else if(plist == "minervame1b" || plist == "minervame1B"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
 
     }
     else if(plist == "minervame1c" || plist == "minervame1C"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
 
     }
     else if(plist == "minervame1d" || plist == "minervame1D"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
 
     }
     else if(plist == "minervame1e" || plist == "minervame1E"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
 
     }
     else if(plist == "minervame1f" || plist == "minervame1F"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
 
     }
     else if(plist == "minervame1g" || plist == "minervame1G"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
 
     }
     else if(plist == "minervame1h" || plist == "minervame1H"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
 
     }
     else if(plist == "minervame1l" || plist == "minervame1L"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
     }
     else if(plist == "minervame1m" || plist == "minervame1M"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
     }
     else if(plist == "minervame1n" || plist == "minervame1N"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
 
     }
     else if(plist == "minervame1o" || plist == "minervame1O"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
     }
     else if(plist == "minervame1p" || plist == "minervame1P"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
 
     }
     else if (plist == "minervame1d1m1nWeightedAve") {
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
 
     }
     else if(plist == "minervame5a" || plist == "minervame5A"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
 
     }
     else if(plist == "minervame6a" || plist == "minervame6A"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
     }
     else if(plist == "minervame6b" || plist == "minervame6B"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
     }
     else if(plist == "minervame6c" || plist == "minervame6C"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
     }
     else if(plist == "minervame6d" || plist == "minervame6D"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
     }
     else if(plist == "minervame6e" || plist == "minervame6E"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
     }
     else if(plist == "minervame6f" || plist == "minervame6F"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
     }
     else if(plist == "minervame6g" || plist == "minervame6G"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
     }
     else if(plist == "minervame6h" || plist == "minervame6H"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
     }
     else if(plist == "minervame6i" || plist == "minervame6I"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
     }
     else if(plist == "minervame6j" || plist == "minervame6J"){
       return
-          new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
+          new MAT::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
-                                         PlotUtils::FluxReweighter::gen2thin,
-                                         PlotUtils::FluxReweighter::g4numiv6,
+                                         MAT::FluxReweighter::gen2thin,
+                                         MAT::FluxReweighter::g4numiv6,
                                          n_flux_universes );
     }
 
@@ -305,7 +305,7 @@ namespace {
   }
 }
 
-namespace PlotUtils
+namespace MAT
 {
   //============================================================================
   FluxReweighter::FluxReweighter(int nuPDG,
@@ -1613,7 +1613,7 @@ namespace PlotUtils
 
   FluxReweighter& flux_reweighter(std::string plist, int nu_pdg,
                                   bool use_nuE_constraint, int n_flux_universes /*= 200*/) {
-    static std::map<std::string, std::map<int, PlotUtils::FluxReweighter*> > FRW_map;
+    static std::map<std::string, std::map<int, MAT::FluxReweighter*> > FRW_map;
     std::transform(plist.begin(), plist.end(), plist.begin(), ::tolower);
     if (!FRW_map[plist][abs(nu_pdg)]) {
       FRW_map[plist][abs(nu_pdg)] = _flux_reweighter(plist, nu_pdg,
@@ -1622,7 +1622,7 @@ namespace PlotUtils
     return *(FRW_map[plist][abs(nu_pdg)]);
   }
 
-} // end namespace PlotUtils
+} // end namespace MAT
 
 // Local Variables:
 // c-basic-offset: 2

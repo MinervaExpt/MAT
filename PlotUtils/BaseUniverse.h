@@ -6,7 +6,7 @@
 #include "Math/Vector4D.h"
 
 
-namespace PlotUtils {
+namespace MAT {
   class BaseUniverse {
     protected:
       // MOVE THESE TO A PHYSICSCALCULATORS.H HEADER
@@ -17,7 +17,7 @@ namespace PlotUtils {
       double calcq3(const double Q2, const double Enu, const double Elep) const;
 
       // member variables
-      PlotUtils::TreeWrapper* m_chw; // chain of events
+      MAT::TreeWrapper* m_chw; // chain of events
       double m_nsigma;               // n sigma that universe event shifts
       Long64_t m_entry;              // current chain entry
       static bool m_is_truth;
@@ -25,10 +25,10 @@ namespace PlotUtils {
     public:
       BaseUniverse() {}
   
-      typedef PlotUtils::ChainWrapper* config_t;
+      typedef MAT::ChainWrapper* config_t;
   
       //! Constructor
-      BaseUniverse(PlotUtils::TreeWrapper* config, double nsigma = 0);
+      BaseUniverse(MAT::TreeWrapper* config, double nsigma = 0);
   
       //! Destructor
       virtual ~BaseUniverse() {}

@@ -1,8 +1,8 @@
 //File: Cut.h
 //Brief: A toolkit for defining selection criteria that can be shared
-//       across analyses.  A PlotUtils::Cut takes a CVUniverse and optionally
+//       across analyses.  A MAT::Cut takes a CVUniverse and optionally
 //       an EVENT and returns a boolean about whether this combination
-//       passes the Cut.  A PlotUtils::Cut can also be used to generate a
+//       passes the Cut.  A MAT::Cut can also be used to generate a
 //       table summarizing cut performance.
 //Author: Andrew Olivier aolivier@ur.rochester.edu
 
@@ -22,7 +22,7 @@
 #define override
 #endif
 
-namespace PlotUtils
+namespace MAT
 {
   namespace detail
   {

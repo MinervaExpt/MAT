@@ -14,7 +14,7 @@
 
 #include "MnvFluxConstraint.h"
 
-using namespace PlotUtils;
+using namespace MAT;
 
 // static members must be initialized outside the declaration
 bool MnvHistoConstrainer::s_disableTH1AddDir = true;

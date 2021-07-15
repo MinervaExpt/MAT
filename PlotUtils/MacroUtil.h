@@ -7,7 +7,7 @@
 //c++ includes
 #include <string>
 
-namespace PlotUtils
+namespace MAT
 {
   class MacroUtil {
     public:
@@ -26,9 +26,9 @@ namespace PlotUtils
   
       // All of these ChainWrapper pointers will be non-NULL.  Some of them
       // just might be empty.
-      PlotUtils::ChainWrapper* m_data;
-      PlotUtils::ChainWrapper* m_mc;
-      PlotUtils::ChainWrapper* m_truth;
+      MAT::ChainWrapper* m_data;
+      MAT::ChainWrapper* m_mc;
+      MAT::ChainWrapper* m_truth;
     
       // Program conditions
       std::string m_plist_string;
@@ -52,6 +52,6 @@ namespace PlotUtils
       // Delegating some constructor work to reduce code duplication
       void CommonInitialization(const std::string& plist_name, const bool is_grid);
   };
-} // namespace PlotUtils
+} // namespace MAT
 
 #endif  // MacroUtil_h

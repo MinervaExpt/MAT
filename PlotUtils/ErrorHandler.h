@@ -25,7 +25,7 @@
   #define DESTRUCTOR_NOEXCEPT
 #endif
 
-namespace PlotUtils
+namespace MAT
 {
   //Pyroot interface to register an error handler that throws python exceptions on ROOT warning messages
   void HandleErrorsInPython();

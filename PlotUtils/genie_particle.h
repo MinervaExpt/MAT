@@ -12,7 +12,7 @@ using std::abs;
 using std::setw;
 using std::sqrt;
 
-namespace PlotUtils{
+namespace MAT{
 
 class genie_particle {
 public:

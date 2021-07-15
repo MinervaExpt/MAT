@@ -26,7 +26,7 @@ struct LeafAndBranch
 
 */
 
-namespace PlotUtils {
+namespace MAT {
 
   //Gory details: type traits to map c++ type back to TLeaf type names
   namespace detail

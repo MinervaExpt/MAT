@@ -4,7 +4,7 @@
 #include "Hist2DWrapper.h"
 #include "FluxSystematics.h" //flux_reweighter
 
-using namespace PlotUtils;
+using namespace MAT;
 
 // Default Constructor
 template <typename T>
@@ -20,7 +20,7 @@ Hist2DWrapper<T>::Hist2DWrapper(const char* hist_name, const char* title,
                              int nBinsX, double xmin, double xmax, 
                              int nBinsY, double ymin, double ymax, 
                              std::map< std::string, std::vector<T*> >& bands) {
-  hist=new PlotUtils::MnvH2D(hist_name, title, nBinsX, xmin, xmax, nBinsY, ymin, ymax );
+  hist=new MAT::MnvH2D(hist_name, title, nBinsX, xmin, xmax, nBinsY, ymin, ymax );
   hist->SetDirectory(0);
   
   for( typename std::map< std::string, std::vector<T*> >::const_iterator band = bands.begin();
@@ -65,7 +65,7 @@ Hist2DWrapper<T>::Hist2DWrapper(const char* hist_name, const char* title,
                             int nBinsX, double xmin, double xmax, 
                             int nBinsY, double ymin, double ymax, 
                             std::vector<T*>& univs) {
-  hist=new PlotUtils::MnvH2D(hist_name, title, nBinsX, xmin, xmax, nBinsY, ymin, ymax);
+  hist=new MAT::MnvH2D(hist_name, title, nBinsX, xmin, xmax, nBinsY, ymin, ymax);
   hist->SetDirectory(0);
   std::vector<T*> tmpunivs;
 
@@ -140,7 +140,7 @@ void Hist2DWrapper<T>::SyncCVHistos() {
       bandname != bandnames.end(); ++bandname) {
     //std::cout << bandname << std::endl;
     // band is a reference to the error band's CV histo
-    PlotUtils::MnvVertErrorBand2D& band = *(hist->GetVertErrorBand((*bandname).c_str()));
+    MAT::MnvVertErrorBand2D& band = *(hist->GetVertErrorBand((*bandname).c_str()));
     // set the BAND's CV histo to the MnvH2D's CV histo
     band.TH2D::operator=( *theCVHisto );
   }
@@ -195,7 +195,7 @@ void Hist2DWrapper<T>::FillErrorBandsWithSysUni(std::vector<T*> univs,
   // Add this band to the MnvH2D 
   if(!hist->HasVertErrorBand(name)){
     if( univs.front()->ShortName() == "Flux" && univs.front()->UseNuEConstraint() ){
-      PlotUtils::flux_reweighter(univs.front()->GetPlaylist(), univs.front()->GetAnalysisNuPDG(), true, univs.front()->GetNFluxUniverses()).AddFluxErrorBand( hist );
+      MAT::flux_reweighter(univs.front()->GetPlaylist(), univs.front()->GetAnalysisNuPDG(), true, univs.front()->GetNFluxUniverses()).AddFluxErrorBand( hist );
     }
     else hist->AddVertErrorBand( name, nhists );
   }

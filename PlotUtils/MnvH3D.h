@@ -14,7 +14,7 @@
 #include <map>
 
 
-namespace PlotUtils
+namespace MAT
 {
 
   class MnvH3D: public TH3D

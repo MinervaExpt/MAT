@@ -20,14 +20,14 @@ namespace evt
   class CVUniverse;
 }
 
-namespace PlotUtils
+namespace MAT
 {
-  template <class UNIVERSE, class EVENT = PlotUtils::detail::empty>
+  template <class UNIVERSE, class EVENT = MAT::detail::empty>
   class Cutter
   {
     public:
-      using reco_t = std::vector<std::unique_ptr<PlotUtils::Cut<UNIVERSE, EVENT> > >;
-      using truth_t = std::vector<std::unique_ptr<PlotUtils::SignalConstraint<UNIVERSE> > >;
+      using reco_t = std::vector<std::unique_ptr<MAT::Cut<UNIVERSE, EVENT> > >;
+      using truth_t = std::vector<std::unique_ptr<MAT::SignalConstraint<UNIVERSE> > >;
 
       Cutter(reco_t&& recoPre, reco_t&& recoSideband, truth_t&& truthSignal, truth_t&& truthPhaseSpace);
 

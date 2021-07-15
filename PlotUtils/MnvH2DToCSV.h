@@ -7,9 +7,9 @@
 // functions to dump histograms as csv files - from Cheryl Patrick
 
 
-namespace PlotUtils{
+namespace MAT{
   
-  void MnvH2DToCSV(PlotUtils::MnvH2D *hist, std::string name, std::string directory, double scale, bool fullprecision=true, bool syserrors=true);
+  void MnvH2DToCSV(MAT::MnvH2D *hist, std::string name, std::string directory, double scale, bool fullprecision=true, bool syserrors=true);
 
 }
 

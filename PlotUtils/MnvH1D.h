@@ -15,7 +15,7 @@
 #include <map>
 
 
-namespace PlotUtils
+namespace MAT
 {
   class MnvH2D;
   

@@ -6,7 +6,7 @@
 #include "Exceptions.h"
 #include <algorithm>
 
-using namespace PlotUtils;
+using namespace MAT;
 
 
 MnvVertErrorBand2D::MnvVertErrorBand2D( const std::string& name, const TH2D* base, const unsigned int nHists /* = 1000 */ ) :

@@ -8,7 +8,7 @@
 #include <TError.h>
 #include <TSystem.h>
 
-namespace PlotUtils
+namespace MAT
 {
 
   //================================
@@ -879,4 +879,4 @@ namespace PlotUtils
   
   
   }//end of Theta
-} //namespace PlotUtils
+} //namespace MAT

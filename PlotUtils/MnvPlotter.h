@@ -22,7 +22,7 @@
 #include <map>
 #include <string>
 
-namespace PlotUtils
+namespace MAT
 {
   typedef TH1* TH1Ptr;
   //! Quickset style options
@@ -254,7 +254,7 @@ namespace PlotUtils
 
         //! utility to apply one of the PlotStyles
         void ApplyStyle(
-            PlotUtils::t_PlotStyle style = PlotUtils::kDefaultStyle
+            MAT::t_PlotStyle style = MAT::kDefaultStyle
             );
 
         //! Set the number of columns to be used for legends

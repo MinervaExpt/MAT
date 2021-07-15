@@ -7,11 +7,11 @@
 
 
 
-namespace PlotUtils{
+namespace MAT{
   
   
   
-  void MnvH1DToCSV(PlotUtils::MnvH1D *hist, std::string name, std::string directory = "./", double scale=1.0, bool fullprecision, bool syserrors){
+  void MnvH1DToCSV(MAT::MnvH1D *hist, std::string name, std::string directory = "./", double scale=1.0, bool fullprecision, bool syserrors){
     
     std::cout << "entering 1DToCSV " << name << std::endl;
     std::ofstream *f_values =new std::ofstream();

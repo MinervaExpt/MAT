@@ -1,7 +1,7 @@
 #include "NuclModUtils.h"
 #include <TMath.h>
 
-using namespace PlotUtils;
+using namespace MAT;
 
 //constants for me
 namespace

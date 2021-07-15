@@ -12,7 +12,7 @@
 // VARIABLE BASE CLASS
 //
 //==============================================================================
-namespace PlotUtils {
+namespace MAT {
 
 #ifndef __CINT__  // CINT doesn't know about std::function
 template <class UNIVERSE>
@@ -81,14 +81,14 @@ class VariableBase {
 };
 #endif  // __CINT__
 
-}  // namespace PlotUtils
+}  // namespace MAT
 
 //==============================================================================
 //
 // EXCLUSIVE VARIABLE (1 ARG) BASE CLASS
 //
 //==============================================================================
-namespace PlotUtils {
+namespace MAT {
 #ifndef __CINT__  // CINT doesn't know about std::function
 template <class UNIVERSE, class VARIABLE>
 class ExclusiveVariable1Arg : public VARIABLE {
@@ -130,14 +130,14 @@ class ExclusiveVariable1Arg : public VARIABLE {
   PointerToCVUniverse1ArgFunction pointer_to_GetExclusiveTrueValue;
 };
 #endif  // __CINT__
-}  // namespace PlotUtils
+}  // namespace MAT
 
 //==============================================================================
 //
 // EXCLUSIVE VARIABLE (2 ARG) BASE CLASS
 //
 //==============================================================================
-namespace PlotUtils {
+namespace MAT {
 #ifndef __CINT__  // CINT doesn't know about std::function
 template <class UNIVERSE, class VARIABLE>
 class ExclusiveVariable2Arg : public VARIABLE {
@@ -179,7 +179,7 @@ class ExclusiveVariable2Arg : public VARIABLE {
   PointerToCVUniverse2ArgFunction pointer_to_GetExclusiveTrueValue;
 };
 #endif  // __CINT__
-}  // namespace PlotUtils
+}  // namespace MAT
 
 #include "VariableBase.cxx"
 

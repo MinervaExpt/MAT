@@ -34,7 +34,7 @@
 #include "MnvVertErrorBand2D.h"
 #include "Exceptions.h"
 
-namespace PlotUtils
+namespace MAT
 {
 	// some forward declarations
 //	class MnvH1D;
@@ -508,7 +508,7 @@ namespace PlotUtils
 		delete quotientHisto;
 	} // MnvHistoConstrainer::CorrectSpectatorUniv()
 
-}   // namespace PlotUtils
+}   // namespace MAT
 
 
 #endif /* MNVFLUXCONSTRAINT_H_ */

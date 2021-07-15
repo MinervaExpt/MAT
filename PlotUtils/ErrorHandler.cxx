@@ -12,7 +12,7 @@
 //Include the header
 #include "ErrorHandler.h"
 
-namespace PlotUtils
+namespace MAT
 {
   void HandleErrorsInPython()
   {

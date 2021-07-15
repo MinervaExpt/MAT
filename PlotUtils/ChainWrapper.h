@@ -8,7 +8,7 @@
 #include <stdexcept>
 #endif
 
-namespace PlotUtils {
+namespace MAT {
 
     class ChainWrapper : public TreeWrapper
     {

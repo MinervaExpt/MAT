@@ -7,7 +7,7 @@
 #include "Exceptions.h"
 #include <algorithm>
 
-using namespace PlotUtils;
+using namespace MAT;
 
 MnvLatErrorBand::MnvLatErrorBand( const std::string& name, const TH1D* base, const unsigned int nHists /* = 2 */ )
   : TH1D( *base )

@@ -14,7 +14,7 @@
 //Forward declarations for ROOT classes
 class TSystem;
 
-namespace PlotUtils
+namespace MAT
 {
   //Returns: A list of files that matched the regular expression regex.  If
   //         os is a TNetXNGSystem or something more exotic that uses special

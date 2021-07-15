@@ -14,7 +14,7 @@
 #include <map>
 #include <cmath>
 
- using namespace PlotUtils;
+ using namespace MAT;
  
   /* To use this, you need to instantiate as Clone of an existing MnvH2D
   

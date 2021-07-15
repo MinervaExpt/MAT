@@ -26,7 +26,7 @@ using std::setw;
 using std::setprecision;
 using std::endl;
 
-namespace PlotUtils {
+namespace MAT {
 
 
 

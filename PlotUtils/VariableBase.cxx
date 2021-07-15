@@ -3,7 +3,7 @@
 
 #include "VariableBase.h"
 #include <iostream>
-using namespace PlotUtils;
+using namespace MAT;
 
 //==============================================================================
 //

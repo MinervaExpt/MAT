@@ -32,7 +32,7 @@
 
 #include <iostream>
 
-using namespace PlotUtils;
+using namespace MAT;
 
 //======================================================================
 // Copied from plot.h

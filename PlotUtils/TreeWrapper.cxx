@@ -19,7 +19,7 @@ using std::cerr;
 using std::exit;
 using std::endl;
 
-namespace PlotUtils
+namespace MAT
 {
   namespace detail
   {
@@ -30,7 +30,7 @@ namespace PlotUtils
   }
 }
 
-PlotUtils::TreeWrapper::TreeWrapper(TTree* t)
+MAT::TreeWrapper::TreeWrapper(TTree* t)
   : tree(t), wrappingChain(false), lastReadTree(-1), currentOffset(0)
 {
   if(t->IsA()->InheritsFrom(TChain::Class())){
@@ -42,7 +42,7 @@ PlotUtils::TreeWrapper::TreeWrapper(TTree* t)
 
 //======================================================================
 
-bool PlotUtils::TreeWrapper::AddBranch(const string& branchName)
+bool MAT::TreeWrapper::AddBranch(const string& branchName)
 {
   // Sometimes FindBranch works, sometimes GetBranch works. Don't know
   // why, so just try both
@@ -69,7 +69,7 @@ bool PlotUtils::TreeWrapper::AddBranch(const string& branchName)
 
 //======================================================================
 
-TLeaf* PlotUtils::TreeWrapper::GetLeaf(const string& branchName, Long64_t ientry)
+TLeaf* MAT::TreeWrapper::GetLeaf(const string& branchName, Long64_t ientry)
 {
   //cout << "GetValue " << branchName << ", " << ientry << endl;
   itLaB it = leavesAndBranches.find(branchName);
@@ -105,7 +105,7 @@ TLeaf* PlotUtils::TreeWrapper::GetLeaf(const string& branchName, Long64_t ientry
 
 //======================================================================
 
-int PlotUtils::TreeWrapper::GetTree(Long64_t entry, int guess)
+int MAT::TreeWrapper::GetTree(Long64_t entry, int guess)
 {
   if(!wrappingChain) return 0;
 
@@ -127,7 +127,7 @@ int PlotUtils::TreeWrapper::GetTree(Long64_t entry, int guess)
 
 //======================================================================
 
-Bool_t PlotUtils::TreeWrapper::Notify()
+Bool_t MAT::TreeWrapper::Notify()
 {
   SetBranchAddresses();
   return kTRUE;
@@ -135,7 +135,7 @@ Bool_t PlotUtils::TreeWrapper::Notify()
 
 //======================================================================
 
-bool PlotUtils::TreeWrapper::SetBranchAddresses()
+bool MAT::TreeWrapper::SetBranchAddresses()
 {
   // This should only be called when running on a TChain
   if(!wrappingChain) return false;
@@ -165,13 +165,13 @@ bool PlotUtils::TreeWrapper::SetBranchAddresses()
 
 //======================================================================
 
-int PlotUtils::TreeWrapper::GetOffset(int treeNum)
+int MAT::TreeWrapper::GetOffset(int treeNum)
 {
   return ((TChain*)tree)->GetTreeOffset()[treeNum];
 }
 
 
-void PlotUtils::TreeWrapper::PrintKnownBranchNames()
+void MAT::TreeWrapper::PrintKnownBranchNames()
 {
     std::cout << "Number of branches: " << leavesAndBranches.size() << std::endl;
     std::cout << "Print list of branch names" << std::endl;

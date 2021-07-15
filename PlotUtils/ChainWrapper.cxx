@@ -11,7 +11,7 @@
 //Stuff to let me handle errors differently based on compiler flags
 
 #ifdef PLOTUTILS_THROW_EXCEPTIONS
-namespace PlotUtils
+namespace MAT
 {
   ChainWrapper::BadFile::BadFile(const std::string& fileName): std::runtime_error("No such file or directory: " + fileName), file(fileName)
   {
@@ -19,7 +19,7 @@ namespace PlotUtils
 }
 
 #define FATAL(fileName)\
-  throw PlotUtils::ChainWrapper::BadFile(fileName);
+  throw MAT::ChainWrapper::BadFile(fileName);
 
 #else //if !PLOTUTILS_THROW_EXCEPTIONS
 #define FATAL(fileName)\
@@ -28,7 +28,7 @@ namespace PlotUtils
 
 #endif //PLOTUTILS_THROW_EXCEPTIONS
 
-PlotUtils::ChainWrapper::ChainWrapper(const char* name)
+MAT::ChainWrapper::ChainWrapper(const char* name)
   : TreeWrapper(new TChain(name))
 {
   wrappingChain=true;
@@ -36,7 +36,7 @@ PlotUtils::ChainWrapper::ChainWrapper(const char* name)
 
 //===========================================================================
 
-int PlotUtils::ChainWrapper::AddFiles(const char* name)
+int MAT::ChainWrapper::AddFiles(const char* name)
 {
   // Urgh, downcast
   //TChain* ch=(TChain*)tree;
@@ -45,7 +45,7 @@ int PlotUtils::ChainWrapper::AddFiles(const char* name)
   //If name seems to be an xrootd URL
   if(std::string(name).find("root:") != std::string::npos)
   {
-    const std::vector<std::string> fileNames = PlotUtils::glob(name, *gSystem);
+    const std::vector<std::string> fileNames = MAT::glob(name, *gSystem);
     if(fileNames.empty())
     {
       FATAL(name);
@@ -85,7 +85,7 @@ int PlotUtils::ChainWrapper::AddFiles(const char* name)
 
 //===========================================================================
 
-int PlotUtils::ChainWrapper::AddPlaylist(const char* name)
+int MAT::ChainWrapper::AddPlaylist(const char* name)
 {
   // Urgh, downcast
   //TChain* ch=(TChain*)tree;
@@ -117,8 +117,8 @@ int PlotUtils::ChainWrapper::AddPlaylist(const char* name)
 
 //===========================================================================
 
-int PlotUtils::ChainWrapper::Add(std::string name){
+int MAT::ChainWrapper::Add(std::string name){
   if (name.find(".root") != std::string::npos) 
-    return PlotUtils::ChainWrapper::AddFiles(name.c_str());
-  else return PlotUtils::ChainWrapper::AddPlaylist(name.c_str());
+    return MAT::ChainWrapper::AddFiles(name.c_str());
+  else return MAT::ChainWrapper::AddPlaylist(name.c_str());
 }

@@ -10,7 +10,7 @@
 #ifndef MNVROOT6
 #include "Cintex/Cintex.h"
 #endif
-namespace PlotUtils
+namespace MAT
 {
   void Initialize();
 }

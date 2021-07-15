@@ -3,7 +3,7 @@
 
 #include "MnvH3D.h"
 
-using namespace PlotUtils;
+using namespace MAT;
 
 //==================================================================================
 // CONSTRUCTORS

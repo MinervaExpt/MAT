@@ -2,7 +2,7 @@
 #define genie_particle_cxx
 
 #include "genie_particle.h"
-using namespace PlotUtils;
+using namespace MAT;
 
 TLorentzVector genie_particle::GetMomentumEnergy() const {
     return __p4;

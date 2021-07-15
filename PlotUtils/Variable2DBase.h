@@ -5,7 +5,7 @@
 
 #include "PlotUtils/VariableBase.h"
 
-namespace PlotUtils {
+namespace MAT {
 
 #ifndef __CINT__
 template <class UNIVERSE>
@@ -65,7 +65,7 @@ class Variable2DBase {
 };
 #endif
 
-}  // namespace PlotUtils
+}  // namespace MAT
 
 #include "Variable2DBase.cxx"
 

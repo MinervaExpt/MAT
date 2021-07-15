@@ -3,7 +3,7 @@
 
 #include "PlotUtils/Variable2DBase.h"
 
-using namespace PlotUtils;
+using namespace MAT;
 
 //==============================================================================
 //

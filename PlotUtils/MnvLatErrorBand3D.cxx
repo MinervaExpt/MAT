@@ -5,7 +5,7 @@
 #include "HistogramUtils.h"
 #include <algorithm>
 
-using namespace PlotUtils;
+using namespace MAT;
 
 
 MnvLatErrorBand3D::MnvLatErrorBand3D( const std::string& name, const TH3D* base, const unsigned int nHists /* = 1000 */ ) :

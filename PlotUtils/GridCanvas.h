@@ -13,7 +13,7 @@ class TH2;
 class TH2D;
 class THStack;
 
-namespace PlotUtils{
+namespace MAT{
 class GridCanvas : public TCanvas
 {
 public:

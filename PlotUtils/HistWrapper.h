@@ -22,7 +22,7 @@ containing only these members:
 - virtual std::string ShortName() const = 0;
 - virtual std::string LatexName() const = 0;
 - virtual double GetWeight() const;
-- PlotUtils::ChainWrapper& m_chw;
+- MAT::ChainWrapper& m_chw;
 - double m_nsigma;
 - Long64_t m_entry;
 
@@ -41,7 +41,7 @@ See a complete example
 
 #include "MnvH1D.h"
 
-namespace PlotUtils {
+namespace MAT {
 
 template <typename T>
 struct HistWrapper {
@@ -111,7 +111,7 @@ struct HistWrapper {
                     const int i);
 
   // Data members
-  PlotUtils::MnvH1D* hist; /*!< The MnvH1D that is created and filled */
+  MAT::MnvH1D* hist; /*!< The MnvH1D that is created and filled */
   std::map<const T*, TH1D*> univToHistMap; /*!< The map between univs and TH1 */
   std::map<std::string, int>
       nhistsAssignedSoFar; /*!< Counter for nunivs in each band.*/
@@ -122,7 +122,7 @@ struct HistWrapper {
                                 std::string name);
 };
 
-}  // namespace PlotUtils
+}  // namespace MAT
 
 // Template classes must have function definitions available in header.
 #include "HistWrapper.cxx"

@@ -16,7 +16,7 @@
 #include <iostream>
 #include <math.h>
 
-namespace PlotUtils
+namespace MAT
 {
 
   /*! @brief Create a systematic error band and covariance matrix using the many universes method where universes differ in a lateral shift amount.

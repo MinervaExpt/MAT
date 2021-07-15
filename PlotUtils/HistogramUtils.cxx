@@ -17,7 +17,7 @@
 #include <TMath.h>
 #include <algorithm>
 
-using namespace PlotUtils;
+using namespace MAT;
 
 // initialize the static members here
 const double MnvHist::NotPhysicalShiftNumber = -12345678.87654321;

@@ -24,9 +24,9 @@
 #include "TFile.h"
 #include "TObjArray.h"
 
-namespace PlotUtils {
+namespace MAT {
 
-template <class HIST = PlotUtils::MnvH1D, class CATEGORY = int>
+template <class HIST = MAT::MnvH1D, class CATEGORY = int>
 class HistFolio {
  public:
   //============================================================================
@@ -174,14 +174,14 @@ class HistFolio {
 // Load HistFolio from file (not a member function)
 //==============================================================================
 template <class HIST>
-PlotUtils::HistFolio<HIST, int> LoadHistFolioFromFile(TFile& f,
+MAT::HistFolio<HIST, int> LoadHistFolioFromFile(TFile& f,
                                                       std::string folio_name);
 
 // Helper to LoadHistFolioFromFile
 template <class HIST>
 HIST* FindSourceHist(TFile& f, std::string folio_name);
 
-}  // namespace PlotUtils
+}  // namespace MAT
 
 #include "HistFolio.cxx"
 

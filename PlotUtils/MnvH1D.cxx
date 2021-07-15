@@ -8,7 +8,7 @@
 #include <TMath.h>
 #include <cassert>
 #include <fstream>
-using namespace PlotUtils;
+using namespace MAT;
 
 //#define MNV1DBG  Turn this on to debug native covariance matrices
 

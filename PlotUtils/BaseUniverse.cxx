@@ -4,12 +4,12 @@
 
 #include "BaseUniverse.h"
 
-using namespace PlotUtils;
+using namespace MAT;
 
 bool BaseUniverse::m_is_truth                  = false;
 
 // CTOR
-  BaseUniverse::BaseUniverse(PlotUtils::TreeWrapper* chw,
+  BaseUniverse::BaseUniverse(MAT::TreeWrapper* chw,
                                        double nsigma )
     : m_chw(chw), m_nsigma(nsigma), m_entry(-1)
   {}

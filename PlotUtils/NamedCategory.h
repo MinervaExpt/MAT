@@ -5,7 +5,7 @@
 #ifndef NAMEDCATEGORY_H
 #define NAMEDCATEGORY_H
 
-namespace PlotUtils {
+namespace MAT {
 template <class value_t>
 struct NamedCategory {
   constexpr NamedCategory(const value_t vals, const char* name)
@@ -22,6 +22,6 @@ struct NamedCategory {
     return (m_value < rhs.m_value);
   }
 };
-}  // namespace PlotUtils
+}  // namespace MAT
 
 #endif  // NAMEDCATEGORY_H

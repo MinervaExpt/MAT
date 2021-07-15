@@ -10,7 +10,7 @@
 
 #include <stdexcept>
 
-namespace PlotUtils
+namespace MAT
 {
   /// Exception type: failed trying to adjust universe weights
   class BadUnivWgtError: public std::runtime_error

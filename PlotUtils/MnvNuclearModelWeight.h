@@ -13,7 +13,7 @@
 
 
 
-namespace PlotUtils
+namespace MAT
 {
 
 
@@ -145,6 +145,6 @@ namespace PlotUtils
 
   }; // end class MnvNuclearModelWeight
 
-}//end namespace PlotUtils
+}//end namespace MAT
 
 #endif //MNV_MnvNuclearModelWeight

@@ -7,7 +7,7 @@
 // Helper functions declared/defined in the .cxx
 // GetFluxSystematicsMap(typename T::config_t chain, unsigned int n_universes);
 
-namespace PlotUtils{
+namespace MAT{
 
   template<class T>
   class FluxUniverse : public T

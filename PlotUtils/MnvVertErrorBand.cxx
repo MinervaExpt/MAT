@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <cassert>
 
-using namespace PlotUtils;
+using namespace MAT;
 
 
 MnvVertErrorBand::MnvVertErrorBand( const std::string& name, const TH1D* base, const unsigned int nHists /* = 1000 */ ) :

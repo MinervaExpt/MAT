@@ -5,10 +5,10 @@
 
 #include "ChainWrapper.h"
 
-PlotUtils::ChainWrapper* makeChainWrapperPtr(const std::string& playlist,
+MAT::ChainWrapper* makeChainWrapperPtr(const std::string& playlist,
                                              const std::string& name);
 
-PlotUtils::ChainWrapper& makeChainWrapper(const std::string& playlist,
+MAT::ChainWrapper& makeChainWrapper(const std::string& playlist,
                                           const std::string& name);
 
 #endif

@@ -9,7 +9,7 @@
 #include <vector>
 #include <map>
 
-namespace PlotUtils
+namespace MAT
 {
   class MnvH1D;
   class MnvH2D;
