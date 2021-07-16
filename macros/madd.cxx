@@ -87,9 +87,9 @@ void MergeRootfile( TDirectory *target, TList *sourcelist ) {
       first_source->cd( path );
       TObject *obj = key->ReadObj();
 
-      PlotUtils::MnvH1D* mnvh1d = dynamic_cast<PlotUtils::MnvH1D*>(obj);
+      MAT::MnvH1D* mnvh1d = dynamic_cast<MAT::MnvH1D*>(obj);
       if (mnvh1d) printf("MnvH1D object\n");
-      PlotUtils::MnvH2D* mnvh2d = dynamic_cast<PlotUtils::MnvH2D*>(obj);
+      MAT::MnvH2D* mnvh2d = dynamic_cast<MAT::MnvH2D*>(obj);
       if (mnvh2d) printf("MnvH2D object\n");
 
       if (mnvh1d) {
@@ -109,7 +109,7 @@ void MergeRootfile( TDirectory *target, TList *sourcelist ) {
             nextsource->cd( path );
             TKey *key2 = (TKey*)gDirectory->GetListOfKeys()->FindObject(key->GetName());
             if (key2) {
-                PlotUtils::MnvH1D *h2 = dynamic_cast<PlotUtils::MnvH1D*>(key2->ReadObj());
+                MAT::MnvH1D *h2 = dynamic_cast<MAT::MnvH1D*>(key2->ReadObj());
                mnvh1d->Add( h2 );
                delete h2;
             }
@@ -134,7 +134,7 @@ void MergeRootfile( TDirectory *target, TList *sourcelist ) {
             nextsource->cd( path );
             TKey *key2 = (TKey*)gDirectory->GetListOfKeys()->FindObject(key->GetName());
             if (key2) {
-                PlotUtils::MnvH2D *h2 = dynamic_cast<PlotUtils::MnvH2D*>(key2->ReadObj());
+                MAT::MnvH2D *h2 = dynamic_cast<MAT::MnvH2D*>(key2->ReadObj());
                mnvh2d->Add( h2 );
                delete h2;
             }

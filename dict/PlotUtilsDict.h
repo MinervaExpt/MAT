@@ -43,20 +43,20 @@
 // see: http://root.cern.ch/root/roottalk/roottalk10/0035.html
 // somehow std::map<>s seem to be instantiated somewhere else, so explicit instantiation is not necessary?
 //#ifdef __GCCXML__
-//template class std::vector<PlotUtils::MnvEVD::Event>;                                       // the 'Events' typedef
-//template class std::pair<std::string, std::vector<PlotUtils::MnvEVD::Event> >;              // the 'EventGroup' typedef
+//template class std::vector<MAT::MnvEVD::Event>;                                       // the 'Events' typedef
+//template class std::pair<std::string, std::vector<MAT::MnvEVD::Event> >;              // the 'EventGroup' typedef
 
 template class std::map<std::string, std::vector<std::string> >;
 template class std::pair<std::string, std::vector<std::string> >;
 
 // The std::pair<>s for those std::map<>s don't seem to be generated though.
-template class std::pair< std::string, PlotUtils::MnvLatErrorBand* >;
-template class std::pair< std::string, PlotUtils::MnvVertErrorBand* >;
-template class std::pair< std::string, PlotUtils::MnvVertErrorBand3D* >;
-template class std::pair< std::string, PlotUtils::MnvLatErrorBand3D* >;
+template class std::pair< std::string, MAT::MnvLatErrorBand* >;
+template class std::pair< std::string, MAT::MnvVertErrorBand* >;
+template class std::pair< std::string, MAT::MnvVertErrorBand3D* >;
+template class std::pair< std::string, MAT::MnvLatErrorBand3D* >;
 template class std::pair< std::string, TMatrixT<double>* >;
-template class std::pair< std::string, PlotUtils::MnvVertErrorBand2D* >;
-template class std::pair< std::string, PlotUtils::MnvLatErrorBand2D* >;
+template class std::pair< std::string, MAT::MnvVertErrorBand2D* >;
+template class std::pair< std::string, MAT::MnvLatErrorBand2D* >;
 
 //#endif
 #endif // PLOTUTILSDICT_H
