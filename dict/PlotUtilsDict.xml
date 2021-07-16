@@ -1,9 +1,6 @@
 <lcgdict>
   <!-- PlotUtils objects -->
-  <class name="PlotUtils::MnvEVD" />
   <class name="PlotUtils::MnvHist" />
-  <class name="PlotUtils::MnvHistoConstrainer" />
-  <class name="PlotUtils::MnvHistoConstrainer::UnivID" />
 
   <class name="PlotUtils::MnvH1D" />
   <class name="PlotUtils::MnvH2D" />
@@ -12,7 +9,6 @@
   <class name="PlotUtils::MnvLatErrorBand2D" />
   <class name="PlotUtils::MnvLatErrorBand3D" />
   <class name="PlotUtils::MnvPlotter" />
-  <class name="PlotUtils::MnvRecoShifter" />
   <class name="PlotUtils::MnvVertErrorBand" />
   <class name="PlotUtils::MnvVertErrorBand2D" />
   <class name="PlotUtils::MnvVertErrorBand3D" />
@@ -21,7 +17,6 @@
   <class name="PlotUtils::GridCanvas" />
   <class name="PlotUtils::FluxReweighter" />
 
-  <class name="PlotUtils::MnvEVD::Event" />
   <!-- exceptions -->
   <class name="PlotUtils::BadUnivWgtError" />
   <class name="PlotUtils::ConstraintAccessError" />
@@ -31,11 +26,6 @@
   <class name="PlotUtils::NoFluxUnivError" />
   <class name="PlotUtils::NoWgtdSpreadError" />
   <class name="PlotUtils::SpectatorConstraintCollisionError" />
-
-  <!-- the ArachneUtils library has a few typedefs... -->
-  <class name="PlotUtils::MnvEVD::Events" />
-  <class name="PlotUtils::MnvEVD::EventGroup" />
-  <class name="PlotUtils::MnvEVD::EventGroupMap" />
 
   <!-- ... so does MnvPlotter ... -->
   <class name="PlotUtils::MnvPlotter::ErrorSummaryGroupMap" />
@@ -66,7 +56,6 @@
 
   <!-- PlotUtils systematic universes classes (new sys framework)-->
   <class name="PlotUtils::BaseUniverse" />
-  <class name="PlotUtils::MinervaUniverse" />
 
   <!-- PlotUtils standalone systematics functions (new sys framework)-->	
   <function name="PlotUtils::flux_reweighter" />
