@@ -1,9 +1,6 @@
 <lcgdict>
   <!-- PlotUtils objects -->
-  <class name="MAT::MnvEVD" />
   <class name="MAT::MnvHist" />
-  <class name="MAT::MnvHistoConstrainer" />
-  <class name="MAT::MnvHistoConstrainer::UnivID" />
 
   <class name="MAT::MnvH1D" />
   <class name="MAT::MnvH2D" />
@@ -12,7 +9,6 @@
   <class name="MAT::MnvLatErrorBand2D" />
   <class name="MAT::MnvLatErrorBand3D" />
   <class name="MAT::MnvPlotter" />
-  <class name="MAT::MnvRecoShifter" />
   <class name="MAT::MnvVertErrorBand" />
   <class name="MAT::MnvVertErrorBand2D" />
   <class name="MAT::MnvVertErrorBand3D" />
@@ -21,7 +17,6 @@
   <class name="MAT::GridCanvas" />
   <class name="MAT::FluxReweighter" />
 
-  <class name="MAT::MnvEVD::Event" />
   <!-- exceptions -->
   <class name="MAT::BadUnivWgtError" />
   <class name="MAT::ConstraintAccessError" />
@@ -31,11 +26,6 @@
   <class name="MAT::NoFluxUnivError" />
   <class name="MAT::NoWgtdSpreadError" />
   <class name="MAT::SpectatorConstraintCollisionError" />
-
-  <!-- the ArachneUtils library has a few typedefs... -->
-  <class name="MAT::MnvEVD::Events" />
-  <class name="MAT::MnvEVD::EventGroup" />
-  <class name="MAT::MnvEVD::EventGroupMap" />
 
   <!-- ... so does MnvPlotter ... -->
   <class name="MAT::MnvPlotter::ErrorSummaryGroupMap" />
@@ -66,7 +56,6 @@
 
   <!-- PlotUtils systematic universes classes (new sys framework)-->
   <class name="MAT::BaseUniverse" />
-  <class name="MAT::MinervaUniverse" />
 
   <!-- PlotUtils standalone systematics functions (new sys framework)-->	
   <function name="MAT::flux_reweighter" />
