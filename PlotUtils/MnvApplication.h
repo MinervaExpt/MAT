@@ -7,9 +7,6 @@
 //  using PlotUtils.
 //==========================================
 
-#ifndef MNVROOT6
-#include "Cintex/Cintex.h"
-#endif
 namespace PlotUtils
 {
   void Initialize();
