@@ -291,7 +291,27 @@ namespace PlotUtils
       unsigned int m_nFluxUniverses;
       //! Total flux error band name
       std::string m_fluxErrorName;
-
+  public:
+    void AddFluxErrorBand(PlotUtils::MnvH1D* h) {
+      AddFluxErrorBand<PlotUtils::MnvH1D>(h);
+    }
+    void AddFluxErrorBand(PlotUtils::MnvH2D* h) {
+      AddFluxErrorBand<PlotUtils::MnvH2D>(h);
+    }
+    MnvH1D* GetIntegratedFluxReweighted( int nuPDG,
+                                         MnvH1D* template_hist,
+                                         double min_energy,
+                                         double max_energy,
+                                         bool use_muon_correlations) {
+      return GetIntegratedFluxReweighted<MnvH1D>(nuPDG,template_hist,min_energy,max_energy,use_muon_correlations);
+    }
+    MnvH2D* GetIntegratedFluxReweighted( int nuPDG,
+                                         MnvH2D* template_hist,
+                                         double min_energy,
+                                         double max_energy,
+                                         bool use_muon_correlations) {
+      return GetIntegratedFluxReweighted<MnvH2D>(nuPDG,template_hist,min_energy,max_energy,use_muon_correlations);
+    }
   };
 
   FluxReweighter& flux_reweighter(std::string plist, int nu_pdg, bool use_nuE_constraint, int n_flux_universes = 200);
