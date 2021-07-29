@@ -6,7 +6,7 @@ file(GLOB HEADER_FILES *.h)
 #Include build system for the rest of this project.  Add new top-level directories here.
 #First, build a ROOT dictionary
 #I modified this dictionary generation code from Heidi's CMakeLists.txt
-REFLEX_GENERATE_DICTIONARY(G__${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/../dict/PlotUtilsDict.h SELECTION ${CMAKE_CURRENT_SOURCE_DIR}/../dict/PlotUtilsDict.xml OPTIONS -D__GCC_XML__)
+REFLEX_GENERATE_DICTIONARY(G__${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/../dict/PlotUtilsDict.h SELECTION ${CMAKE_CURRENT_SOURCE_DIR}/../dict/PlotUtilsDict.xml OPTIONS -D__GCC_XML__ --noIncludePaths)
 
 #MESSAGE("boost:$ENV{BOOSTDIR}")
 #include_directories(PlotUtils $ENV{PLOTUTILSROOT} $ENV{BOOSTDIR}/include $ENV{BOOSTDIR})
