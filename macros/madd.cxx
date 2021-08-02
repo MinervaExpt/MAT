@@ -229,6 +229,7 @@ int main( int argc, char *argv[] )
     FileList->Add( TFile::Open( argv[i] ) );
 
   MergeRootfile( Target, FileList );
-
+  Target->Close();
+  delete Target;
   return 0;
 }
