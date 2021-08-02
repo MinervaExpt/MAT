@@ -74,6 +74,8 @@ namespace PlotUtils
       enum EPlaylist
       {
         minerva1,
+        minerva1_Rob,
+        minerva1_Dan,
         minerva5,
         minerva7,
         minerva9,
