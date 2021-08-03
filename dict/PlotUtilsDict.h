@@ -27,6 +27,7 @@
 #include "../PlotUtils/MnvLatErrorBand2D.h"
 #include "../PlotUtils/MnvLatErrorBand3D.h"
 #include "../PlotUtils/MnvPlotter.h"
+#include "../PlotUtils/MnvColors.h"
 #include "../PlotUtils/MnvVertErrorBand.h"
 #include "../PlotUtils/MnvVertErrorBand2D.h"
 #include "../PlotUtils/MnvVertErrorBand3D.h"
