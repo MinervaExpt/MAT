@@ -47,7 +47,7 @@
 #ifndef HIST2DWRAPPER_H
 #define HIST2DWRAPPER_H
 
-#include "MnvH2D.h"
+#include "PlotUtils/MnvH2D.h"
 #include <vector>
 #include <map>
 

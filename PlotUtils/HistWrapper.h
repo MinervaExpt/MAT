@@ -39,7 +39,7 @@ See a complete example
 #include <map>
 #include <vector>
 
-#include "MnvH1D.h"
+#include "PlotUtils/MnvH1D.h"
 
 namespace PlotUtils {
 

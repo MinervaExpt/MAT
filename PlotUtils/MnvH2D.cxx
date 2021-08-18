@@ -2,7 +2,7 @@
 #define MNV_MnvH2D_cxx 1
 
 //#define MNVDBG 1  // Turn this on to get debug covariance matrices
-#include "MnvH2D.h"
+#include "PlotUtils/MnvH2D.h"
 #include <iostream>
 #include <fstream>
 

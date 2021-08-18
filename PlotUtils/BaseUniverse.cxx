@@ -2,7 +2,7 @@
 #ifndef BASEUNIVERSE_cxx
 #define BASEUNIVERSE_cxx
 
-#include "BaseUniverse.h"
+#include "PlotUtils/BaseUniverse.h"
 
 using namespace PlotUtils;
 

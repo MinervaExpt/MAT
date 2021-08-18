@@ -1,9 +1,9 @@
 #ifndef MNV_MnvPlotter_cxx
 #define MNV_MnvPlotter_cxx 1
 
-#include "MnvPlotter.h"
-#include "HistogramUtils.h" //for IsAutoAxisLimit
-#include "MnvColors.h"
+#include "PlotUtils/MnvPlotter.h"
+#include "PlotUtils/HistogramUtils.h" //for IsAutoAxisLimit
+#include "PlotUtils/MnvColors.h"
 
 #include "TROOT.h"
 #include "TH1.h"

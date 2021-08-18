@@ -1,6 +1,6 @@
 #ifndef MNV1HDTOCSV_H
 
-#include "MnvH1D.h"
+#include "PlotUtils/MnvH1D.h"
 
 #include <string>
 

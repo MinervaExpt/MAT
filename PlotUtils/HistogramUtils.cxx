@@ -13,7 +13,7 @@
 #ifndef HISTOGRAMUTILS_cxx
 #define HISTOGRAMUTILS_cxx
 
-#include "HistogramUtils.h"
+#include "PlotUtils/HistogramUtils.h"
 #include <TMath.h>
 #include <algorithm>
 
