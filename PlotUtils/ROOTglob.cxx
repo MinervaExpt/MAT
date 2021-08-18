@@ -5,7 +5,7 @@
 //Author: Andrew Olivier aolivier@ur.rochester.edu
 
 //PlotUtils includes
-#include "ROOTglob.h"
+#include "PlotUtils/ROOTglob.h"
 
 //ROOT includes
 #include "TRegexp.h"

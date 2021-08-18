@@ -1,9 +1,9 @@
 #ifndef MNV_MnvVertErrorBand2D_cxx
 #define MNV_MnvVertErrorBand2D_cxx 1
 
-#include "MnvVertErrorBand2D.h"
-#include "HistogramUtils.h"
-#include "Exceptions.h"
+#include "PlotUtils/MnvVertErrorBand2D.h"
+#include "PlotUtils/HistogramUtils.h"
+#include "PlotUtils/Exceptions.h"
 #include <algorithm>
 
 using namespace PlotUtils;
