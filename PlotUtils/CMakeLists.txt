@@ -30,15 +30,15 @@ endif(${ROOT_VERSION} VERSION_GREATER 6)
 
 #Build a library from the dictionary source code ROOT generated.  I'll need it both to load
 #this project into the interpreter and to put some more information into libMAT.so.
-add_library(${PROJECT_NAME}Dict SHARED ${CMAKE_CURRENT_BINARY_DIR}/${DICTIONARY_NAME})
-target_link_libraries(${PROJECT_NAME}Dict ${ROOT_LIBRARIES})
-install(TARGETS ${PROJECT_NAME}Dict EXPORT ${PROJECT_NAME}Targets DESTINATION lib)
+#add_library(${PROJECT_NAME}Dict SHARED ${CMAKE_CURRENT_BINARY_DIR}/${DICTIONARY_NAME})
+#target_link_libraries(${PROJECT_NAME}Dict ${ROOT_LIBRARIES})
+#install(TARGETS ${PROJECT_NAME}Dict EXPORT ${PROJECT_NAME}Targets DESTINATION lib)
 
 #Now, build libMAT
-add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
-target_link_libraries(${PROJECT_NAME} ${ROOT_LIBRARIES} ${PROJECT_NAME}Dict)
+add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${CMAKE_CURRENT_BINARY_DIR}/${DICTIONARY_NAME})
+target_link_libraries(${PROJECT_NAME} ${ROOT_LIBRARIES})
 install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}Targets DESTINATION lib)
 install(FILES ${HEADER_FILES} ${SOURCE_FILES} DESTINATION include/PlotUtils)
 install(EXPORT ${PROJECT_NAME}Targets DESTINATION lib/cmake/${PROJECT_NAME})
 
-export(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}Dict FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake)
+export(TARGETS ${PROJECT_NAME} FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake)
