@@ -6,7 +6,7 @@ An error analysis toolkit for particle physics described in [Arxiv 2103.08677](h
 If you are a MINERvA collaborator, just install [MAT-MINERvA](https://github.com/MinervaExpt/MAT-MINERvA) instead.  It installs this package too and keeps their builds synchronized.
 
 ### CMake build (for non-MINERvA experiments)
-Requires at least CMake 3.
+Requires at least CMake 3.2
 
 ```
 git clone https://github.com/MinervaExpt/MAT.git
