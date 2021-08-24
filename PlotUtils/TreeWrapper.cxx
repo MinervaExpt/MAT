@@ -77,8 +77,9 @@ TLeaf* PlotUtils::TreeWrapper::GetLeaf(const string& branchName, Long64_t ientry
   if (it==leavesAndBranches.end()) {
     if (!AddBranch(branchName)) {
       cerr << "Can't find branch " << branchName << ". Bailing" << endl;
-      exit(1);
+      throw std::runtime_error("branch not found");
     }
+
     it = leavesAndBranches.find(branchName);
   }
   if (ientry<0) return it->second.leaf;
