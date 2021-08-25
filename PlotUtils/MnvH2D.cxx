@@ -772,6 +772,32 @@ void MnvH2D::RenameHistosAndErrorBands( const std::string& name )
   
 }
 
+//This removes SumW2 from the error band hists.  This is saves about half the space, but
+// if you care about the stat error of your error bands, calling this will change that error
+void MnvH2D::UnSumw2Universes()
+{
+  std::vector<std::string> vert_errBandNames = this->GetVertErrorBandNames();
+
+  for (std::vector<std::string>::iterator itName = vert_errBandNames.begin(); itName != vert_errBandNames.end(); ++itName) 
+  {
+    MnvVertErrorBand2D* band = this->GetVertErrorBand(*itName);
+    for (unsigned int i=0; i < band->GetNHists(); ++i){
+      band->GetHist(i)->Sumw2(false);
+    }
+  }
+
+  std::vector<std::string> lat_errBandNames  = this->GetLatErrorBandNames();
+
+  for (std::vector<std::string>::iterator itName = lat_errBandNames.begin(); itName != lat_errBandNames.end(); ++itName) 
+  {
+    MnvLatErrorBand2D* band = this->GetLatErrorBand(*itName);
+    for (unsigned int i=0; i < band->GetNHists(); ++i){
+      band->GetHist(i)->Sumw2(false);
+    }
+  }
+
+}
+
 
 void MnvH2D::ClearAllErrorBands()
 {
