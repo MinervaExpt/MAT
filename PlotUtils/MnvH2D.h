@@ -117,6 +117,8 @@ namespace PlotUtils
       //! Rename histos and error bands obviously     
       void RenameHistosAndErrorBands( const std::string& newname);
  
+      void UnSumw2Universes();
+      
       //! Delete all Error Bands 
       void ClearAllErrorBands();
 
