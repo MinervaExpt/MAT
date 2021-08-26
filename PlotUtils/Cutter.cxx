@@ -12,8 +12,8 @@
 #define PLOTUTILS_CUTTER_CXX
 
 //PlotUtils includes
-#include "Cutter.h"
-#include "Table.h"
+#include "PlotUtils/Cutter.h"
+#include "PlotUtils/Table.h"
 
 //c++ includes
 #include <algorithm>

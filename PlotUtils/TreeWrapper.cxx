@@ -9,7 +9,7 @@
 #include <TStreamerInfo.h>
 #include <TVirtualCollectionProxy.h>
 
-#include "TreeWrapper.h"
+#include "PlotUtils/TreeWrapper.h"
 
 using std::vector;
 using std::map;

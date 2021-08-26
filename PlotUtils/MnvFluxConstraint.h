@@ -28,11 +28,11 @@
 #include <string>
 #include <set>
 
-#include "MnvH1D.h"
-#include "MnvH2D.h"
-#include "MnvVertErrorBand.h"
-#include "MnvVertErrorBand2D.h"
-#include "Exceptions.h"
+#include "PlotUtils/MnvH1D.h"
+#include "PlotUtils/MnvH2D.h"
+#include "PlotUtils/MnvVertErrorBand.h"
+#include "PlotUtils/MnvVertErrorBand2D.h"
+#include "PlotUtils/Exceptions.h"
 
 namespace PlotUtils
 {

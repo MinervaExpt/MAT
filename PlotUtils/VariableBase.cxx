@@ -1,7 +1,7 @@
 #ifndef VARIABLEBASE_CXX
 #define VARIABLEBASE_CXX
 
-#include "VariableBase.h"
+#include "PlotUtils/VariableBase.h"
 #include <iostream>
 using namespace PlotUtils;
 

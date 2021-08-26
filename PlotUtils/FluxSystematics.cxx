@@ -1,7 +1,7 @@
 #ifndef FLUXSYSTEMATICS_CXX
 #define FLUXSYSTEMATICS_CXX
 
-#include "FluxSystematics.h"
+#include "PlotUtils/FluxSystematics.h"
 #include <iostream>
 
 // Helper Functions

@@ -1,8 +1,8 @@
 #ifndef MNV_MnvPlotter_h
 #define MNV_MnvPlotter_h 1
 
-#include "MnvH1D.h"
-#include "MnvH2D.h"
+#include "PlotUtils/MnvH1D.h"
+#include "PlotUtils/MnvH2D.h"
 
 #include "TDirectory.h"
 #include "TClass.h"

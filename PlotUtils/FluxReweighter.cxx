@@ -1,9 +1,9 @@
-#include "FluxReweighter.h"
+#include "PlotUtils/FluxReweighter.h"
 
-#include "MnvH1D.h"
-#include "MnvH2D.h"
-#include "MnvFluxConstraint.h"
-#include "MnvVertErrorBand.h"
+#include "PlotUtils/MnvH1D.h"
+#include "PlotUtils/MnvH2D.h"
+#include "PlotUtils/MnvFluxConstraint.h"
+#include "PlotUtils/MnvVertErrorBand.h"
 
 #include "TMatrixD.h"
 #include "TMatrixDEigen.h"

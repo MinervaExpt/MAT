@@ -4,7 +4,7 @@
 // Thursday, February  7 2013
 //
 
-#include "GridCanvas.h"
+#include "PlotUtils/GridCanvas.h"
 #include "TLatex.h"
 #include "TPad.h"
 #include "TH1.h"

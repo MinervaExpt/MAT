@@ -1,10 +1,10 @@
 #ifndef MNV_MnvLatErrorBand_cxx
 #define MNV_MnvLatErrorBand_cxx 1
 
-#include "MnvLatErrorBand.h"
+#include "PlotUtils/MnvLatErrorBand.h"
 
-#include "HistogramUtils.h" //for IsNotPhysicalShift
-#include "Exceptions.h"
+#include "PlotUtils/HistogramUtils.h" //for IsNotPhysicalShift
+#include "PlotUtils/Exceptions.h"
 #include <algorithm>
 
 using namespace PlotUtils;

@@ -1,7 +1,7 @@
 #ifndef HISTFOLIO_CXX
 #define HISTFOLIO_CXX
 
-#include "HistFolio.h"
+#include "PlotUtils/HistFolio.h"
 
 #include <cassert>
 #include <exception>
