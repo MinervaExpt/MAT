@@ -211,7 +211,25 @@ namespace PlotUtils
       template<class MnvHistoType>
       MnvHistoType* GetIntegratedFluxReweighted(int nuPDG, MnvHistoType* template_hist, double min_energy, double max_energy,bool use_correlations = true);
       //MnvH1D* GetIntegratedFluxReweighted(int nuPDG, MnvH1D* template_hist, double min_energy, double max_energy, bool use_correlations = true);
-      MnvH1D* GetIntegratedFluxReweighted_FromInputFlux(MnvH1D* input_flux, MnvH1D* template_hist, double min_energy, double max_energy);
+      
+      template<class MnvHistoType>
+      MnvHistoType* GetIntegratedFluxReweighted_FromInputFlux(MnvH1D* input_flux, MnvHistoType* template_hist, double min_energy, double max_energy);
+      //MnvH1D* GetIntegratedFluxReweighted_FromInputFlux(MnvH1D* input_flux, MnvH1D* template_hist, double min_energy, double max_energy);
+      
+      MnvH1D* GetIntegratedTargetFlux(int nuPDG, std::string tar_mat, MnvH1D* template_hist, double min_energy, double max_energy, std::string project_dir = "targets_2345_temp");
+      MnvH2D* GetIntegratedTargetFlux(int nuPDG, std::string tar_mat, MnvH2D* template_hist, double min_energy, double max_energy, std::string project_dir = "targets_2345_temp");
+
+      //Get flux developed for the targets.  Currently only accepts nu-e constrained, neutrino mode only)
+      MnvH1D* GetTargetFluxMnvH1D(int nuPDG, std::string tar_mat, std::string project_dir = "targets_2345_temp");
+
+      //Add eff corrected tracker daisy histograms together so that the flux matches that of the specified target
+      //The map key is the daisy number
+      MnvH1D* GetReweightedDaisySum(int nuPDG, std::string tar_mat, std::map<int, MnvH1D*> daisy_eff_hists, std::string project_dir = "targets_2345_temp");
+
+      MnvH2D* GetReweightedDaisySum(int nuPDG, std::string tar_mat, std::map<int, MnvH2D*> daisy_eff_hists, std::string project_dir = "targets_2345_temp");
+
+      //Get the parameter files for daisy reweight 
+      MnvH1D* GetDaisyParamMnvH1D(int nuPDG, std::string tar_mat, std::string project_dir = "targets_2345_temp");
 
       //! Get a histogram filled with unweighted flux universes and cv values for other errors
       //MnvH1D* GetIntegratedFluxGenerated(int nuPDG, MnvH1D* template_hist);
