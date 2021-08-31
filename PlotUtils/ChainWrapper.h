@@ -1,7 +1,7 @@
 #ifndef CHAINWRAPPER_H
 #define CHAINWRAPPER_H
 
-#include "TreeWrapper.h"
+#include "PlotUtils/TreeWrapper.h"
 #include "TChain.h"
 
 #ifdef PLOTUTILS_THROW_EXCEPTIONS

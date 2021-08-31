@@ -1,7 +1,7 @@
 #ifndef MNV_MnvH2DLOG_cxx
 #define MNV_MnvH2DLOG_cxx 1
 
-#include "MnvH2DLog.h"
+#include "PlotUtils/MnvH2DLog.h"
 #include <iostream>
 
 using std::cout;

@@ -5,10 +5,10 @@
 #include "TString.h"
 #include "TH3D.h"
 #include "TVectorD.h"
-#include "MnvH1D.h"
-#include "MnvH2D.h"
-#include "MnvVertErrorBand3D.h"
-#include "MnvLatErrorBand3D.h"
+#include "PlotUtils/MnvH1D.h"
+#include "PlotUtils/MnvH2D.h"
+#include "PlotUtils/MnvVertErrorBand3D.h"
+#include "PlotUtils/MnvLatErrorBand3D.h"
 #include <string>
 #include <vector>
 #include <map>

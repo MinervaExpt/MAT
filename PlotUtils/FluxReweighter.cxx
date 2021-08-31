@@ -1,9 +1,9 @@
-#include "FluxReweighter.h"
+#include "PlotUtils/FluxReweighter.h"
 
-#include "MnvH1D.h"
-#include "MnvH2D.h"
-#include "MnvFluxConstraint.h"
-#include "MnvVertErrorBand.h"
+#include "PlotUtils/MnvH1D.h"
+#include "PlotUtils/MnvH2D.h"
+#include "PlotUtils/MnvFluxConstraint.h"
+#include "PlotUtils/MnvVertErrorBand.h"
 
 #include "TMatrixD.h"
 #include "TMatrixDEigen.h"
@@ -501,11 +501,18 @@ namespace PlotUtils
       if (iplaylist == 1) {
         filename+="/FluxConstraints/nu+e_eroica.txt";
       }
-      //This is the nu+e method
+      //Using the combined fhc+rhc+imd constraint
+      else if (iplaylist == 2 or iplaylist==3) {
+      	filename+="/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt";
+      }
+
+      //This is the nu+e method with fhc measurement
+      /*
       else if (iplaylist == 2) {
 	filename+="/FluxConstraints/nu+e_ME_spectrum.txt";
       }
-
+      */
+      
       //This is the IMD method
       /*
       else if (iplaylist == 2 or iplaylist==3) {
@@ -513,10 +520,13 @@ namespace PlotUtils
       	filename+="/FluxConstraints/IMDweights_unordered.txt";
       }
       */
+      //This is the nu+e method with rhc measurement
+      /*
       else if (iplaylist ==3){
-        filename +="/FluxConstraints/sorted_nu+e_ME_RHC_spectrum.txt";
+        filename +="/FluxConstraints/sorted_nu+e_RHC_Final.txt";
 
       }
+      */
       _constrainer->LoadConstraint( "nu+e", filename );
 
       _constrainer->SetSpectatorCorrectionStrategy("Flux_BeamFocus", MnvHistoConstrainer::PRESERVE_FRACTIONAL_ERR);

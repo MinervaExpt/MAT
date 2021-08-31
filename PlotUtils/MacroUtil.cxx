@@ -2,8 +2,8 @@
 #define MacroUtil_cxx
 
 //PlotUtils includes
-#include "MacroUtil.h"
-#include "makeChainWrapper.h"
+#include "PlotUtils/MacroUtil.h"
+#include "PlotUtils/makeChainWrapper.h"
 
 //ROOT includes
 #include "TH1.h"

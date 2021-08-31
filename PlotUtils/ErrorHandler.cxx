@@ -10,7 +10,7 @@
 //about scary-looking preprocessor macros being redefined.
 //#include "Python.h"
 //Include the header
-#include "ErrorHandler.h"
+#include "PlotUtils/ErrorHandler.h"
 
 namespace PlotUtils
 {

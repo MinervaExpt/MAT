@@ -1,7 +1,7 @@
 #ifndef MNVH2DTOCSV_H
 
 
-#include "MnvH2D.h"
+#include "PlotUtils/MnvH2D.h"
 #include <string>
 
 // functions to dump histograms as csv files - from Cheryl Patrick

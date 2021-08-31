@@ -10,7 +10,7 @@
 #define CRASHONROOTMESSAGE_H
 
 //Plotutils includes
-#include "ErrorHandler.h"
+#include "PlotUtils/ErrorHandler.h"
 
 //Force override of ROOT's default error handler by just including this header
 ROOT::detail::beforeMain forceErrorHandlerOverride;

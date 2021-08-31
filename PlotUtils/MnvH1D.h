@@ -7,8 +7,8 @@
 #include "TH2D.h"
 #include "TVectorD.h"
 
-#include "MnvVertErrorBand.h"
-#include "MnvLatErrorBand.h"
+#include "PlotUtils/MnvVertErrorBand.h"
+#include "PlotUtils/MnvLatErrorBand.h"
 
 #include <string>
 #include <vector>

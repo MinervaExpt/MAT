@@ -1,8 +1,8 @@
 #ifndef FLUXSYSTEMATICS_H
 #define FLUXSYSTEMATICS_H
 
-#include "TreeWrapper.h"
-#include "FluxReweighter.h"
+#include "PlotUtils/TreeWrapper.h"
+#include "PlotUtils/FluxReweighter.h"
 
 // Helper functions declared/defined in the .cxx
 // GetFluxSystematicsMap(typename T::config_t chain, unsigned int n_universes);

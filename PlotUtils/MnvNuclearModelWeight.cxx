@@ -1,4 +1,4 @@
-#include "MnvNuclearModelWeight.h"
+#include "PlotUtils/MnvNuclearModelWeight.h"
 
 
 #include <iostream>

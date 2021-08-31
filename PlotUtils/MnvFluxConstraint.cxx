@@ -12,7 +12,7 @@
 #include <sstream>
 #include <vector>
 
-#include "MnvFluxConstraint.h"
+#include "PlotUtils/MnvFluxConstraint.h"
 
 using namespace PlotUtils;
 

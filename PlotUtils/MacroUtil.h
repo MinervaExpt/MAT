@@ -2,7 +2,7 @@
 #define MacroUtil_h
 
 //PlotUtils includes
-#include "ChainWrapper.h"
+#include "PlotUtils/ChainWrapper.h"
 
 //c++ includes
 #include <string>

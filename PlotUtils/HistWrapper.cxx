@@ -1,9 +1,9 @@
 #ifndef HISTWRAPPER_CXX
 #define HISTWRAPPER_CXX
 
-#include "HistWrapper.h"
+#include "PlotUtils/HistWrapper.h"
 
-#include "FluxSystematics.cxx"  // PlotUtils::flux_reweighter
+#include "PlotUtils/FluxSystematics.cxx"  // PlotUtils::flux_reweighter
 
 using namespace PlotUtils;
 

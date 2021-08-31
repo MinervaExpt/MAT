@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include "glob.h"
 
-#include "ChainWrapper.h"
+#include "PlotUtils/ChainWrapper.h"
 #include "ROOTglob.h"
 
 #include "TSystem.h"

@@ -5,7 +5,7 @@
 // Very general functions for manipulating root histograms 
 //----------------------------------------------------------
 
-#include "MnvH1D.h"
+#include "PlotUtils/MnvH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
 #include "TMatrix.h"

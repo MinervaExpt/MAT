@@ -18,9 +18,9 @@
 #ifndef HISTFOLIO_H
 #define HISTFOLIO_H
 
-#include "MnvColors.h"
-#include "MnvH1D.h"
-#include "NamedCategory.h"
+#include "PlotUtils/MnvColors.h"
+#include "PlotUtils/MnvH1D.h"
+#include "PlotUtils/NamedCategory.h"
 #include "TFile.h"
 #include "TObjArray.h"
 
