@@ -223,7 +223,7 @@ namespace PlotUtils
       MnvH1D* GetTargetFluxMnvH1D(int nuPDG, std::string tar_mat, std::string project_dir = "targets_2345_temp");
 
       //Add eff corrected tracker daisy histograms together so that the flux matches that of the specified target
-      //The map key is the daisy number
+      //The map key is the daisy number (the method to get this is in TargetUtils::GetDaisyPetal)
       MnvH1D* GetReweightedDaisySum(int nuPDG, std::string tar_mat, std::map<int, MnvH1D*> daisy_eff_hists, std::string project_dir = "targets_2345_temp");
 
       MnvH2D* GetReweightedDaisySum(int nuPDG, std::string tar_mat, std::map<int, MnvH2D*> daisy_eff_hists, std::string project_dir = "targets_2345_temp");

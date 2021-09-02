@@ -583,7 +583,7 @@ namespace PlotUtils
 
     TString histName = TString::Format("flux");
 
-    std::cout<<"FRW: Getting target flux "<<tar_mat<<std::endl;
+    //std::cout<<"FRW: Getting target flux "<<tar_mat<<std::endl;
     MnvH1D* h_flux = GetMnvH1D(filename, histName);
     
     std::vector< std::string > vert_error_names = h_flux->GetVertErrorBandNames();
@@ -639,7 +639,7 @@ namespace PlotUtils
 
       TString histName = TString::Format("param_hist");
 
-      std::cout<<"FRW: Getting daisy reweight parameters"<<std::endl;
+      //std::cout<<"FRW: Getting daisy reweight parameters"<<std::endl;
       h_param = GetMnvH1D(filename, histName);
     }
     return h_param;    
