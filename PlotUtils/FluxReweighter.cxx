@@ -576,25 +576,57 @@ namespace PlotUtils
       std::exit(1);
     }
 
-    TString filename = TString::Format("%s/data/flux_daisy/%s/flux_with_errors/flux_%s.root",
-                                         plotutils,
-                                         project_dir.c_str(),
-                                         tar_mat.c_str());
+    //NOTE: Target fluxes are made with gen2thin and g4numiv6 - 9/7/2021
+
+    TString tracker_filename = TString::Format("%s/data/flux_daisy/%s/flux_with_errors/flux_tracker.root",
+                                                plotutils,
+                                                project_dir.c_str(),
+                                                tar_mat.c_str());
+
+    TString tarfilename = TString::Format("%s/data/flux_daisy/%s/flux_with_errors/flux_%s.root",
+                                           plotutils,
+                                           project_dir.c_str(),
+                                           tar_mat.c_str());
 
     TString histName = TString::Format("flux");
 
-    //std::cout<<"FRW: Getting target flux "<<tar_mat<<std::endl;
-    MnvH1D* h_flux = GetMnvH1D(filename, histName);
-    
-    std::vector< std::string > vert_error_names = h_flux->GetVertErrorBandNames();
-    for( auto &name : vert_error_names ) {
-      if( strcmp( name.c_str(), "Flux" ) != 0 ) h_flux->PopVertErrorBand(name);
+    MnvH1D* tracker_flux = GetMnvH1D(tracker_filename, histName);
+    MnvH1D* tar_flux     = GetMnvH1D(tarfilename, histName);
+
+    //Will use ratio of target/tracker to supply a weight to make the correct flux universes
+
+    MnvH1D* h_flux       = (MnvH1D*)m_fluxReweightNu->Clone(Form("flux_%s",tar_mat.c_str()));
+    MnvH1D* ratio_flux   = (MnvH1D*)m_fluxReweightNu->Clone(Form("tmp_flux_ratio_%s",tar_mat.c_str())); 
+    ratio_flux->ClearAllErrorBands();
+    ratio_flux->Reset();
+
+    //Create a ratio of targets/tracker
+    for( int iBin = 0; iBin < ratio_flux->GetNbinsX()+2; ++iBin )
+    {
+      double binCenter = ratio_flux->GetBinCenter(iBin);
+
+      int iBinTracker  = tracker_flux->FindBin(binCenter);
+      int iBinTarget   = tar_flux->FindBin(binCenter);
+
+      double content_tracker = tracker_flux->GetBinContent(iBinTracker);
+      double content_target  = tar_flux->GetBinContent(iBinTarget);
+
+      ratio_flux->SetBinContent( iBin, content_tracker > 0 ? content_target/content_tracker : 1.0 );
+      ratio_flux->SetBinError(   iBin, 0.0 );
     }
 
-    std::vector< std::string > lat_error_names  = h_flux->GetLatErrorBandNames();
-    for( auto &name : lat_error_names ) {
-      if( strcmp( name.c_str(), "Flux" ) != 0 ) h_flux->PopLatErrorBand(name);
-    }
+    ratio_flux->AddMissingErrorBandsAndFillWithCV( *h_flux );
+    h_flux->Multiply( h_flux, ratio_flux );
+
+    //std::vector< std::string > vert_error_names = h_flux->GetVertErrorBandNames();
+    //for( auto &name : vert_error_names ) {
+    //  if( strcmp( name.c_str(), "Flux" ) != 0 ) h_flux->PopVertErrorBand(name);
+    //}
+
+    //std::vector< std::string > lat_error_names  = h_flux->GetLatErrorBandNames();
+    //for( auto &name : lat_error_names ) {
+    //  if( strcmp( name.c_str(), "Flux" ) != 0 ) h_flux->PopLatErrorBand(name);
+    //}
 
     return h_flux;
 
