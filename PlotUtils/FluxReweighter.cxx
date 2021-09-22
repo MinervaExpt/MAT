@@ -197,7 +197,7 @@ namespace {
                                          n_flux_universes );
 
     }
-    else if (plist == "minervame1d1m1nWeightedAve") {
+    else if (plist == "minervame1d1m1nweightedave") {
       return
           new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
@@ -555,6 +555,129 @@ namespace PlotUtils
 
 
   //============================================================================
+  MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
+                                              std::string tar_mat,
+                                              std::string project_dir)
+  {
+
+    if( nuPDG != 14 ) {
+      std::cout << "FRW: Target fluxes have been generated for muon neutrinos only" <<std::endl;
+      std::exit(1);
+    }
+
+    if( !m_applyNuEConstraint ) {
+      std::cout << "FRW: Target fluxes have been generated for nu-e constraints only" <<std::endl;
+      std::exit(1);
+    }
+
+    const char* plotutils=gSystem->Getenv("PLOTUTILSROOT");
+    if (!plotutils || !strlen(plotutils)) {
+      std::cout << "$PLOTUTILSROOT is not set. Can't find flux histograms" << std::endl;
+      std::exit(1);
+    }
+
+    //NOTE: Target fluxes are made with gen2thin and g4numiv6 - 9/7/2021
+
+    TString tracker_filename = TString::Format("%s/data/flux_daisy/%s/flux_with_errors/flux_tracker.root",
+                                                plotutils,
+                                                project_dir.c_str(),
+                                                tar_mat.c_str());
+
+    TString tarfilename = TString::Format("%s/data/flux_daisy/%s/flux_with_errors/flux_%s.root",
+                                           plotutils,
+                                           project_dir.c_str(),
+                                           tar_mat.c_str());
+
+    TString histName = TString::Format("flux");
+
+    MnvH1D* tracker_flux = GetMnvH1D(tracker_filename, histName);
+    MnvH1D* tar_flux     = GetMnvH1D(tarfilename, histName);
+
+    //Will use ratio of target/tracker to supply a weight to make the correct flux universes
+
+    MnvH1D* h_flux       = (MnvH1D*)m_fluxReweightNu->Clone(Form("flux_%s",tar_mat.c_str()));
+    MnvH1D* ratio_flux   = (MnvH1D*)m_fluxReweightNu->Clone(Form("tmp_flux_ratio_%s",tar_mat.c_str())); 
+    ratio_flux->ClearAllErrorBands();
+    ratio_flux->Reset();
+
+    //Create a ratio of targets/tracker
+    for( int iBin = 0; iBin < ratio_flux->GetNbinsX()+2; ++iBin )
+    {
+      double binCenter = ratio_flux->GetBinCenter(iBin);
+
+      int iBinTracker  = tracker_flux->FindBin(binCenter);
+      int iBinTarget   = tar_flux->FindBin(binCenter);
+
+      double content_tracker = tracker_flux->GetBinContent(iBinTracker);
+      double content_target  = tar_flux->GetBinContent(iBinTarget);
+
+      ratio_flux->SetBinContent( iBin, content_tracker > 0 ? content_target/content_tracker : 1.0 );
+      ratio_flux->SetBinError(   iBin, 0.0 );
+    }
+
+    ratio_flux->AddMissingErrorBandsAndFillWithCV( *h_flux );
+    h_flux->Multiply( h_flux, ratio_flux );
+
+    //std::vector< std::string > vert_error_names = h_flux->GetVertErrorBandNames();
+    //for( auto &name : vert_error_names ) {
+    //  if( strcmp( name.c_str(), "Flux" ) != 0 ) h_flux->PopVertErrorBand(name);
+    //}
+
+    //std::vector< std::string > lat_error_names  = h_flux->GetLatErrorBandNames();
+    //for( auto &name : lat_error_names ) {
+    //  if( strcmp( name.c_str(), "Flux" ) != 0 ) h_flux->PopLatErrorBand(name);
+    //}
+
+    return h_flux;
+
+  }
+
+  //============================================================================
+  MnvH1D* FluxReweighter::GetDaisyParamMnvH1D(int nuPDG,
+                                              std::string tar_mat,
+                                              std::string project_dir)
+  {
+
+    if( nuPDG != 14 ) {
+      std::cout << "FRW: Daisy reweights have been generated for muon neutrinos only" <<std::endl;
+      std::exit(1);
+    }
+
+    if( !m_applyNuEConstraint ) {
+      std::cout << "FRW: Daisy reweights have been generated for nu-e constraints only" <<std::endl;
+      std::exit(1);
+    }
+
+    const char* plotutils=gSystem->Getenv("PLOTUTILSROOT");
+    if (!plotutils || !strlen(plotutils)) {
+      std::cout << "$PLOTUTILSROOT is not set. Can't find daisy reweights" << std::endl;
+      std::exit(1);
+    }
+
+    MnvH1D* h_param;
+
+    if( strcmp( tar_mat.c_str(), "tracker" ) == 0 ) {
+      h_param = new MnvH1D("tracker_param_hist", "tracker_param_hist;Flux Bin;Weight", 12, 0., 12.);
+      for( int iBin = 1; iBin <= 12; ++iBin ) {
+        h_param->SetBinContent(iBin, 1);
+        h_param->SetBinError(iBin, 0);
+      }
+    }
+    else{
+      TString filename = TString::Format("%s/data/flux_daisy/%s/out_%s_000100.root",
+                                           plotutils,
+                                           project_dir.c_str(),
+                                           tar_mat.c_str());
+
+      TString histName = TString::Format("param_hist");
+
+      //std::cout<<"FRW: Getting daisy reweight parameters"<<std::endl;
+      h_param = GetMnvH1D(filename, histName);
+    }
+    return h_param;    
+
+  }
+  //============================================================================
   MnvH1D* FluxReweighter::GetFluxMnvH1D(int nuPDG,
       enum EPlaylist playlist,
       enum EFluxVersion fluxVersion,
@@ -618,8 +741,8 @@ namespace PlotUtils
     std::cout << "FRW: this is the flux file I'm using: " << filename << std::endl;
     return GetMnvH1D(filename, histName);
   }
-
   //============================================================================
+
   MnvH1D* FluxReweighter::GetMELowNuMnvH1D()
   {
     const char* plotutils=gSystem->Getenv("PLOTUTILSROOT");
@@ -1097,16 +1220,16 @@ namespace PlotUtils
 
 
   //============================================================================
-  MnvH1D* FluxReweighter::GetIntegratedFluxReweighted_FromInputFlux(MnvH1D* input_flux,
-                                                                    MnvH1D* template_hist,
-                                                                    double min_energy,
-                                                                    double max_energy)
+  template<class MnvHistoType>
+  MnvHistoType* FluxReweighter::GetIntegratedFluxReweighted_FromInputFlux(MnvH1D* input_flux,
+                                                                          MnvHistoType* template_hist,
+                                                                          double min_energy,
+                                                                          double max_energy)
   {
-    //MnvH1D* h_flux = this->GetFluxReweighted(nuPDG);
     MnvH1D* h_flux = (MnvH1D*)input_flux->Clone("input_flux");
 
-    MnvH1D* h_flux_integrated =
-        (MnvH1D*)template_hist->Clone("reweightedflux_integrated");
+    MnvHistoType* h_flux_integrated =
+        (MnvHistoType*)template_hist->Clone("reweightedflux_integrated");
 
     h_flux_integrated->ClearAllErrorBands();
     h_flux_integrated->Reset();
@@ -1117,15 +1240,186 @@ namespace PlotUtils
     //get integral
     double flux_cv = h_flux->Integral( b_min, b_max , "width" );
     //CV first
-    for(int i=0;i<h_flux_integrated->GetNbinsX()+2;i++)
+    for(int i=0;i<h_flux_integrated->GetSize();i++)
       h_flux_integrated->SetBinContent(i,flux_cv);
 
     h_flux_integrated->AddMissingErrorBandsAndFillWithCV(*template_hist);
-    h_flux_integrated->SaveAs("x_Flux_XSecLooper.root");
+    //h_flux_integrated->SaveAs("x_Flux_XSecLooper.root");
     return h_flux_integrated;
   }
+  template MnvH1D* FluxReweighter::GetIntegratedFluxReweighted_FromInputFlux<MnvH1D>(MnvH1D* input_flux,
+                                                                                     MnvH1D* template_hist,
+                                                                                     double min_energy,
+                                                                                     double max_energy);
+  template MnvH2D* FluxReweighter::GetIntegratedFluxReweighted_FromInputFlux<MnvH2D>(MnvH1D* input_flux,
+                                                                                     MnvH2D* template_hist,
+                                                                                     double min_energy,
+                                                                                     double max_energy);
 
 
+  //============================================================================
+  MnvH1D* FluxReweighter::GetIntegratedTargetFlux(int nuPDG, 
+                                                  std::string tar_mat, 
+                                                  MnvH1D* template_hist, 
+                                                  double min_energy, 
+                                                  double max_energy, 
+                                                  std::string project_dir)
+  {
+    MnvH1D* h_flux = GetTargetFluxMnvH1D(nuPDG, tar_mat, project_dir);
+    MnvH1D* h_flux_integrated = GetIntegratedFluxReweighted_FromInputFlux( h_flux, template_hist, min_energy, max_energy );
+    
+    //Put in the correct flux universes
+    if( !h_flux_integrated->HasVertErrorBand("Flux") ) return h_flux_integrated;
+
+    MnvVertErrorBand* flux_int_band = h_flux_integrated->PopVertErrorBand("Flux");
+    MnvVertErrorBand* flux_band     = h_flux->GetVertErrorBand("Flux");
+
+    const int nUni = flux_int_band->GetNHists();
+    if( flux_int_band->GetNHists() > flux_band->GetNHists() ) 
+    {
+      std::cout<<"FRW: Target flux band only has "<<flux_band->GetNHists()<<" uni while hist has "<<flux_int_band->GetNHists()<<" uni"<<std::endl;
+      std::exit(1);
+    }
+
+    const int b_min = h_flux->FindBin( min_energy );
+    const int b_max = h_flux->FindBin( max_energy );
+    std::vector< TH1D* > flux_int_hists; 
+    for( int iUni = 0; iUni < nUni; ++iUni )
+    {
+      TH1D* tmp_flux_uni = (TH1D*)flux_int_band->GetHist(iUni)->Clone(Form("Custom_flux_integrated_universe_%d",iUni));
+      tmp_flux_uni->Clear();
+
+      double flux_int = flux_band->GetHist(iUni)->Integral( b_min, b_max, "width" );
+      for( int iBin = 0; iBin < tmp_flux_uni->GetSize(); ++iBin ) tmp_flux_uni->SetBinContent( iBin, flux_int );
+      flux_int_hists.push_back(tmp_flux_uni);
+    }
+
+    h_flux_integrated->AddVertErrorBand("Flux",flux_int_hists);
+
+    return h_flux_integrated;
+
+  }
+
+  MnvH2D* FluxReweighter::GetIntegratedTargetFlux(int nuPDG, 
+                                                        std::string tar_mat, 
+                                                        MnvH2D* template_hist, 
+                                                        double min_energy, 
+                                                        double max_energy, 
+                                                        std::string project_dir)
+  {
+    MnvH1D* h_flux = GetTargetFluxMnvH1D(nuPDG, tar_mat, project_dir);
+    MnvH2D* h_flux_integrated = GetIntegratedFluxReweighted_FromInputFlux( h_flux, template_hist, min_energy, max_energy );
+    
+    //Put in the correct flux universes (if the hist has the Flux vert error band)
+    if( !h_flux_integrated->HasVertErrorBand("Flux") ) return h_flux_integrated;
+
+    MnvVertErrorBand2D* flux_int_band = h_flux_integrated->PopVertErrorBand("Flux");
+    MnvVertErrorBand* flux_band       = h_flux->GetVertErrorBand("Flux");
+
+    const int nUni = flux_int_band->GetNHists();
+    if( flux_int_band->GetNHists() > flux_band->GetNHists() ) 
+    {
+      std::cout<<"FRW: Target flux band only has "<<flux_band->GetNHists()<<" uni while hist has "<<flux_int_band->GetNHists()<<" uni"<<std::endl;
+      std::exit(1);
+    }
+
+    const int b_min = h_flux->FindBin( min_energy );
+    const int b_max = h_flux->FindBin( max_energy );
+    std::vector< TH2D* > flux_int_hists; 
+    for( int iUni = 0; iUni < nUni; ++iUni )
+    {
+      TH2D* tmp_flux_uni = (TH2D*)flux_int_band->GetHist(iUni)->Clone(Form("Custom_flux_integrated_universe_%d",iUni));
+      tmp_flux_uni->Clear();
+
+      double flux_int = flux_band->GetHist(iUni)->Integral( b_min, b_max, "width" );
+      for( int iBin = 0; iBin < tmp_flux_uni->GetSize(); ++iBin ) tmp_flux_uni->SetBinContent( iBin, flux_int );
+      flux_int_hists.push_back(tmp_flux_uni);
+    }
+
+    h_flux_integrated->AddVertErrorBand("Flux",flux_int_hists);
+
+    return h_flux_integrated;
+  }
+  //============================================================================
+  MnvH1D* FluxReweighter::GetReweightedDaisySum(int nuPDG, 
+                                                std::string tar_mat, 
+                                                std::map<int, MnvH1D*> daisy_eff_hists, 
+                                                std::string project_dir)
+  {
+    MnvH1D* h_param = GetDaisyParamMnvH1D( nuPDG, tar_mat, project_dir );
+
+    const int nBins = h_param->GetNbinsX();
+    //Make sure there are the correct daisy keys
+    for( int iDaisy = 0; iDaisy < nBins; ++iDaisy ) { 
+      if( daisy_eff_hists.find(iDaisy) == daisy_eff_hists.end() ) {
+        std::cout<<"Daisy eff hists missing daisy "<<iDaisy<<std::endl;
+        std::exit(1);
+      }
+    }
+    MnvH1D* daisy_sum = (MnvH1D*)daisy_eff_hists[0]->Clone(Form("%s_daisySum",daisy_eff_hists[0]->GetName()));
+    daisy_sum->SetDirectory(0);
+    daisy_sum->Reset();
+    
+    for( int iDaisy = 0; iDaisy < nBins; ++iDaisy ) {
+      daisy_sum->Add( daisy_eff_hists[iDaisy], h_param->GetBinContent(iDaisy+1) );
+    }
+
+    //Insert error bands from the param hist
+    std::vector< std::string > vert_error_names = h_param->GetVertErrorBandNames();
+    for( auto& name : vert_error_names ) {
+      MnvVertErrorBand* error_band = h_param->GetVertErrorBand(name);
+      const int nHists = error_band->GetNHists();
+      daisy_sum->AddVertErrorBand(name, nHists);
+
+      for( uint iHist = 0; iHist < error_band->GetNHists(); ++iHist){
+        for( int iDaisy = 0; iDaisy < nBins; ++iDaisy ) {
+          daisy_sum->GetVertErrorBand(name)->GetHist(iHist)->Add( daisy_eff_hists[iDaisy], 
+                          error_band->GetHist(iHist)->GetBinContent(iDaisy+1) );
+        }
+      }
+    }
+    return daisy_sum;
+  }
+
+  MnvH2D* FluxReweighter::GetReweightedDaisySum(int nuPDG, 
+                                                std::string tar_mat, 
+                                                std::map<int, MnvH2D*> daisy_eff_hists, 
+                                                std::string project_dir)
+  {
+    MnvH1D* h_param = GetDaisyParamMnvH1D( nuPDG, tar_mat, project_dir );
+
+    const int nBins = h_param->GetNbinsX();
+    //Make sure there are the correct daisy keys
+    for( int iDaisy = 0; iDaisy < nBins; ++iDaisy ) { 
+      if( daisy_eff_hists.find(iDaisy) == daisy_eff_hists.end() ) {
+        std::cout<<"Daisy eff hists missing daisy "<<iDaisy<<std::endl;
+        std::exit(1);
+      }
+    }
+    MnvH2D* daisy_sum = (MnvH2D*)daisy_eff_hists[0]->Clone(Form("%s_daisySum",daisy_eff_hists[0]->GetName()));
+    daisy_sum->SetDirectory(0);
+    daisy_sum->Reset();
+    
+    for( int iDaisy = 0; iDaisy < nBins; ++iDaisy ) {
+      daisy_sum->Add( daisy_eff_hists[iDaisy], h_param->GetBinContent(iDaisy+1) );
+    }
+
+    //Insert error bands from the param hist
+    std::vector< std::string > vert_error_names = h_param->GetVertErrorBandNames();
+    for( auto& name : vert_error_names ) {
+      MnvVertErrorBand* error_band = h_param->GetVertErrorBand(name);
+      const int nHists = error_band->GetNHists();
+      daisy_sum->AddVertErrorBand(name, nHists);
+
+      for( uint iHist = 0; iHist < error_band->GetNHists(); ++iHist){
+        for( int iDaisy = 0; iDaisy < nBins; ++iDaisy ) {
+          daisy_sum->GetVertErrorBand(name)->GetHist(iHist)->Add( daisy_eff_hists[iDaisy], 
+                          error_band->GetHist(iHist)->GetBinContent(iDaisy+1) );
+        }
+      }
+    }
+    return daisy_sum;
+  }
   //============================================================================
   double FluxReweighter::GetFluxErrorWeight( double Enu, int nuPDG,
                                              unsigned int universe )
