@@ -21,7 +21,7 @@ int main( int argc, char **argv )
   bool bElastics           = true;
   std::string playlist     = ""; 
   std::string project_name = "Renorm_Kine_Truth";
-  std::string output_dir   = Form("%s/data/mhrwKineRenorm", getenv("PLOTUTILSROOT"));
+  std::string output_dir   = Form("%s/data/mhrwKineRenorm", getenv("MATFLUXANDWEIGHTFILES"));
 
   const char* const short_options = "f:m:M:a:eP:p:o:h";
   static struct option long_options[]=
@@ -67,7 +67,7 @@ int main( int argc, char **argv )
                   << "|   -e, --elasticsOff  : (Optional) Turn elastic cross sections off (Default: On)                      |" << std::endl
                   << "|   -P, --playlist     : (Optional) Playlist name to add to output file (Default: "" )                 |" << std::endl
                   << "|   -p,   project_name : (Optional) Output file name (Default: Renorm_Kine_Truth)                      |" << std::endl
-                  << "|   -o, --output_dir   : (Optional) Output directories (Default: $PLOTUTILSROOT/data/mhrwKineRenorm)   |" << std::endl
+                  << "|   -o, --output_dir   : (Optional) Output directories (Default: $MATFLUXANDWEIGHTFILES/data/mhrwKineRenorm)   |" << std::endl
                   << "|   -h, --help         : Print this.                                                                   |" << std::endl
                   << "|******************************************************************************************************|" << std::endl;
          return 0;

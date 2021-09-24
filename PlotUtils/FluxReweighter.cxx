@@ -570,9 +570,9 @@ namespace PlotUtils
       std::exit(1);
     }
 
-    const char* plotutils=gSystem->Getenv("PLOTUTILSROOT");
+    const char* plotutils=gSystem->Getenv("MATFLUXANDWEIGHTFILES");
     if (!plotutils || !strlen(plotutils)) {
-      std::cout << "$PLOTUTILSROOT is not set. Can't find flux histograms" << std::endl;
+      std::cout << "$MATFLUXANDWEIGHTFILES is not set. Can't find flux histograms" << std::endl;
       std::exit(1);
     }
 
@@ -648,9 +648,9 @@ namespace PlotUtils
       std::exit(1);
     }
 
-    const char* plotutils=gSystem->Getenv("PLOTUTILSROOT");
+    const char* plotutils=gSystem->Getenv("MATFLUXANDWEIGHTFILES");
     if (!plotutils || !strlen(plotutils)) {
-      std::cout << "$PLOTUTILSROOT is not set. Can't find daisy reweights" << std::endl;
+      std::cout << "$MATFLUXANDWEIGHTFILES is not set. Can't find daisy reweights" << std::endl;
       std::exit(1);
     }
 
@@ -684,9 +684,9 @@ namespace PlotUtils
       enum EG4NumiVersion g4NumiVersion,
       bool useGen  /*=false*/)
   {
-    const char* plotutils=gSystem->Getenv("PLOTUTILSROOT");
+    const char* plotutils=gSystem->Getenv("MATFLUXANDWEIGHTFILES");
     if (!plotutils || !strlen(plotutils)) {
-      std::cout << "$PLOTUTILSROOT is not set. Can't find flux histograms" << std::endl;
+      std::cout << "$MATFLUXANDWEIGHTFILES is not set. Can't find flux histograms" << std::endl;
       std::exit(1);
     }
 
@@ -745,9 +745,9 @@ namespace PlotUtils
 
   MnvH1D* FluxReweighter::GetMELowNuMnvH1D()
   {
-    const char* plotutils=gSystem->Getenv("PLOTUTILSROOT");
+    const char* plotutils=gSystem->Getenv("MATFLUXANDWEIGHTFILES");
     if (!plotutils || !strlen(plotutils)) {
-      std::cout << "$PLOTUTILSROOT is not set. Can't find flux histograms" << std::endl;
+      std::cout << "$MATFLUXANDWEIGHTFILES is not set. Can't find flux histograms" << std::endl;
       std::exit(1);
     }
 
@@ -760,9 +760,9 @@ namespace PlotUtils
   //============================================================================
   TSpline3* FluxReweighter::GetSpline(MnvH1D *h)
   {
-    const char* plotutils=gSystem->Getenv("PLOTUTILSROOT");
+    const char* plotutils=gSystem->Getenv("MATFLUXANDWEIGHTFILES");
     if (!plotutils || !strlen(plotutils)) {
-      std::cout << "$PLOTUTILSROOT is not set. Can't find flux histograms" << std::endl;
+      std::cout << "$MATFLUXANDWEIGHTFILES is not set. Can't find flux histograms" << std::endl;
       std::exit(1);
     }
 
@@ -839,7 +839,7 @@ namespace PlotUtils
   //======================================================================
   void FluxReweighter::SetFluxSysMnvH1D( int nuPDG, enum EFluxVersion fluxVersion)
   {
-    const char* plotutils=gSystem->Getenv("PLOTUTILSROOT");
+    const char* plotutils=gSystem->Getenv("MATFLUXANDWEIGHTFILES");
     const char* fluxName = fluxForSystematicsHistName(fluxVersion);
 
     if(nuPDG>0){

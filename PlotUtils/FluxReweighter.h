@@ -53,7 +53,7 @@ namespace PlotUtils
      *   NB: you just need one FluxReweighter per job, not one per
      *   event (which will be slow and might leak memory)
      *
-     *   The histograms live in $PLOTUTILSROOT/data/flux with a
+     *   The histograms live in $MATFLUXANDWEIGHTFILES/data/flux with a
      *   hopefully obvious naming scheme. When a new flux or g4numi
      *   version is introduced, someone will have to update the
      *   relevant enum and the function that converts it to a string.
