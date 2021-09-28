@@ -1,7 +1,7 @@
 #ifndef MNVCOLORS_CXX
 #define MNVCOLORS_CXX
 
-#include "MnvColors.h"
+#include "PlotUtils/MnvColors.h"
 
 //======================================================================
 const std::vector<int>& MnvColors::GetColors(int palette) {

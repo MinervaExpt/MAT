@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "ChainWrapper.h"
+#include "PlotUtils/ChainWrapper.h"
 
 PlotUtils::ChainWrapper* makeChainWrapperPtr(const std::string& playlist,
                                              const std::string& name);

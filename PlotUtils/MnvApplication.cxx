@@ -1,4 +1,4 @@
-#include "MnvApplication.h"
+#include "PlotUtils/MnvApplication.h"
 
 void PlotUtils::Initialize()
 {

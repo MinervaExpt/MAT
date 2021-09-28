@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "makeChainWrapper.h"
+#include "PlotUtils/makeChainWrapper.h"
 
 
 PlotUtils::ChainWrapper* makeChainWrapperPtr(const std::string& playlist,

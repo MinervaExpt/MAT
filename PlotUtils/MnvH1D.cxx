@@ -1,9 +1,9 @@
 #ifndef MNV_MnvH1D_cxx
 #define MNV_MnvH1D_cxx 1
 
-#include "MnvH1D.h"
-#include "MnvH2D.h"
-#include "HistogramUtils.h"
+#include "PlotUtils/MnvH1D.h"
+#include "PlotUtils/MnvH2D.h"
+#include "PlotUtils/HistogramUtils.h"
 
 #include <TMath.h>
 #include <cassert>

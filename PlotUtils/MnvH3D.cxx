@@ -1,7 +1,7 @@
 #ifndef MNV_MnvH3D_cxx
 #define MNV_MnvH3D_cxx 1
 
-#include "MnvH3D.h"
+#include "PlotUtils/MnvH3D.h"
 
 using namespace PlotUtils;
 

@@ -1,8 +1,8 @@
 #ifndef MNV_MnvVertErrorBand_cxx
 #define MNV_MnvVertErrorBand_cxx 1
 
-#include "MnvVertErrorBand.h"
-#include "HistogramUtils.h"
+#include "PlotUtils/MnvVertErrorBand.h"
+#include "PlotUtils/HistogramUtils.h"
 #include "Exceptions.h"
 #include <algorithm>
 #include <cassert>

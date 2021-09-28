@@ -8,7 +8,7 @@
 #include <TMath.h>
 #include <TVector3.h>
 
-#include "ChainWrapper.h"
+#include "PlotUtils/ChainWrapper.h"
 
 
 #include <iostream>

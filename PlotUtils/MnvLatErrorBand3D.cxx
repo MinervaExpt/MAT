@@ -1,8 +1,8 @@
 #ifndef MNV_MnvLatErrorBand3D_cxx
 #define MNV_MnvLatErrorBand3D_cxx 1
 
-#include "MnvLatErrorBand3D.h"
-#include "HistogramUtils.h"
+#include "PlotUtils/MnvLatErrorBand3D.h"
+#include "PlotUtils/HistogramUtils.h"
 #include <algorithm>
 
 using namespace PlotUtils;
