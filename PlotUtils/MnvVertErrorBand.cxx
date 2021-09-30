@@ -262,7 +262,7 @@ TMatrixD MnvVertErrorBand::CalcCovMx(bool area_normalize /* = false */ , bool as
   //If this band's CV histo is empty, and we want to use the spread error then we should not be here.
   if (fUseSpreadError && GetEntries() == 0){
     std::cerr << "ERROR From MnvVertErrorBand::CalcCovMx. Problem with " << GetName() << std::endl;
-    throw ErrBandEmptyCVError("Vertical error band's CV histo is empty! Cannot Calculate Spread Error.");
+    //throw ErrBandEmptyCVError("Vertical error band's CV histo is empty! Cannot Calculate Spread Error.");
   }
 
   //Calculating the Mean
