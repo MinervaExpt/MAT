@@ -1329,7 +1329,7 @@ else if(style == kCCInclusiveHeliumStyle){
     ApplyStyle(kCompactStyle);
     
     // I bin width-normalize histograms on my own, set this as false
-    draw_normalized_to_bin_width = false;
+    //draw_normalized_to_bin_width = false;
     
     // MC and data histogram settings
     mc_line_width     = 3;
@@ -1355,10 +1355,9 @@ else if(style == kCCInclusiveHeliumStyle){
     // Systematics map
     error_summary_group_map.clear();
     
-    std::vector<std::string> detector;
-    detector.push_back("BeamAngleX");
-    detector.push_back("BeamAngleY");
-    error_summary_group_map["Detector Model"] = detector;
+    std::vector<std::string> flux;
+    flux.push_back("Flux");
+    error_summary_group_map["Neutrino Flux"] = flux;
     
     std::vector<std::string> genie_interaction_model;
     genie_interaction_model.push_back("GENIE_AhtBY");
@@ -1378,10 +1377,12 @@ else if(style == kCCInclusiveHeliumStyle){
     genie_interaction_model.push_back("GENIE_Rvp1pi");
     genie_interaction_model.push_back("GENIE_Rvp2pi");
     genie_interaction_model.push_back("GENIE_VecFFCCQEshape");
+    genie_interaction_model.push_back("GENIE_D2_MaRES");
+    genie_interaction_model.push_back("GENIE_D2_NormCCRES");
+    genie_interaction_model.push_back("GENIE_EP_MvRES");
     error_summary_group_map["GENIE Interaction Models"] = genie_interaction_model;
     
     std::vector<std::string> genie_nucleon_fsi;
-    genie_nucleon_fsi.push_back("GENIE_AGKYxF1pi");
     genie_nucleon_fsi.push_back("GENIE_FrAbs_N");
     genie_nucleon_fsi.push_back("GENIE_FrCEx_N");
     genie_nucleon_fsi.push_back("GENIE_FrElas_N");
@@ -1391,6 +1392,7 @@ else if(style == kCCInclusiveHeliumStyle){
     error_summary_group_map["GENIE Nucleon FSI"] = genie_nucleon_fsi;
     
     std::vector<std::string> genie_pion_fsi;
+    genie_pion_fsi.push_back("GENIE_AGKYxF1pi");
     genie_pion_fsi.push_back("GENIE_FrAbs_pi");
     genie_pion_fsi.push_back("GENIE_FrCEx_pi");
     genie_pion_fsi.push_back("GENIE_FrElas_pi");
@@ -1400,11 +1402,12 @@ else if(style == kCCInclusiveHeliumStyle){
     genie_pion_fsi.push_back("GENIE_Theta_Delta2Npi");
     error_summary_group_map["GENIE Pion FSI"] = genie_pion_fsi;
     
-    std::vector<std::string> mnvgenie_v1;
-    mnvgenie_v1.push_back("Low_Recoil_2p2h_Tune");
-    mnvgenie_v1.push_back("RPA_HighQ2");
-    mnvgenie_v1.push_back("RPA_LowQ2");
-    error_summary_group_map["MnvGENIE Tune v1"] = mnvgenie_v1;
+    std::vector<std::string> mnvgenie;
+    mnvgenie.push_back("Low_Recoil_2p2h_Tune");
+    mnvgenie.push_back("RPA_HighQ2");
+    mnvgenie.push_back("RPA_LowQ2");
+    mnvgenie.push_back("LowQ2Pi");
+    error_summary_group_map["MnvGENIE Tune"] = mnvgenie;
     
     std::vector<std::string> muon;
     muon.push_back("Muon_Energy_MINERvA");
@@ -1412,26 +1415,33 @@ else if(style == kCCInclusiveHeliumStyle){
     muon.push_back("Muon_Energy_Resolution");
     muon.push_back("MuonAngleXResolution");
     muon.push_back("MuonAngleYResolution");
-    muon.push_back("MINOS_Reconstruction_Efficiency");
+    muon.push_back("BeamAngleX");
+    muon.push_back("BeamAngleY");
     error_summary_group_map["Muon Reconstruction"] = muon;
     
-    std::vector<std::string> flux;
-    flux.push_back("Flux");
-    error_summary_group_map["Neutrino Flux"] = flux;
+    std::vector<std::string> detector;
+    detector.push_back("GEANT_Neutron");
+    detector.push_back("GEANT_Pion");
+    detector.push_back("GEANT_Proton");
+    detector.push_back("MichelEfficiency");
+    error_summary_group_map["Detector Model"] = detector;
+    
+    std::vector<std::string> normalization;
+    normalization.push_back("Target_Mass");
+    normalization.push_back("MINOS_Reconstruction_Efficiency");
+    error_summary_group_map["Normalization"] = normalization;
     
     // Systematics color scheme
     error_color_map.clear();
-    error_color_map["Detector Model"]           = kViolet+6;
+    error_color_map["Neutrino Flux"]            = kRed+2;
     error_color_map["GENIE Interaction Models"] = kGreen+1;
     error_color_map["GENIE Nucleon FSI"]        = kBlue+2;
     error_color_map["GENIE Pion FSI"]           = kMagenta+1;
-    error_color_map["MnvGENIE Tune v1"]         = kOrange+2;
+    error_color_map["MnvGENIE Tune"]            = kOrange+2;
     error_color_map["Muon Reconstruction"]      = kCyan+2;
-    error_color_map["Neutrino Flux"]            = kRed+2;
+    error_color_map["Detector Model"]           = kViolet+6;
+    error_color_map["Normalization"]            = kPink+2;
   }
-
-
-
 
   else {
     Error( "ApplyStyle", "This plot style is not recognized.  Using the default: kDefaultStyle" );
