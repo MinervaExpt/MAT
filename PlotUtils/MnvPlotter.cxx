@@ -3001,7 +3001,7 @@ void MnvPlotter::DrawDataMCWithErrorBand(
         //temporarily set the min/max so DrawDataMCWithErrorBand doesn't change anything
         const double oldMin = axis_minimum;
         const double oldMax = axis_maximum;
-        axis_minimum = tmpMC->GetMinimum();
+        if (!gPad->GetLogy()) axis_minimum = tmpMC->GetMinimum();
         axis_maximum = tmpMC->GetMaximum();
 
         if (bkgdHist)
