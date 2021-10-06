@@ -2782,7 +2782,7 @@ void MnvPlotter::DrawDataMC(
     tmpMC->Scale(mcScale);
 
     //respect max/min setting the user may have used
-    if ( MnvHist::IsAutoAxisLimit( axis_minimum ) )
+    if ( !gPad->GetLogy() && MnvHist::IsAutoAxisLimit( axis_minimum ) )
     {
         if ( hist_min_zero && !gPad->GetLogy() )
             tmpMC->SetMinimum( 0. );
@@ -2982,7 +2982,7 @@ void MnvPlotter::DrawDataMCWithErrorBand(
         tmpMC->Sumw2();
 
     //respect max/min setting the user may have used
-    if ( MnvHist::IsAutoAxisLimit( axis_minimum ) )
+    if ( !gPad->GetLogy() && MnvHist::IsAutoAxisLimit( axis_minimum ) )
     {
         if ( hist_min_zero && !gPad->GetLogy() )
             tmpMC->SetMinimum( 0. );
@@ -3101,7 +3101,7 @@ void MnvPlotter::DrawMCWithErrorBand(
     tmpMC->Scale(mcScale);
 
     //respect max/min setting the user may have used
-    if ( MnvHist::IsAutoAxisLimit( axis_minimum ) )
+    if ( !gPad->GetLogy() && MnvHist::IsAutoAxisLimit( axis_minimum ) )
     {
         if ( hist_min_zero && !gPad->GetLogy() )
             tmpMC->SetMinimum( 0. );
@@ -4200,7 +4200,7 @@ void MnvPlotter::DrawDataMCVariations(
         hst->Scale( mcScale );
         if (i == 0) {
             //respect max/min setting the user may have used
-            if ( MnvHist::IsAutoAxisLimit( axis_minimum ) )
+            if ( !gPad->GetLogy() && MnvHist::IsAutoAxisLimit( axis_minimum ) )
             {
                 if ( hist_min_zero && !gPad->GetLogy() )
                     hst->SetMinimum( 0. );
@@ -4861,7 +4861,7 @@ bool MnvPlotter::DrawErrorSummary(
     ApplyNextLineStyle( hTotalErr, true, useDifferentLineStyles );
 
     //respect max/min setting the user may have used
-    if ( MnvHist::IsAutoAxisLimit( axis_minimum ) )
+    if ( !gPad->GetLogy() && MnvHist::IsAutoAxisLimit( axis_minimum ) )
         hTotalErr->SetMinimum( 0. );
     else
         hTotalErr->SetMinimum( axis_minimum );
@@ -5010,7 +5010,7 @@ bool MnvPlotter::DrawErrorSummary(
 
         //ApplyAxisStyle(hErr);
         ////respect max/min setting the user may have used
-        //if ( MnvHist::IsAutoAxisLimit( axis_minimum ) )
+        //if ( !gPad->GetLogy() && MnvHist::IsAutoAxisLimit( axis_minimum ) )
         //    hErr->SetMinimum( 0. );
         //else
         //    hErr->SetMinimum( axis_minimum );
@@ -5185,7 +5185,7 @@ void MnvPlotter::DrawStackedMC(
         tmp_mnv->GetYaxis()->SetTitle( first_yaxis_label.c_str() );
 
     //respect max/min setting the user may have used
-    if ( MnvHist::IsAutoAxisLimit( axis_minimum ) )
+    if ( !gPad->GetLogy() && MnvHist::IsAutoAxisLimit( axis_minimum ) )
     {
         if ( hist_min_zero && !gPad->GetLogy() )
             tmp_mnv->SetMinimum( 0. );
@@ -5347,7 +5347,7 @@ void MnvPlotter::DrawDataStackedMC(
 
 
     //respect max/min setting the user may have used
-    if ( MnvHist::IsAutoAxisLimit( axis_minimum ) )
+    if ( !gPad->GetLogy() && MnvHist::IsAutoAxisLimit( axis_minimum ) )
     {
       if (!gPad)
         throw std::runtime_error("MnvPlotter requires a TCanvas. Please make one first.");
@@ -5517,7 +5517,7 @@ void MnvPlotter::DrawDataStackedMC(
 
 
     //respect max/min setting the user may have used
-    if ( MnvHist::IsAutoAxisLimit( axis_minimum ) )
+    if ( !gPad->GetLogy() && MnvHist::IsAutoAxisLimit( axis_minimum ) )
     {
       if (!gPad)
         throw std::runtime_error("MnvPlotter requires a TCanvas. Please make one first.");
