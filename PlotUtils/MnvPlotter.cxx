@@ -1328,8 +1328,8 @@ else if(style == kCCInclusiveHeliumStyle){
     // Apply compact style first
     ApplyStyle(kCompactStyle);
     
-    // I bin width-normalize histograms on my own, set this as false
-    //draw_normalized_to_bin_width = false;
+    // Keep this as default unless otherwise
+    draw_normalized_to_bin_width = true;
     
     // MC and data histogram settings
     mc_line_width     = 3;
@@ -1337,17 +1337,36 @@ else if(style == kCCInclusiveHeliumStyle){
     data_marker_size  = 1.3;
     ratio_marker_size = 1.3;
     
-    // Max number of digits on axes
-    axis_max_digits = 4;
+    // Axis options
+//     hist_min_zero     = true;
+    axis_draw_grid_x    = true;
+    axis_draw_grid_y    = true;
+    axis_max_digits     = 3;
+    axis_title_font_x   = 62;
+    axis_title_font_y   = 62;
+    axis_title_font_z   = 62;
+    axis_title_offset_x = 1.15;
+    axis_title_offset_y = 1.15;
+    axis_title_offset_z = 0.9;
+    axis_title_size_x   = 0.05;
+    axis_title_size_y   = 0.05;
+    axis_title_size_z   = 0.05;
+    axis_label_font     = 42;
+    axis_label_size     = 0.045;
+//     axis_minimum      = MnvHist::AutoAxisLimit;
+//     axis_maximum      = MnvHist::AutoAxisLimit;
+//     axis_maximum_group= MnvHist::AutoAxisLimit; //0.5;
     
     // Legend settings
-    width_xspace_per_letter = 0.4;
     height_nspaces_per_hist = 1.0;
-    legend_offset_x         = 0.04;
-    
-    // Axis grid
-    axis_draw_grid_x = true;
-    axis_draw_grid_y = true;
+    width_xspace_per_letter = 0.4;
+    legend_border_size      = 1;
+    legend_fill_color       = 10;
+    legend_text_size        = 0.03;
+    legend_offset_x         = 0.0;
+    legend_offset_y         = 0.0;
+    legend_n_columns        = 1;
+    legend_text_font        = 62;
     
     // Extra margin
     extra_right_margin = -1.0;
@@ -1417,6 +1436,7 @@ else if(style == kCCInclusiveHeliumStyle){
     muon.push_back("MuonAngleYResolution");
     muon.push_back("BeamAngleX");
     muon.push_back("BeamAngleY");
+    muon.push_back("MINOS_Reconstruction_Efficiency");
     error_summary_group_map["Muon Reconstruction"] = muon;
     
     std::vector<std::string> detector;
@@ -1426,10 +1446,13 @@ else if(style == kCCInclusiveHeliumStyle){
     detector.push_back("MichelEfficiency");
     error_summary_group_map["Detector Model"] = detector;
     
-    std::vector<std::string> normalization;
-    normalization.push_back("Target_Mass");
-    normalization.push_back("MINOS_Reconstruction_Efficiency");
-    error_summary_group_map["Normalization"] = normalization;
+    std::vector<std::string> other;
+    other.push_back("Target_Mass_CH");
+    other.push_back("Target_Mass_C");
+    other.push_back("Target_Mass_H2O");
+    other.push_back("Target_Mass_Fe");
+    other.push_back("Target_Mass_Pb");
+    error_summary_group_map["Other"] = other;
     
     // Systematics color scheme
     error_color_map.clear();
@@ -1440,7 +1463,7 @@ else if(style == kCCInclusiveHeliumStyle){
     error_color_map["MnvGENIE Tune"]            = kOrange+2;
     error_color_map["Muon Reconstruction"]      = kCyan+2;
     error_color_map["Detector Model"]           = kViolet+6;
-    error_color_map["Normalization"]            = kPink+2;
+    error_color_map["Other"]                    = kPink+2;
   }
 
   else {
