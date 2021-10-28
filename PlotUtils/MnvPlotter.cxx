@@ -461,8 +461,8 @@ void MnvPlotter::ApplyStyle( PlotUtils::t_PlotStyle style /* = kDefaultStyle */ 
     error_color_map["Muon Angle Rec."]     = kRed+2;
     error_color_map["Hadronic Energy Rec."]= kMagenta+2;
     */
-    error_color_map["Scint. BG"] = kViolet+2;
-    error_color_map["BG Scale"]       = kViolet+2;
+    error_color_map["Scint. BG"] = kMagenta;
+    error_color_map["BG Scale"]       = kMagenta;
     error_color_map["BG MC Stat."]    = kTeal+2;
     error_color_map["Interaction Models"] = kGreen+2;
     error_color_map["FSI Models"]  = kCyan+2;
@@ -470,6 +470,7 @@ void MnvPlotter::ApplyStyle( PlotUtils::t_PlotStyle style /* = kDefaultStyle */ 
     error_color_map["Detector Res."] = kRed;
     error_color_map["Flux + Mass"]  = kOrange+2;
     error_color_map["MC Stats."] = kPink+2;;
+    error_color_map["Sidebands"] = kViolet+2;
 
     /*vector<string> scintBGGroup;
       scintBGGroup.push_back("BG Scale");
@@ -490,6 +491,11 @@ void MnvPlotter::ApplyStyle( PlotUtils::t_PlotStyle style /* = kDefaultStyle */ 
     detResGroup.push_back("Muon Angle Rec.");
     detResGroup.push_back("Hadronic Energy Rec.");
     detResGroup.push_back("Birks' Parameter");
+    detResGroup.push_back( "Muon_Energy_MINOS" );
+    detResGroup.push_back( "Muon_Energy_MINERvA" );
+    detResGroup.push_back( "Muon_Energy_Resolution" );
+    detResGroup.push_back( "BeamAngleX" );
+    detResGroup.push_back( "BeamAngleY" );
     error_summary_group_map["Detector Res."] = detResGroup;
 
     vector<string> otherGroup;
@@ -547,6 +553,11 @@ void MnvPlotter::ApplyStyle( PlotUtils::t_PlotStyle style /* = kDefaultStyle */ 
 
     error_summary_group_map["Interaction Models"] = xsecErrGroup;
     error_summary_group_map["FSI Models"] = fsiErrGroup;
+
+    vector<string> sb;
+    sb.push_back("Plastic_SB");
+    sb.push_back("Phys_SB");
+    error_summary_group_map["Sidebands"] = sb;
 
     print_formats.clear();
     print_formats.push_back( "png" );
