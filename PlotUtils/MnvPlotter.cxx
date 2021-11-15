@@ -461,8 +461,8 @@ void MnvPlotter::ApplyStyle( PlotUtils::t_PlotStyle style /* = kDefaultStyle */ 
     error_color_map["Muon Angle Rec."]     = kRed+2;
     error_color_map["Hadronic Energy Rec."]= kMagenta+2;
     */
-    error_color_map["Scint. BG"] = kViolet+2;
-    error_color_map["BG Scale"]       = kViolet+2;
+    error_color_map["Scint. BG"] = kMagenta;
+    error_color_map["BG Scale"]       = kMagenta;
     error_color_map["BG MC Stat."]    = kTeal+2;
     error_color_map["Interaction Models"] = kGreen+2;
     error_color_map["FSI Models"]  = kCyan+2;
@@ -470,6 +470,7 @@ void MnvPlotter::ApplyStyle( PlotUtils::t_PlotStyle style /* = kDefaultStyle */ 
     error_color_map["Detector Res."] = kRed;
     error_color_map["Flux + Mass"]  = kOrange+2;
     error_color_map["MC Stats."] = kPink+2;;
+    error_color_map["Sidebands"] = kViolet+2;
 
     /*vector<string> scintBGGroup;
       scintBGGroup.push_back("BG Scale");
@@ -490,6 +491,11 @@ void MnvPlotter::ApplyStyle( PlotUtils::t_PlotStyle style /* = kDefaultStyle */ 
     detResGroup.push_back("Muon Angle Rec.");
     detResGroup.push_back("Hadronic Energy Rec.");
     detResGroup.push_back("Birks' Parameter");
+    detResGroup.push_back( "Muon_Energy_MINOS" );
+    detResGroup.push_back( "Muon_Energy_MINERvA" );
+    detResGroup.push_back( "Muon_Energy_Resolution" );
+    detResGroup.push_back( "BeamAngleX" );
+    detResGroup.push_back( "BeamAngleY" );
     error_summary_group_map["Detector Res."] = detResGroup;
 
     vector<string> otherGroup;
@@ -547,6 +553,11 @@ void MnvPlotter::ApplyStyle( PlotUtils::t_PlotStyle style /* = kDefaultStyle */ 
 
     error_summary_group_map["Interaction Models"] = xsecErrGroup;
     error_summary_group_map["FSI Models"] = fsiErrGroup;
+
+    vector<string> sb;
+    sb.push_back("Plastic_SB");
+    sb.push_back("Phys_SB");
+    error_summary_group_map["Sidebands"] = sb;
 
     print_formats.clear();
     print_formats.push_back( "png" );
@@ -1328,8 +1339,8 @@ else if(style == kCCInclusiveHeliumStyle){
     // Apply compact style first
     ApplyStyle(kCompactStyle);
     
-    // I bin width-normalize histograms on my own, set this as false
-    draw_normalized_to_bin_width = false;
+    // Keep this as default unless otherwise
+    draw_normalized_to_bin_width = true;
     
     // MC and data histogram settings
     mc_line_width     = 3;
@@ -1337,17 +1348,36 @@ else if(style == kCCInclusiveHeliumStyle){
     data_marker_size  = 1.3;
     ratio_marker_size = 1.3;
     
-    // Max number of digits on axes
-    axis_max_digits = 4;
+    // Axis options
+//     hist_min_zero     = true;
+    axis_draw_grid_x    = true;
+    axis_draw_grid_y    = true;
+    axis_max_digits     = 3;
+    axis_title_font_x   = 62;
+    axis_title_font_y   = 62;
+    axis_title_font_z   = 62;
+    axis_title_offset_x = 1.15;
+    axis_title_offset_y = 1.15;
+    axis_title_offset_z = 0.9;
+    axis_title_size_x   = 0.05;
+    axis_title_size_y   = 0.05;
+    axis_title_size_z   = 0.05;
+    axis_label_font     = 42;
+    axis_label_size     = 0.045;
+//     axis_minimum      = MnvHist::AutoAxisLimit;
+//     axis_maximum      = MnvHist::AutoAxisLimit;
+//     axis_maximum_group= MnvHist::AutoAxisLimit; //0.5;
     
     // Legend settings
-    width_xspace_per_letter = 0.4;
     height_nspaces_per_hist = 1.0;
-    legend_offset_x         = 0.04;
-    
-    // Axis grid
-    axis_draw_grid_x = true;
-    axis_draw_grid_y = true;
+    width_xspace_per_letter = 0.4;
+    legend_border_size      = 1;
+    legend_fill_color       = 10;
+    legend_text_size        = 0.03;
+    legend_offset_x         = 0.0;
+    legend_offset_y         = 0.0;
+    legend_n_columns        = 1;
+    legend_text_font        = 62;
     
     // Extra margin
     extra_right_margin = -1.0;
@@ -1355,10 +1385,9 @@ else if(style == kCCInclusiveHeliumStyle){
     // Systematics map
     error_summary_group_map.clear();
     
-    std::vector<std::string> detector;
-    detector.push_back("BeamAngleX");
-    detector.push_back("BeamAngleY");
-    error_summary_group_map["Detector Model"] = detector;
+    std::vector<std::string> flux;
+    flux.push_back("Flux");
+    error_summary_group_map["Neutrino Flux"] = flux;
     
     std::vector<std::string> genie_interaction_model;
     genie_interaction_model.push_back("GENIE_AhtBY");
@@ -1378,10 +1407,12 @@ else if(style == kCCInclusiveHeliumStyle){
     genie_interaction_model.push_back("GENIE_Rvp1pi");
     genie_interaction_model.push_back("GENIE_Rvp2pi");
     genie_interaction_model.push_back("GENIE_VecFFCCQEshape");
+    genie_interaction_model.push_back("GENIE_D2_MaRES");
+    genie_interaction_model.push_back("GENIE_D2_NormCCRES");
+    genie_interaction_model.push_back("GENIE_EP_MvRES");
     error_summary_group_map["GENIE Interaction Models"] = genie_interaction_model;
     
     std::vector<std::string> genie_nucleon_fsi;
-    genie_nucleon_fsi.push_back("GENIE_AGKYxF1pi");
     genie_nucleon_fsi.push_back("GENIE_FrAbs_N");
     genie_nucleon_fsi.push_back("GENIE_FrCEx_N");
     genie_nucleon_fsi.push_back("GENIE_FrElas_N");
@@ -1391,6 +1422,7 @@ else if(style == kCCInclusiveHeliumStyle){
     error_summary_group_map["GENIE Nucleon FSI"] = genie_nucleon_fsi;
     
     std::vector<std::string> genie_pion_fsi;
+    genie_pion_fsi.push_back("GENIE_AGKYxF1pi");
     genie_pion_fsi.push_back("GENIE_FrAbs_pi");
     genie_pion_fsi.push_back("GENIE_FrCEx_pi");
     genie_pion_fsi.push_back("GENIE_FrElas_pi");
@@ -1400,11 +1432,12 @@ else if(style == kCCInclusiveHeliumStyle){
     genie_pion_fsi.push_back("GENIE_Theta_Delta2Npi");
     error_summary_group_map["GENIE Pion FSI"] = genie_pion_fsi;
     
-    std::vector<std::string> mnvgenie_v1;
-    mnvgenie_v1.push_back("Low_Recoil_2p2h_Tune");
-    mnvgenie_v1.push_back("RPA_HighQ2");
-    mnvgenie_v1.push_back("RPA_LowQ2");
-    error_summary_group_map["MnvGENIE Tune v1"] = mnvgenie_v1;
+    std::vector<std::string> mnvgenie;
+    mnvgenie.push_back("Low_Recoil_2p2h_Tune");
+    mnvgenie.push_back("RPA_HighQ2");
+    mnvgenie.push_back("RPA_LowQ2");
+    mnvgenie.push_back("LowQ2Pi");
+    error_summary_group_map["MnvGENIE Tune"] = mnvgenie;
     
     std::vector<std::string> muon;
     muon.push_back("Muon_Energy_MINERvA");
@@ -1412,26 +1445,37 @@ else if(style == kCCInclusiveHeliumStyle){
     muon.push_back("Muon_Energy_Resolution");
     muon.push_back("MuonAngleXResolution");
     muon.push_back("MuonAngleYResolution");
+    muon.push_back("BeamAngleX");
+    muon.push_back("BeamAngleY");
     muon.push_back("MINOS_Reconstruction_Efficiency");
     error_summary_group_map["Muon Reconstruction"] = muon;
     
-    std::vector<std::string> flux;
-    flux.push_back("Flux");
-    error_summary_group_map["Neutrino Flux"] = flux;
+    std::vector<std::string> detector;
+    detector.push_back("GEANT_Neutron");
+    detector.push_back("GEANT_Pion");
+    detector.push_back("GEANT_Proton");
+    detector.push_back("MichelEfficiency");
+    error_summary_group_map["Detector Model"] = detector;
+    
+    std::vector<std::string> other;
+    other.push_back("Target_Mass_CH");
+    other.push_back("Target_Mass_C");
+    other.push_back("Target_Mass_H2O");
+    other.push_back("Target_Mass_Fe");
+    other.push_back("Target_Mass_Pb");
+    error_summary_group_map["Other"] = other;
     
     // Systematics color scheme
     error_color_map.clear();
-    error_color_map["Detector Model"]           = kViolet+6;
+    error_color_map["Neutrino Flux"]            = kRed+2;
     error_color_map["GENIE Interaction Models"] = kGreen+1;
     error_color_map["GENIE Nucleon FSI"]        = kBlue+2;
     error_color_map["GENIE Pion FSI"]           = kMagenta+1;
-    error_color_map["MnvGENIE Tune v1"]         = kOrange+2;
+    error_color_map["MnvGENIE Tune"]            = kOrange+2;
     error_color_map["Muon Reconstruction"]      = kCyan+2;
-    error_color_map["Neutrino Flux"]            = kRed+2;
+    error_color_map["Detector Model"]           = kViolet+6;
+    error_color_map["Other"]                    = kPink+2;
   }
-
-
-
 
   else {
     Error( "ApplyStyle", "This plot style is not recognized.  Using the default: kDefaultStyle" );
