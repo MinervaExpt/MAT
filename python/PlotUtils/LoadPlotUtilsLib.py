@@ -7,6 +7,10 @@
                     November 2012
 """
 
+# hms 2021-11-20 comment out classes that moved to MAT-MINERvA
+# to use this you need to
+# export PYTHONPATH=$WHEREMATIS/MAT/python:$WHEREMATIS/MAT/python/PlotUtils
+
 import sys
 import os
 
@@ -25,26 +29,17 @@ CLASSES_TO_LOAD = [
   "MnvVertErrorBand",
   "MnvVertErrorBand2D",
   "MnvVertErrorBand3D",
-  "AnaBinning",
-  "MnvAnaTuple",
   "MnvPlotter",
-  "MnvRecoShifter",
-  "MnvEVD",
   "TargetUtils",
   "MnvNormalizer",
   "FluxReweighter",
-  "FluxReweighterWithWiggleFit",
   "ChainWrapper",
-  "HyperDimLinearizer",
   "GridCanvas",
-  # weight classes
   "weight_2p2h",
   "weightLowQ2Pi",
   "weightRPA",
   "weightDIS",
   "weightZExp",
-  # systematic universe classes (new sys framework)
-  "DefaultCVUniverse",
   "MinervaUniverse",
   "FluxUniverse",
   "GenieUniverse",
@@ -60,17 +55,7 @@ CLASSES_TO_LOAD = [
   "ResponseUniverse",
   "LowQ2PionUniverse",
   "MinosEfficiencyUniverse",
-  "flux_reweighter",
-  # PhysicsVariable members
-  "nuEnergyCCQE",
-  "qSquaredCCQE",
-  "struckNucleonMass",
-  "W",
-  "WSquared",
-  "xBjorken"
-  #technically, this is a function, but python don't care
- # "PhysicsVariables" # can't seem to load these as functions instead of class HMS 1-5-2020
-                
+  "flux_reweighter"            
 ]
 
 # new code for ROOT6
@@ -93,7 +78,7 @@ args = sys.argv[:]
 sys.argv = sys.argv[:0]
 
 if "PLOTUTILSROOT" in os.environ:
-  ROOT.gSystem.Load("libplotutils")
+  ROOT.gSystem.Load("libMAT")
 
 	# copy the classes from the Reflex library
 	# into the "PlotUtils" namespace for more

@@ -32,43 +32,42 @@ double CountPOT(const std::string& fileName)
 
 // Data tree only
 MacroUtil::MacroUtil(const std::string& reco_tree_name, const std::string& data_file_list,
-                     const std::string& plist_name, const bool is_grid): m_data(makeChainWrapperPtr(data_file_list, reco_tree_name)),
+                     const std::string& plist_name): m_data(makeChainWrapperPtr(data_file_list, reco_tree_name)),
                                                                          m_mc(new ChainWrapper(reco_tree_name.c_str())),
                                                                          m_truth(new ChainWrapper("Truth")),
                                                                          m_data_pot(CountPOT(data_file_list)),
                                                                          m_mc_pot(0)
 {
-  CommonInitialization(plist_name, is_grid);
+  CommonInitialization(plist_name);
 }
 
 // MC reco tree.  Choose whether the Truth tree also is loaded
 MacroUtil::MacroUtil(const std::string& reco_tree_name, const std::string& mc_file_list,
-                     const std::string& plist_name, const bool wantsTruth, const bool is_grid)
+                     const std::string& plist_name, const bool wantsTruth)
                     : m_data(new ChainWrapper(reco_tree_name.c_str())),
                       m_mc(makeChainWrapperPtr(mc_file_list, reco_tree_name)),
                       m_truth(wantsTruth?makeChainWrapperPtr(mc_file_list, "Truth"):(new ChainWrapper("Truth"))),
                       m_data_pot(0), m_mc_pot(CountPOT(mc_file_list))
 {
-  CommonInitialization(plist_name, is_grid);
+  CommonInitialization(plist_name);
 }
 
 //Data, MC reco, and Truth trees
 MacroUtil::MacroUtil(const std::string& reco_tree_name, const std::string& mc_file_list,
                      const std::string& data_file_list, const std::string& plist_name,
-                     const bool wantsTruth, const bool is_grid): m_data(makeChainWrapperPtr(data_file_list, reco_tree_name)),
+                     const bool wantsTruth): m_data(makeChainWrapperPtr(data_file_list, reco_tree_name)),
                                                                  m_mc(makeChainWrapperPtr(mc_file_list, reco_tree_name)),
                                                                  m_truth(wantsTruth?makeChainWrapperPtr(mc_file_list, "Truth"):(new ChainWrapper("Truth"))),
                                                                  m_data_pot(CountPOT(data_file_list)),
                                                                  m_mc_pot(CountPOT(mc_file_list))
 {
-  CommonInitialization(plist_name, is_grid);
+  CommonInitialization(plist_name);
 }
 
 // Delegating constructor to reduce code duplication
-void MacroUtil::CommonInitialization(const std::string& plist_name, const bool is_grid)
+void MacroUtil::CommonInitialization(const std::string& plist_name)
 {
   m_plist_string = plist_name;
-  m_is_grid = is_grid;
   TH1::AddDirectory(false);
 }
 
@@ -83,9 +82,7 @@ void MacroUtil::PrintMacroConfiguration(std::string macro_name) {
             << m_truth->GetChain()->GetListOfFiles()->GetEntriesFast()
             << "\n** Data POT extracted from anatuples is " << m_data_pot
             << "\n** MC POT extracted from anatuples is " << m_mc_pot
-            << "\n** Playlist string is " << m_plist_string
-            << "\n** Grid is "
-            << std::boolalpha << m_is_grid << "\n\n";
+            << "\n** Playlist string is " << m_plist_string << "\n\n";
 }
 
 #endif
