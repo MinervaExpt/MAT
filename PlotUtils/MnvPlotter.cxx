@@ -5007,24 +5007,24 @@ bool MnvPlotter::DrawErrorSummary(
         if (!asfrac) hTmpErr->GetYaxis()->SetTitle( Ytitle.c_str() );
         if (!asfrac) hTmpErr->Scale(hTmpErr->GetBinWidth(1),"width");
         hTmpErr->Draw("HIST");
-
-        //ApplyAxisStyle(hErr);
+	
+        ApplyAxisStyle(hErr);
         ////respect max/min setting the user may have used
-        //if ( MnvHist::IsAutoAxisLimit( axis_minimum ) )
-        //    hErr->SetMinimum( 0. );
-        //else
-        //    hErr->SetMinimum( axis_minimum );
+        if ( MnvHist::IsAutoAxisLimit( axis_minimum ) )
+	  hErr->SetMinimum( 0. );
+        else
+	  hErr->SetMinimum( axis_minimum );
+	
+	//if (inGroup) {
+	//hErr->SetMaximum( headroom * axis_maximum_group );
+	//}
+        if ( MnvHist::IsAutoAxisLimit( axis_maximum ) )
+	  hErr->SetMaximum( headroom * hTotalErr->GetMaximum() );
+        else
+	  hErr->SetMaximum( axis_maximum_group );
 
-        ////if (inGroup) {
-        ////    hErr->SetMaximum( headroom * axis_maximum_group );
-        ////}
-        //if ( MnvHist::IsAutoAxisLimit( axis_maximum ) )
-        //    hErr->SetMaximum( headroom * hTotalErr->GetMaximum() );
-        //else
-        //    hErr->SetMaximum( axis_maximum );
-
-        //hErr->GetYaxis()->SetTitle( "Fractional Uncertainty" );
-        //if (!asfrac) hErr->GetYaxis()->SetTitle( Ytitle.c_str() );
+        hErr->GetYaxis()->SetTitle( "Fractional Uncertainty" );
+        if (!asfrac) hErr->GetYaxis()->SetTitle( Ytitle.c_str() );
         //if (!asfrac) hErr->Scale(hErr->GetBinWidth(1),"width");
         hErr->Draw("HIST SAME");
       }
