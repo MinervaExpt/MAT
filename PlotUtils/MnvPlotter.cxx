@@ -5021,7 +5021,7 @@ bool MnvPlotter::DrawErrorSummary(
         if ( MnvHist::IsAutoAxisLimit( axis_maximum ) )
 	  hErr->SetMaximum( headroom * hTotalErr->GetMaximum() );
         else
-	  hErr->SetMaximum( axis_maximum_group );
+	  hErr->SetMaximum( axis_maximum);
 
         hErr->GetYaxis()->SetTitle( "Fractional Uncertainty" );
         if (!asfrac) hErr->GetYaxis()->SetTitle( Ytitle.c_str() );
