@@ -13,16 +13,16 @@ namespace PlotUtils
     public:
       // Data tree only
       MacroUtil(const std::string& reco_tree_name, const std::string& data_file_list,
-                const std::string& plist_name, const bool is_grid);
+                const std::string& plist_name);
   
       // MC reco tree.  Choose whether the Truth tree also is loaded
       MacroUtil(const std::string& reco_tree_name, const std::string& mc_file_list,
-                const std::string& plist_name, const bool wantsTruth, const bool is_grid);
+                const std::string& plist_name, const bool wantsTruth);
   
       //Data, MC reco, and Truth trees
       MacroUtil(const std::string& reco_tree_name, const std::string& mc_file_list,
                 const std::string& data_file_list, const std::string& plist_name,
-                const bool wantsTruth, const bool is_grid);
+                const bool wantsTruth);
   
       // All of these ChainWrapper pointers will be non-NULL.  Some of them
       // just might be empty.
@@ -32,7 +32,6 @@ namespace PlotUtils
     
       // Program conditions
       std::string m_plist_string;
-      bool m_is_grid;
     
       // POT counting
       double m_data_pot;
@@ -50,7 +49,7 @@ namespace PlotUtils
       MacroUtil();
   
       // Delegating some constructor work to reduce code duplication
-      void CommonInitialization(const std::string& plist_name, const bool is_grid);
+      void CommonInitialization(const std::string& plist_name);
   };
 } // namespace PlotUtils
 
