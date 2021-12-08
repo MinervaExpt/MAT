@@ -33,7 +33,7 @@ def SyncBands2(hist):
 
 binwidth = True  # correct for bindwidth
 
-full = True # full precision
+full = False # full precision
 
 xtra = ""
 
@@ -73,6 +73,7 @@ if os.path.dirname(file) != "":
 hist = sys.argv[2]
 histname = hist
 newname = sys.argv[2]
+oldname = newname
 if len(sys.argv)>3:
   oldname = sys.argv[3]
 if len(sys.argv)>4:

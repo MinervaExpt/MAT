@@ -23,7 +23,7 @@ f.ls()
 
 h = MnvH1D()
 h = f.Get(hist)
-h.Scale(1.E42)
+h.Scale(1.E41)
 
 
 fname = file[0:-5]
@@ -36,6 +36,8 @@ binwidth = True
 if not binwidth:
  xtra = ""
 full = False
+if not full:
+  xtra += "_short"
 
 h.MnvH1DToCSV(h.GetName()+xtra,dir,1.,full,True,False,binwidth)
 cv.Write()
