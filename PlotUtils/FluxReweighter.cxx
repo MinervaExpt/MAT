@@ -813,12 +813,23 @@ namespace PlotUtils
     // FluxCorrection not valid for nue
     if (nuPDG == -12 ) return 1;
     if (nuPDG == 12 ) return 1;
-    // FluxCorrection not valid for RHC numu (yet?)
-    if (nuPDG == -14 ) return 1;
+
+    //We also don't want the wrong sign fluxes to pick this correction... -David L. putting in Amit's changes from CVS commit 1.106-8
+    int iPlaylist = LeOrMe(d_Playlist);
+    if (iPlaylist==2 && nuPDG==-14) return 1;
+    if (iPlaylist==3 && nuPDG==14) return 1;
+
+    // FluxCorrection not valid for RHC numu (yet?) It is now!
+    //if (nuPDG == -14 ) return 1; Commented out now that RHC is valid. -David L. putting in Amit's changes from CVS commit 1.106-8
     // Correction for Amit's Emu fluxes not useful above 15 GeV
     if (sys_name == "Muon_Energy" && Enu > 15) return 1;
     if (sys_name == "Muon_Energy_MINOS" && Enu > 15) return 1;
 
+    TH1D* cvFlux = m_fluxSystematicsMnvH1D;
+
+    TH1D* sysFlux = (TH1D*)m_fluxSystematicsMnvH1D->GetVertErrorBand(sys_name.c_str())->GetHist(universe);
+
+    /* Commented out now that RHC is valid. Replaced by the above lines. -David L. putting in Amit's changes from CVS commit 1.106-8
     TH1D* cvFlux = nuPDG > 0 ?
       m_fluxSystematicsMnvH1D :
       NULL; // We may have a RHC case in the future
@@ -826,6 +837,7 @@ namespace PlotUtils
     TH1D* sysFlux = nuPDG > 0 ?
         (TH1D*)m_fluxSystematicsMnvH1D->GetVertErrorBand(sys_name.c_str())->GetHist(universe) :
         NULL; // We may have a RHC case in the future
+    */
 
     double num = sysFlux->Interpolate( Enu );
     double dem = cvFlux->Interpolate( Enu );
@@ -840,16 +852,17 @@ namespace PlotUtils
   void FluxReweighter::SetFluxSysMnvH1D( int nuPDG, enum EFluxVersion fluxVersion)
   {
     const char* plotutils=gSystem->Getenv("PLOTUTILSROOT");
+    bool isNu = nuPDG>0?true:false; //Kept around in Amit CVS commit 1.108 for correlated muon fluxes. -David L.
     const char* fluxName = fluxForSystematicsHistName(fluxVersion);
 
-    if(nuPDG>0){
-      //std::cout << "Creating alternate sysmap using the " << fluxName << " flux." << std::endl;
-      TFile myfile(TString::Format("%s/data/flux/sys/%s.root",plotutils,fluxName));
-      m_fluxSystematicsMnvH1D = (MnvH1D*)myfile.Get(TString::Format("%s",fluxName));
-      // assert will provide useful debug info only when the code is compiled in debug mode
-      assert(m_fluxSystematicsMnvH1D != NULL && "Failed to find a histogram of that name in FluxReweighter!  Maybe its name changed?");
-      m_fluxSystematicsMnvH1D->SetDirectory(0);
-    }
+    //if(nuPDG>0){ Commented out so that RHC correlations in fact grab the necessary file/histo. -David L.
+    //std::cout << "Creating alternate sysmap using the " << fluxName << " flux." << std::endl;
+    TFile myfile(TString::Format("%s/data/flux/sys/%s.root",plotutils,fluxName));
+    m_fluxSystematicsMnvH1D = (MnvH1D*)myfile.Get(TString::Format("%s",fluxName));
+    // assert will provide useful debug info only when the code is compiled in debug mode
+    assert(m_fluxSystematicsMnvH1D != NULL && "Failed to find a histogram of that name in FluxReweighter!  Maybe its name changed?");
+    m_fluxSystematicsMnvH1D->SetDirectory(0);
+    //} Commented out so that RHC correlations in fact grab the necessary file/histo. -David L.
 
   }
 
@@ -1624,6 +1637,7 @@ namespace PlotUtils
   //======================================================================
   const char* FluxReweighter::fluxForSystematicsHistName(EFluxVersion fluxVersion)
   {
+    int iPlaylist = LeOrMe(d_Playlist); // Adding in Amit's CVS commit 1.106-8 changes -David L.
     switch(fluxVersion){
       case lowNu:
         m_useStandardFlux = false;
@@ -1640,7 +1654,8 @@ namespace PlotUtils
 
       default:
         m_useStandardFlux = true;
-        return "Muon_Energy_MnvH1D";
+	if (iPlaylist==3) return "MuonBar_Energy_MnvH1D"; // Adding in Amit's CVS commit 1.106-8 changes -David L.
+	else return "Muon_Energy_MnvH1D";
     }
   }
 

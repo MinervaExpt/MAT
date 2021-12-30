@@ -11,7 +11,7 @@ from array import array
 
 norm = True
 if len(sys.argv)< 3:
-  print "viewer args are filename histname"
+  print ("viewer args are filename histname")
   sys.exit(1)
 file = sys.argv[1]
 hist = sys.argv[2]
@@ -23,7 +23,7 @@ f.ls()
 
 h = MnvH1D()
 h = f.Get(hist)
-h.Scale(1.E42)
+h.Scale(1.E41)
 
 
 fname = file[0:-5]
@@ -36,6 +36,8 @@ binwidth = True
 if not binwidth:
  xtra = ""
 full = False
+if not full:
+  xtra += "_short"
 
 h.MnvH1DToCSV(h.GetName()+xtra,dir,1.,full,True,False,binwidth)
 cv.Write()
@@ -47,7 +49,7 @@ n = h.GetNVertErrorBands()
 names = h.GetErrorBandNames()
 
 for name in names:
-  print name
+  print ("error band:", name)
   band = h.GetVertErrorBand(name)
   hists = band.GetHists()
   bcv = MnvH1D()
