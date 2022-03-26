@@ -668,7 +668,8 @@ namespace PlotUtils
             const bool dataAsPoints = true,
             const bool allSolidLines = false,
             const bool leaveStyleAlone = false,
-            const bool covAreaNormalize = false
+            const bool covAreaNormalize = false,
+            bool useDataHistTitle = true
             );
 
         //! adds a legend to the plot
