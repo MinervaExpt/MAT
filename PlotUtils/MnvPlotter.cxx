@@ -4123,7 +4123,8 @@ void MnvPlotter::DrawDataMCVariations(
         const bool dataAsPoints     /*= true  */,
         const bool allSolidLines    /*= false */,
         const bool leaveStyleAlone  /*= false */,
-        const bool covAreaNormalize /*=false*/
+        const bool covAreaNormalize /*=false*/,
+        bool useDataHistTitle /*=true*/
         )
 {
     if (!gPad)
@@ -4199,9 +4200,9 @@ void MnvPlotter::DrawDataMCVariations(
     }
     //Add data to the legend first
     if ( dataAsPoints )
-        leg->AddEntry(tmpData,tmpData->GetTitle(),"ple");
+        leg->AddEntry(tmpData,useDataHistTitle ? tmpData->GetTitle() : "Data","ple");
     else
-        leg->AddEntry(tmpData,tmpData->GetTitle(),"l");
+        leg->AddEntry(tmpData,useDataHistTitle ? tmpData->GetTitle() : "Data","l");
 
 
 
