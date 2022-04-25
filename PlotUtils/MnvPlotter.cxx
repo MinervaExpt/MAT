@@ -4068,6 +4068,160 @@ Double_t MnvPlotter::Chi2DataMC(
     return chi2;
 }
 
+Double_t MnvPlotter::Chi2DataMCNonStandardBins(
+                                const MnvH1D* dataHist,
+                                const MnvH1D* mcHist,
+                                const Double_t mcScale,
+                                const bool useDataErrorMatrix,
+                                const bool useOnlyShapeErrors,
+                                const bool useModelStat,
+				const MnvH2D* templateHist,
+                                TMatrixD *Chi2ByBin)
+{
+    //We get the number of bins and make sure it's compatible with the NxN matrix given
+    if ( dataHist->GetNbinsX() != mcHist->GetNbinsX() )
+    {
+        Error("MnvPlotter::Chi2DataMC", "The number of bins from Data and MC histograms differ. Returning -1.");
+        return -1.;
+    }
+
+    //only consider the plotted range
+    const int lowBin  = chi2_use_overflow_err ? 0 : mcHist->GetXaxis()->GetFirst();
+    const int highBin = chi2_use_overflow_err ? mcHist->GetNbinsX()+1 : mcHist->GetXaxis()->GetLast();
+
+    //Scaling MC to Data
+    MnvH1D* tmpMCHist = (MnvH1D*) mcHist->Clone("tmpMCHist");
+    tmpMCHist->Scale(mcScale);
+
+    MnvH1D* tmpDataHist = (MnvH1D*) dataHist->Clone("tmpDataHist");
+
+    // Defining Error Matrix dimensions
+    // Either use the requested range or the full error matrix with under/overflow
+    Int_t Nbins = highBin - lowBin + 1;
+    if ( chi2_use_overflow_err )
+        Nbins = tmpMCHist->GetNbinsX()+2;
+
+
+    vector<int> encoded_ufofbins;
+    for(int i=1;i<tmpDataHist->GetNbinsX()+1;i++){
+      int lowedge_encoded = tmpDataHist->GetBinLowEdge(i);
+      int orig_x,orig_y,orig_z;
+      templateHist->GetBinXYZ(lowedge_encoded,orig_x,orig_y,orig_z);
+      if(orig_x<1 || orig_x>templateHist->GetNbinsX()){
+	encoded_ufofbins.push_back(i);
+	tmpDataHist->SetBinContent(i,0);
+	tmpDataHist->SetBinError(i,0);
+	tmpMCHist->SetBinContent(i,0);
+	tmpMCHist->SetBinError(i,0);
+      }
+      if(orig_y<1 || orig_y>templateHist->GetNbinsY()){
+	encoded_ufofbins.push_back(i);
+	tmpDataHist->SetBinContent(i,0);
+	tmpDataHist->SetBinError(i,0);
+	tmpMCHist->SetBinContent(i,0);
+	tmpMCHist->SetBinError(i,0);
+      }
+      
+    }
+      
+
+    //get the covariance matrix
+    TMatrixD covMatrix(Nbins, Nbins);
+    {
+        const Int_t NbinsTotal = tmpMCHist->GetNbinsX() + 2; //+2 for under/overflow
+        TMatrixD covMatrixTmp( NbinsTotal, NbinsTotal );
+        const bool includeStatError = true;
+        const bool errorAsFraction  = false;
+
+        // Use Error Matrix from Data or MC?
+        if ( useDataErrorMatrix )
+        {
+            covMatrixTmp = tmpDataHist->GetTotalErrorMatrix( includeStatError, errorAsFraction, useOnlyShapeErrors);
+            if (useModelStat) covMatrixTmp += tmpMCHist->GetStatErrorMatrix( );
+        }
+        else
+        {
+            covMatrixTmp = tmpMCHist->GetTotalErrorMatrix(  includeStatError, errorAsFraction, useOnlyShapeErrors);
+            if (useModelStat) covMatrixTmp += tmpDataHist->GetStatErrorMatrix( );
+        }
+
+        //select only covariance elements in the histogram range
+        // unless using the contributions to covariance from overflow
+        if ( chi2_use_overflow_err )
+        {
+            covMatrix = covMatrixTmp;
+        }
+        else
+        {
+            for ( int i = 0; i != Nbins; ++i )
+            {
+                for ( int j = 0; j != Nbins; ++j )
+                {
+		  if(find(encoded_ufofbins.begin(),encoded_ufofbins.end(),i)!=encoded_ufofbins.end()) continue;
+		  if(find(encoded_ufofbins.begin(),encoded_ufofbins.end(),j)!=encoded_ufofbins.end()) continue;
+		  covMatrix[i][j] = covMatrixTmp[i+lowBin][j+lowBin];
+                }
+            }
+        }
+
+    }// end of block to get covarance
+
+    //Now, we invert the covariance error Matrix and store the result in "errorMatrix"
+    // Note: TDecompSVD can handle singular matrices
+
+    //Now, we invert the covariance error Matrix and store the result in "errorMatrix"
+    // Note: TDecompSVD can handle singular matrices
+
+    covMatrix*=1e80;//ROOT can't seem to handle small entries with lots of zeros? Suggested scaling the histogram and then rescaling the inverted matrix
+
+    TDecompSVD error(covMatrix);
+    TMatrixD errorMatrix(covMatrix);
+    if ( ! error.Invert( errorMatrix ) )
+    {
+        Warning("MnvPlotter::Chi2DataMC", "Cannot invert total covariance matrix.  Using statistical errors only for Chi2 calculation.");
+        return Chi2DataMC( (TH1D*)tmpDataHist, (TH1D*)tmpMCHist,  mcScale );
+    }
+    errorMatrix*=1e80;//ROOT can't seem to handle small entries with lots of zeros? Suggested scaling the histogram and then rescaling the inverted matrix
+
+    if (Chi2ByBin) {
+        //cout << "Resizing the matrix you gave me for the chi2. Orignal size " << Chi2ByBin->GetNrows()<<endl;
+        Chi2ByBin->ResizeTo(Nbins,Nbins);
+        //cout << "New size row " << Chi2ByBin->GetNrows()<<endl;
+    }
+
+    //Calculating chi2
+    int ndf = 0;
+    Double_t chi2 = 0.;
+    // under/overflow bins not taken into account in the chi2 calculation
+    for (int i=lowBin; i<=highBin ; ++i)
+    {
+        const int iErrBin = i - lowBin;
+        const Double_t x_data_i = tmpDataHist->GetBinContent(i);
+        const Double_t x_mc_i   = tmpMCHist->GetBinContent(i);
+
+        for (int j=lowBin; j<=highBin; ++j)
+        {
+            const int jErrBin = j - lowBin;
+            const Double_t x_data_j = tmpDataHist->GetBinContent(j);
+            const Double_t x_mc_j   = tmpMCHist->GetBinContent(j);
+            const double chi2_ij = (x_data_i - x_mc_i) * errorMatrix[iErrBin][jErrBin] * (x_data_j - x_mc_j);
+            if (Chi2ByBin) Chi2ByBin[0][iErrBin][jErrBin]=chi2_ij;//Dunno why this work... TBD
+            chi2 += chi2_ij;
+        }
+        ++ndf; // Is this the right way to calcualte ndf?
+    }
+
+    // if this is a shape comparison, subtract one degree of freedom?
+    if (useOnlyShapeErrors)
+        --ndf;
+
+    delete tmpMCHist;
+
+    return chi2;
+}
+
+
+
 
 Double_t MnvPlotter::Chi2MCMC(
         const MnvH1D* histA,

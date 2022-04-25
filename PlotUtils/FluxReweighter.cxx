@@ -503,12 +503,12 @@ namespace PlotUtils
       }
       //Using the combined fhc+rhc+imd constraint
       else if (iplaylist == 2 or iplaylist==3) {
-      	filename+="/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt";
+	filename+="/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt";
       }
 
       //This is the nu+e method with fhc measurement
-      /*
-      else if (iplaylist == 2) {
+      /*      
+      else if (iplaylist == 2 || iplaylist==3) {
 	filename+="/FluxConstraints/nu+e_ME_spectrum.txt";
       }
       */
