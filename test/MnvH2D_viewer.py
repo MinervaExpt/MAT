@@ -67,9 +67,10 @@ if len(sys.argv)< 3:
   print ("viewer args are filename histname")
   sys.exit(1)
 file = sys.argv[1]
-dir = "./"
-if os.path.dirname(file) != "":
-  dir = os.path.dirname(file)+"/"
+localdir = os.path.dirname(file)
+dir= os.path.join(localdir,os.path.basename(file)+"_csvdump")
+if not os.path.exists(dir):
+  os.makedirs(dir)
 hist = sys.argv[2]
 histname = hist
 newname = sys.argv[2]
@@ -89,16 +90,16 @@ f.ls()
 #f.ls()
 #h = MnvH2D()
 h = f.Get(hist)
-if h == 0:
+if h == None:
   print ("no ",sys.argv[2]," in ", sys.argv[1])
   sys.exit(1)
 print ("name is ",h.GetName(),h.GetTitle())
 
 size = h.GetBinContent(1,1)
-if h.GetBinContent(1,1) > 1.E20:
-    h.Scale(1.E-41)
-if h.GetBinContent(1,1) <  1.E-20:
-    h.Scale(1.E41)
+#if h.GetBinContent(1,1) > 1.E20:
+#    h.Scale(1.E-41)
+#if h.GetBinContent(1,1) <  1.E-20:
+#    h.Scale(1.E41)
 central = h.GetCVHistoWithStatError()
 cx = central.ProjectionX()
 cy = central.ProjectionY()
@@ -111,7 +112,7 @@ m = h.GetSysErrorMatrix("unfoldingCov")
 # MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, bool fullprecision, bool syserrors, bool percentage,bool binwidth)
 
 #print " print out CSV"
-h.MnvH2DToCSV(h.GetName()+xtra,dir,1.,full,True,False,binwidth)
+h.MnvH2DToCSV(h.GetName()+xtra,dir,1.E39,full,True,False,binwidth)
 
 #print "going to ",h.GetName()+xtra
 
@@ -122,8 +123,8 @@ b = b0
 bx = b.ProjectionX()
 by = b.ProjectionY()
 
-bx.MnvH1DToCSV(bx.GetName()+xtra,dir,1.,full,True,False,binwidth)
-by.MnvH1DToCSV(by.GetName()+xtra,dir,1.,full,True,False,binwidth)
+bx.MnvH1DToCSV(bx.GetName()+xtra,dir,1.e39,full,True,False,binwidth)
+by.MnvH1DToCSV(by.GetName()+xtra,dir,1.e39,full,True,False,binwidth)
 fname = file[0:-5]
 
 if not binwidth:

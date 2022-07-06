@@ -15,15 +15,18 @@ if len(sys.argv)< 3:
   sys.exit(1)
 file = sys.argv[1]
 hist = sys.argv[2]
- 
-dir = os.path.dirname(file)
+localdir = os.path.dirname(file)
+dir= os.path.join(localdir,os.path.basename(file)+"_csv")
+if not os.path.exists(dir):
+  os.makedirs(dir)
+# = os.path.dirname(file)
 
 f = TFile.Open(file,"READONLY")
 f.ls()
 
 h = MnvH1D()
 h = f.Get(hist)
-h.Scale(1.E41)
+#h.Scale(1.E41)
 
 
 fname = file[0:-5]
@@ -39,7 +42,7 @@ full = False
 if not full:
   xtra += "_short"
 
-h.MnvH1DToCSV(h.GetName()+xtra,dir,1.,full,True,False,binwidth)
+h.MnvH1DToCSV(h.GetName()+xtra,dir,1.E39,full,True,False,binwidth)
 cv.Write()
 
 #o = TFile.Open(fname+"_"+hist+"_cv_bands_TH.root","RECREATE")

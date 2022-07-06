@@ -1833,14 +1833,28 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
     
     
     
-    f_values->open((directory+name+".csv").c_str());
-    f_err->open((directory+name+"_errors.csv").c_str());
-    f_staterr->open((directory+name+"_staterrors.csv").c_str());
-    f_syserr->open((directory+name+"_syserrors.csv").c_str());
-    f_bins->open((directory+name+"_bins.csv").c_str());
-    f_corr->open((directory+name+"_correlation.csv").c_str());
-    f_cov->open((directory+name+"_covariance.csv").c_str());
-    
+    f_values->open((directory+"/"+name+"_values_2d.csv").c_str());
+    f_err->open((directory+"/"+name+"_errors_2d.csv").c_str());
+    f_staterr->open((directory+"/"+name+"_staterrors_2d.csv").c_str());
+    f_syserr->open((directory+"/"+name+"_syserrors_2d.csv").c_str());
+    f_bins->open((directory+"/"+name+"_bins_2d.csv").c_str());
+    f_corr->open((directory+"/"+name+"_correlation.csv").c_str());
+    f_cov->open((directory+"/"+name+"_covariance.csv").c_str());
+  
+  std::ofstream *f_meta = new std::ofstream();
+  f_meta->open((directory+"/"+name+"_meta.txt").c_str());
+  *f_meta << "Name: " <<  name << std::endl;
+  *f_meta << Form("GetName: \"%s\"",GetName())<< std::endl;
+  *f_meta << Form("GetTitle: \"%s\"",GetTitle()) << std::endl;
+  *f_meta << Form("Fractional Errors: \"%d\"",percentage) << std::endl;
+  *f_meta << Form("Binwidth: \"%d\"",binwidth) << std::endl;
+  *f_meta << Form("SysErrors: \"%d\"",syserrors) << std::endl;
+  *f_meta << Form("Scale: \"%.17e\"",scale) << std::endl;
+  *f_meta << Form("Precision: \"%d\"",fullprecision) << std::endl;
+  *f_meta << Form("xAxis: \"%s\"",GetXaxis()->GetTitle()) << std::endl;
+  *f_meta << Form("yAxis: \"%s\"",GetYaxis()->GetTitle()) << std::endl;
+  *f_meta << Form("zAxis: \"%s\"",GetZaxis()->GetTitle()) << std::endl;
+  f_meta->close();
     
     TH2D stat=GetStatError(); //stat error
     TH2D total=GetCVHistoWithError(); // CV with total error
@@ -1859,11 +1873,12 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
     *f_staterr<<std::endl;
     *f_syserr<<std::endl;
     */
-    
+    *f_bins<<Form("\"%s\"",GetXaxis()->GetTitle())<< ",";
     *f_bins<<GetXaxis()->GetBinLowEdge(1)<< ","; //<<std::endl;
     
     for (int x=1;x<=GetXaxis()->GetNbins();x++){
-        *f_bins<<GetXaxis()->GetBinUpEdge(x)<< ",";//<<std::endl;
+        *f_bins<<GetXaxis()->GetBinUpEdge(x);
+        if (x != GetXaxis()->GetNbins()) *f_bins  << ",";//<<std::endl;
         for (int y=1;y<=GetYaxis()->GetNbins();y++){
             if (y> 1) {
                 *f_values<<",";
@@ -1899,6 +1914,7 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
     }
     
     *f_bins<< std::endl;
+    *f_bins<< Form("\"%s\"",GetYaxis()->GetTitle())<< ",";
     for (int y=0;y<=GetYaxis()->GetNbins();y++){
         if (y!=0) *f_bins<< ",";
         *f_bins<<GetYaxis()->GetBinUpEdge(y);
@@ -1914,8 +1930,7 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
     //    TMatrixD correlation_matrix= GetTotalCorrelationMatrix();
     TMatrixD correlation_matrix= GetTotalCorrelationMatrix();
     TMatrixD covariance_matrix= GetTotalErrorMatrix();
-    correlation_matrix *= (scale*scale); // scale by factor of 10^41
-   // *f_corr << "Covariance" << std::endl;
+    //correlation_matrix *= (scale*scale);
     
     int nbins_x=GetNbinsX();
     int nbins_y=GetNbinsY();
@@ -1929,9 +1944,6 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
         
         binwidcorri = GetXaxis()->GetBinWidth(x)*GetYaxis()->GetBinWidth(y);
         if (!binwidth) binwidcorri = 1.0;
-        
-        
-        
         if (x==0 || y==0 || x==nbins_x+1 || y== nbins_y+1) continue; // Do not print overflow and underflow
         
         //*f_corr<< "bin_"<<x<<"_"<<y;
@@ -1955,12 +1967,12 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
             }
             if (!binwidth) binwidcorrj = 1.0;
             if (!fullprecision){
-                *f_cov<<Form("%.2e",covariance_matrix[i][j]/binwidcorri/binwidcorrj);   // need to include bin widths
-                *f_corr<<Form("%.2e",correlation_matrix[i][j]);   // do not include bin widths
+                *f_cov<<Form("%.2f",covariance_matrix[i][j]/binwidcorri/binwidcorrj*scale*scale);   // need to include bin widths
+                *f_corr<<Form("%.4f",correlation_matrix[i][j]);   // do not include bin widths
             }
             else{
-                *f_cov<<Form("%.17e",covariance_matrix[i][j]/binwidcorri/binwidcorrj);   // need to include bin widths
-                *f_corr<<Form("%.2e",correlation_matrix[i][j]);   // do not include bin widths
+                *f_cov<<Form("%.17e",covariance_matrix[i][j]/binwidcorri/binwidcorrj*scale*scale);   // need to include bin widths
+                *f_corr<<Form("%.17e",correlation_matrix[i][j]);   // do not include bin widths
             }
         }
         *f_corr<<std::endl;
@@ -1979,9 +1991,9 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
     std::ofstream * f_vert = new std::ofstream();
     std::ofstream * f_lat = new std::ofstream();
     f_cov = new std::ofstream();
-    f_lat->open((directory+name+"_latdump.csv").c_str());
-    f_vert->open((directory+name+"_vertdump.csv").c_str());
-    f_cov->open((directory+name+"_covdump.csv").c_str());
+    f_lat->open((directory+"/"+name+"_latdump.csv").c_str());
+    f_vert->open((directory+"/"+name+"_vertdump.csv").c_str());
+    f_cov->open((directory+"/"+name+"_covdump.csv").c_str());
     
     std::vector<std::string> vert_errBandNames = GetVertErrorBandNames();
     std::vector<std::string> lat_errBandNames  = GetLatErrorBandNames();
@@ -1993,7 +2005,7 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
         unsigned int nunis = v->GetNHists();
         
         for (unsigned int i = 0; i< nunis; i++){
-            *f_vert <<GetName() << Form(" %s_%d,",name->c_str(),i);// << std::endl;
+            *f_vert  << Form("%s_%d,",name->c_str(),i);// << std::endl;
             TH2* h = v->GetHist(i);
             for (int x=1;x <=h->GetXaxis()->GetNbins();x++){
                 for (int y = 1; y <= h->GetYaxis()->GetNbins(); y++)
@@ -2001,16 +2013,24 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
                     if (y>1) {
                         *f_vert << ",";
                     }
-                    double bincor = 1.0;
-                    if(binwidth) bincor = h->GetXaxis()->GetBinWidth(x)*h->GetYaxis()->GetBinWidth(y);
-                    if (percentage) bincor = total.GetBinContent(x,y);
-                    double frac= (h->GetBinContent(x,y)/bincor);
-                    if (!fullprecision){
-                        *f_vert<<Form("%.2f",frac);
+                    double val = h->GetBinContent(x,y) ;
+                    
+                  if (percentage){
+                    val /= total.GetBinContent(x,y);
+                  }
+                  else{
+                    if(binwidth) {double bincor = h->GetXaxis()->GetBinWidth(x)*h->GetYaxis()->GetBinWidth(y);
+                      val /= bincor;
                     }
-                    else{
-                        *f_vert<<Form("%.17e",frac);
-                    }
+                    val *= scale;
+                  }
+                  //std::cout << "check " << percentage << " " << binwidth << " " << h->GetBinContent(x,y)<< " " << val << std::endl;
+                  if (!fullprecision){
+                      *f_vert<<Form("%.3f",val);
+                  }
+                  else{
+                      *f_vert<<Form("%.17e",val);
+                  }
                     
                 }
                 *f_vert << std::endl;
@@ -2025,7 +2045,7 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
         unsigned int nunis = v->GetNHists();
         
         for (unsigned int i = 0; i< nunis; i++){
-            *f_lat << GetName() << Form(" %s_%d,",name->c_str(),i); // << std::endl;
+            *f_lat << Form("%s_%d,",name->c_str(),i); // << std::endl;
             TH2* h = v->GetHist(i);
             for (int x=1;x <=h->GetXaxis()->GetNbins();x++){
                 for (int y = 1; y <= h->GetYaxis()->GetNbins(); y++)
@@ -2034,16 +2054,23 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
                         *f_lat << ",";
                     }
                     
-                    double bincor = 1.0;
-                    if(binwidth) bincor = h->GetXaxis()->GetBinWidth(x)*h->GetYaxis()->GetBinWidth(y);
-                    if(percentage) bincor = total.GetBinContent(x,y);
-                    double frac = (h->GetBinContent(x,y)/bincor);
-                    if (!fullprecision){
-                        *f_lat<<Form("%.2f",frac);
-                    }
-                    else{
-                        *f_lat<<Form("%.17e",frac);
-                    }
+                  double val = h->GetBinContent(x,y) ;
+                  
+                if (percentage){
+                  val /= total.GetBinContent(x,y);
+                }
+                else{
+                  if(binwidth) {double bincor = h->GetXaxis()->GetBinWidth(x)*h->GetYaxis()->GetBinWidth(y);
+                    val /= bincor;
+                  }
+                  val *= scale;
+                }
+                  if (!fullprecision){
+                      *f_lat<<Form("%.3f",val);
+                  }
+                  else{
+                      *f_lat<<Form("%.17e",val);
+                  }
                     
                 }
                 *f_lat << std::endl;
@@ -2057,7 +2084,7 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
     *f_cov << " covariance " << cov_errNames.size() <<  std::endl;
     for( std::vector<std::string>::iterator name=cov_errNames.begin(); name!=cov_errNames.end(); ++name ){
         TMatrixD  v = GetSysErrorMatrix(*name);
-        *f_cov  << GetName() << Form("%s",name->c_str()) << std::endl;
+        *f_cov  << Form("%s, ",name->c_str()) << std::endl;
         //std::cout << "Try a matrix" << v[100][100] << std::endl;
       //v.Print();
         int nbins_x=GetNbinsX();
