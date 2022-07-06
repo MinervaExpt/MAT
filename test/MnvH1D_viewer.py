@@ -8,7 +8,8 @@ from ROOT import *
 from PlotUtils import *
 
 from array import array
-
+full = False
+binwidth = True
 norm = True
 if len(sys.argv)< 3:
   print ("viewer args are filename histname")
@@ -16,18 +17,20 @@ if len(sys.argv)< 3:
 file = sys.argv[1]
 hist = sys.argv[2]
 localdir = os.path.dirname(file)
-dir= os.path.join(localdir,os.path.basename(file)+"_csv")
+dir= os.path.join(localdir,os.path.basename(file).replace(".root","_csvdump"))
 if not os.path.exists(dir):
   os.makedirs(dir)
-# = os.path.dirname(file)
+
 
 f = TFile.Open(file,"READONLY")
-f.ls()
+#f.ls()
 
 h = MnvH1D()
 h = f.Get(hist)
-#h.Scale(1.E41)
-
+# hack to fix escape characters
+h.GetXaxis().SetTitle(h.GetXaxis().GetTitle().replace("\nu","\\nu"))
+h.GetYaxis().SetTitle(h.GetXaxis().GetTitle().replace("\nu","\\nu"))
+h.SetTitle(h.GetTitle().replace("\nu","\\nu"))
 
 fname = file[0:-5]
 o = TFile.Open(fname+"_"+hist+"_cv_bands_TH.root","RECREATE")
@@ -35,24 +38,23 @@ o = TFile.Open(fname+"_"+hist+"_cv_bands_TH.root","RECREATE")
 o.cd()
 cv = h.GetCVHistoWithStatError()
 xtra = "_binwidth"
-binwidth = True
+
 if not binwidth:
  xtra = ""
-full = False
+
 if not full:
   xtra += "_short"
 
 h.MnvH1DToCSV(h.GetName()+xtra,dir,1.E39,full,True,False,binwidth)
 cv.Write()
 
-#o = TFile.Open(fname+"_"+hist+"_cv_bands_TH.root","RECREATE")
 
 n = h.GetNVertErrorBands()
 
 names = h.GetErrorBandNames()
 
 for name in names:
-  print ("error band:", name)
+  #print ("error band:", name)
   band = h.GetVertErrorBand(name)
   hists = band.GetHists()
   bcv = MnvH1D()

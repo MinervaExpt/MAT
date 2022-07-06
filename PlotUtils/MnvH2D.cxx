@@ -1821,7 +1821,7 @@ void MnvH2D::SilentSumw2()
     Sumw2();
 }
 
-void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, bool fullprecision, bool syserrors, bool percentage,bool binwidth){
+void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, bool fullprecision, bool syserrors, bool fractional,bool binwidth){
     //std::cout << "entering H2DToCsV" << name << " " << (directory+name+".csv").c_str() << std::endl;
     std::ofstream *f_values =new std::ofstream();
     std::ofstream *f_err =new std::ofstream();
@@ -1838,18 +1838,18 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
     f_staterr->open((directory+"/"+name+"_staterrors_2d.csv").c_str());
     f_syserr->open((directory+"/"+name+"_syserrors_2d.csv").c_str());
     f_bins->open((directory+"/"+name+"_bins_2d.csv").c_str());
-    f_corr->open((directory+"/"+name+"_correlation.csv").c_str());
-    f_cov->open((directory+"/"+name+"_covariance.csv").c_str());
+    f_corr->open((directory+"/"+name+"_correlation_2d.csv").c_str());
+    f_cov->open((directory+"/"+name+"_covariance_2d.csv").c_str());
   
   std::ofstream *f_meta = new std::ofstream();
   f_meta->open((directory+"/"+name+"_meta.txt").c_str());
   *f_meta << "Name: " <<  name << std::endl;
   *f_meta << Form("GetName: \"%s\"",GetName())<< std::endl;
   *f_meta << Form("GetTitle: \"%s\"",GetTitle()) << std::endl;
-  *f_meta << Form("Fractional Errors: \"%d\"",percentage) << std::endl;
+  *f_meta << Form("Fractional Errors: \"%d\"",fractional) << std::endl;
   *f_meta << Form("Binwidth: \"%d\"",binwidth) << std::endl;
   *f_meta << Form("SysErrors: \"%d\"",syserrors) << std::endl;
-  *f_meta << Form("Scale: \"%.17e\"",scale) << std::endl;
+  *f_meta << Form("Scale: \"%.4e\"",scale) << std::endl;
   *f_meta << Form("Precision: \"%d\"",fullprecision) << std::endl;
   *f_meta << Form("xAxis: \"%s\"",GetXaxis()->GetTitle()) << std::endl;
   *f_meta << Form("yAxis: \"%s\"",GetYaxis()->GetTitle()) << std::endl;
@@ -1991,9 +1991,9 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
     std::ofstream * f_vert = new std::ofstream();
     std::ofstream * f_lat = new std::ofstream();
     f_cov = new std::ofstream();
-    f_lat->open((directory+"/"+name+"_latdump.csv").c_str());
-    f_vert->open((directory+"/"+name+"_vertdump.csv").c_str());
-    f_cov->open((directory+"/"+name+"_covdump.csv").c_str());
+    f_lat->open((directory+"/"+name+"_latdump_2d.csv").c_str());
+    f_vert->open((directory+"/"+name+"_vertdump_2d.csv").c_str());
+    f_cov->open((directory+"/"+name+"_covdump_2d.csv").c_str());
     
     std::vector<std::string> vert_errBandNames = GetVertErrorBandNames();
     std::vector<std::string> lat_errBandNames  = GetLatErrorBandNames();
@@ -2005,9 +2005,10 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
         unsigned int nunis = v->GetNHists();
         
         for (unsigned int i = 0; i< nunis; i++){
-            *f_vert  << Form("%s_%d,",name->c_str(),i);// << std::endl;
+            
             TH2* h = v->GetHist(i);
             for (int x=1;x <=h->GetXaxis()->GetNbins();x++){
+                *f_vert  << Form("%s_%d, ",name->c_str(),i);// << std::endl;
                 for (int y = 1; y <= h->GetYaxis()->GetNbins(); y++)
                 {
                     if (y>1) {
@@ -2015,8 +2016,9 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
                     }
                     double val = h->GetBinContent(x,y) ;
                     
-                  if (percentage){
-                    val /= total.GetBinContent(x,y);
+                  if (fractional){
+                
+                    if (total.GetBinContent(x,y) != 0) val /= total.GetBinContent(x,y);
                   }
                   else{
                     if(binwidth) {double bincor = h->GetXaxis()->GetBinWidth(x)*h->GetYaxis()->GetBinWidth(y);
@@ -2024,7 +2026,7 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
                     }
                     val *= scale;
                   }
-                  //std::cout << "check " << percentage << " " << binwidth << " " << h->GetBinContent(x,y)<< " " << val << std::endl;
+                  //std::cout << "check " << fractional << " " << binwidth << " " << h->GetBinContent(x,y)<< " " << val << std::endl;
                   if (!fullprecision){
                       *f_vert<<Form("%.3f",val);
                   }
@@ -2045,9 +2047,10 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
         unsigned int nunis = v->GetNHists();
         
         for (unsigned int i = 0; i< nunis; i++){
-            *f_lat << Form("%s_%d,",name->c_str(),i); // << std::endl;
+            
             TH2* h = v->GetHist(i);
             for (int x=1;x <=h->GetXaxis()->GetNbins();x++){
+                *f_lat << Form("%s_%d,",name->c_str(),i); // << std::endl;
                 for (int y = 1; y <= h->GetYaxis()->GetNbins(); y++)
                 {
                     if (y>1) {
@@ -2056,8 +2059,9 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
                     
                   double val = h->GetBinContent(x,y) ;
                   
-                if (percentage){
-                  val /= total.GetBinContent(x,y);
+                if (fractional){
+          
+                  if (total.GetBinContent(x,y) != 0) val /= total.GetBinContent(x,y);
                 }
                 else{
                   if(binwidth) {double bincor = h->GetXaxis()->GetBinWidth(x)*h->GetYaxis()->GetBinWidth(y);
@@ -2098,7 +2102,7 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
             double binwidcorri;
             binwidcorri = 1.0;
             if(binwidth) binwidcorri = GetXaxis()->GetBinWidth(x)*GetYaxis()->GetBinWidth(y);
-            //if(percentage) binwidcorri = total.GetBinContent(x,y);
+            //if(fractional) binwidcorri = total.GetBinContent(x,y);
             
             
             
@@ -2120,7 +2124,7 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
                 first ++;
                 binwidcorrj = 1.0;
                 if(binwidth) binwidcorrj = GetXaxis()->GetBinWidth(this_x)*GetYaxis()->GetBinWidth(this_y);
-                //if(percentage) binwidcorrj = total.GetBinContent(this_x,this_y);
+                //if(fractional) binwidcorrj = total.GetBinContent(this_x,this_y);
             
                 if(!fullprecision){
                   if (binwidcorri*binwidcorrj != 0.0){
