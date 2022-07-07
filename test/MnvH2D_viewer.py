@@ -94,7 +94,7 @@ if h == None:
 
 # hack to fix escape characters
 h.GetXaxis().SetTitle(h.GetXaxis().GetTitle().replace("\nu","\\nu"))
-h.GetYaxis().SetTitle(h.GetXaxis().GetTitle().replace("\nu","\\nu"))
+h.GetYaxis().SetTitle(h.GetYaxis().GetTitle().replace("\nu","\\nu"))
 h.SetTitle(h.GetTitle().replace("\nu","\\nu"))
 print ("name is ",h.GetName(),h.GetTitle())
 
