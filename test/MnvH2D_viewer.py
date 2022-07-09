@@ -104,7 +104,7 @@ central.SetDirectory(0)
 cx = central.ProjectionX()
 cy = central.ProjectionY()
 
-h.MnvH2DToCSV(h.GetName()+xtra,dir,1.E39,full,True,Fractional,binwidth)
+h.MnvH2DToCSV(h.GetName()+xtra,dir,1.E44,full,True,Fractional,binwidth)
 
 b0 = h.Clone()
 b0.SetDirectory(0)
@@ -114,8 +114,8 @@ bx = b0.ProjectionX()
 bx.GetXaxis().SetTitle(h.GetXaxis().GetTitle())
 by = b0.ProjectionY()
 by.GetXaxis().SetTitle(h.GetYaxis().GetTitle())
-bx.MnvH1DToCSV(bx.GetName()+xtra,dir,1.e39,full,True,Fractional,binwidth)
-by.MnvH1DToCSV(by.GetName()+xtra,dir,1.e39,full,True,Fractional,binwidth)
+bx.MnvH1DToCSV(bx.GetName()+xtra,dir,1.e44,full,True,Fractional,binwidth)
+by.MnvH1DToCSV(by.GetName()+xtra,dir,1.e44,full,True,Fractional,binwidth)
 fname = file[0:-5]
 
 if not binwidth:
