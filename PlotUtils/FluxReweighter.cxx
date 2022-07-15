@@ -1212,6 +1212,26 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
     delete tmp_flux_cv;
     delete tmp_template_cv;
 
+    //Now Flux Universes // DON'T Assume Flux is the only error
+    std::vector<std::string> vertNames = h_flux->GetVertErrorBandNames();
+    for(unsigned int k=0; k<vertNames.size(); ++k ) {
+      MnvVertErrorBand *errBand = h_flux->GetVertErrorBand( vertNames[k] );
+      const int universes = errBand->GetNHists();
+      std::vector<TH1D*> vert_hists;
+      for(int u=0;u<universes;++u) {
+        TH1D* tmp_flux = new TH1D(*errBand->GetHist( u ));
+        TH1D* tmp_template = new TH1D(h_flux_rebinned->GetCVHistoWithStatError());
+        tmp_template->SetName(Form("Flux_rebinned_universe_%d",u));
+        RebinFluxHist(tmp_flux,tmp_template);
+        vert_hists.push_back(tmp_template);
+      }
+      h_flux_rebinned->AddVertErrorBand( vertNames[k],vert_hists);
+      //clean my mess
+      for(std::vector<TH1D*>::iterator itHist = vert_hists.begin();
+          itHist != vert_hists.end(); ++itHist)
+        delete *itHist;
+    }
+
     h_flux_rebinned->AddMissingErrorBandsAndFillWithCV(*template_hist);
 
     //if (m_applyNuEConstraint) {
