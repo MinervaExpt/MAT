@@ -3285,10 +3285,12 @@ void MnvH1D::MnvH1DToCSV(std::string name, std::string directory, double scale, 
       }
       double bincor = 1.0;
       if (binwidth) bincor = (GetXaxis()->GetBinWidth(i));
+      
          
       // Bin width normalize if not enu when we want a total x sec
       *f_bins<<GetXaxis()->GetBinUpEdge(i);//<<std::endl;
       *f_values<<Form("%.17e",total.GetBinContent(i)/bincor*scale);
+      if (fractional) bincor = total.GetBinContent(i)*scale;
       *f_err<<Form("%.17e",total.GetBinError(i)/bincor*scale);
       *f_staterr<<Form("%.17e",stat.GetBinContent(i)/bincor*scale);
       *f_syserr<<Form("%.17e",sys.GetBinContent(i)/bincor*scale);
@@ -3310,7 +3312,9 @@ void MnvH1D::MnvH1DToCSV(std::string name, std::string directory, double scale, 
       if (binwidth) bincor = (GetXaxis()->GetBinWidth(i));
       *f_bins<<GetXaxis()->GetBinUpEdge(i);//<<std::endl;
       // Bin width normalize if not enu when we want a total x sec
+      
       *f_values<<Form("%.2f",total.GetBinContent(i)/bincor*scale);
+      if (fractional) bincor = total.GetBinContent(i)*scale;
       *f_err<<Form("%.2f",total.GetBinError(i)/bincor*scale);
       *f_staterr<<Form("%.2f",stat.GetBinContent(i)/bincor*scale);
       *f_syserr<<Form("%.2f",sys.GetBinContent(i)/bincor*scale);

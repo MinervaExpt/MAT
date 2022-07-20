@@ -1888,11 +1888,13 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
             }
             double widcor = 1;
             if (binwidth) widcor=GetXaxis()->GetBinWidth(x)*GetYaxis()->GetBinWidth(y);
+            
             if (!fullprecision){
                 
                 
                 
                 *f_values<<Form("%.2f",total.GetBinContent(x,y)/widcor*scale);
+                if (fractional) widcor = total.GetBinContent(x,y)*scale; // just divide by the total
                 *f_err<<Form("%.2f",err.GetBinContent(x,y)/widcor*scale);
                 *f_staterr<<Form("%.2f",stat.GetBinContent(x,y)/widcor*scale);
                 *f_syserr<<Form("%.2f",sys.GetBinContent(x,y)/widcor*scale);
@@ -1901,6 +1903,7 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
             else{
                 
                 *f_values<<Form("%.17e",total.GetBinContent(x,y)/widcor*scale);
+                if (fractional) widcor = total.GetBinContent(x,y)*scale; // just divide by the total.
                 *f_err<<Form("%.17e",total.GetBinError(x,y)/widcor*scale);
                 *f_staterr<<Form("%.17e",stat.GetBinContent(x,y)/widcor*scale);
                 *f_syserr<<Form("%.17e",sys.GetBinContent(x,y)/widcor*scale);
@@ -1966,6 +1969,7 @@ void MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, 
             //cout << " i,j " << i << ", " << j << ", " << correlation_matrix[i][j] << ", " << binwidcorri << ", " <<  binwidcorrj << ", " << correlation_matrix[i][j]/binwidcorri/binwidcorrj << endl;
             }
             if (!binwidth) binwidcorrj = 1.0;
+            
             if (!fullprecision){
                 *f_cov<<Form("%.2f",covariance_matrix[i][j]/binwidcorri/binwidcorrj*scale*scale);   // need to include bin widths
                 *f_corr<<Form("%.4f",correlation_matrix[i][j]);   // do not include bin widths
