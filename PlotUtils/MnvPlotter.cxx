@@ -4453,11 +4453,11 @@ void MnvPlotter::DrawDataMCVariations(
             else
                 hst->SetMaximum( axis_maximum );
 
-            hst->Draw("C");
+            hst->Draw("HIST C");
         }
 
         else
-            hst->Draw("C SAME");
+            hst->Draw("HIST C SAME");
     }
 
     if ( dataAsPoints )
