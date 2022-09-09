@@ -65,7 +65,7 @@ class VariableBase {
   int GetNBins() const;
   int GetNRecoBins() const;
   bool HasRecoBinning (){ return m_has_reco_binning;} // flag to tell if you need to bother with reco bins
-  void SetRecoBinning (const bool has){m_has_reco_binning = has;}
+  void SetRecoBinning (const bool has){m_has_reco_binning = has;}
   std::vector<double> GetBinVec() const;
   std::vector<double> GetRecoBinVec() const;
   void PrintBinning() const;
