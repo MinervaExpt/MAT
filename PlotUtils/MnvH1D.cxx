@@ -3313,11 +3313,11 @@ void MnvH1D::MnvH1DToCSV(std::string name, std::string directory, double scale, 
       *f_bins<<GetXaxis()->GetBinUpEdge(i);//<<std::endl;
       // Bin width normalize if not enu when we want a total x sec
       
-      *f_values<<Form("%.2f",total.GetBinContent(i)/bincor*scale);
+      *f_values<<Form("%.4f",total.GetBinContent(i)/bincor*scale);
       if (fractional) bincor = total.GetBinContent(i)*scale;
-      *f_err<<Form("%.2f",total.GetBinError(i)/bincor*scale);
-      *f_staterr<<Form("%.2f",stat.GetBinContent(i)/bincor*scale);
-      *f_syserr<<Form("%.2f",sys.GetBinContent(i)/bincor*scale);
+      *f_err<<Form("%.4f",total.GetBinError(i)/bincor*scale);
+      *f_staterr<<Form("%.4f",stat.GetBinContent(i)/bincor*scale);
+      *f_syserr<<Form("%.4f",sys.GetBinContent(i)/bincor*scale);
       
       }
   }
@@ -3368,7 +3368,7 @@ void MnvH1D::MnvH1DToCSV(std::string name, std::string directory, double scale, 
       if (this_x > 1) *f_corr << ",";
       if (this_x > 1) *f_cov << ",";
       if(!fullprecision){
-        *f_cov<<Form("%.2f",covariance_matrix[x][this_x]/binwidcorri/binwidcorrj*scale*scale);
+        *f_cov<<Form("%.4f",covariance_matrix[x][this_x]/binwidcorri/binwidcorrj*scale*scale);
         *f_corr<<Form("%.4f",correlation_matrix[x][this_x]);
       }
       else{
@@ -3425,7 +3425,7 @@ void MnvH1D::MnvH1DToCSV(std::string name, std::string directory, double scale, 
         }
         double frac= (h->GetBinContent(j)/bincor);
         if (!fullprecision){
-        *f_vert<<Form("%.2f",frac);
+        *f_vert<<Form("%.4f",frac);
         }
         else{
           *f_vert<<Form("%.17e",frac);
@@ -3461,7 +3461,7 @@ void MnvH1D::MnvH1DToCSV(std::string name, std::string directory, double scale, 
           }
         double frac = (h->GetBinContent(j)/bincor);
         if (!fullprecision){
-          *f_lat<<Form("%.2f",frac);
+          *f_lat<<Form("%.4f",frac);
         }
         else{
           *f_lat<<Form("%.17e",frac);
