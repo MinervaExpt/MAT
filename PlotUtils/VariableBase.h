@@ -26,6 +26,7 @@ class VariableBase {
   // * returns a double,
   // * is a member of UNIVERSE, and
   // * acts on a `this` which is a const reference to a UNIVERSE.
+  // HMS 8-10-2022 add support for different true and reco binning
   typedef std::function<double(const UNIVERSE&)> PointerToCVUniverseFunction;
 
  public:
@@ -37,10 +38,22 @@ class VariableBase {
                const std::vector<double> binning,
                PointerToCVUniverseFunction reco_func = &UNIVERSE::GetDummyVar,
                PointerToCVUniverseFunction true_func = &UNIVERSE::GetDummyVar);
+  
+  VariableBase(const std::string name, const std::string xaxis_label,
+               const std::vector<double> binning,
+               const std::vector<double> reco_binning,
+               PointerToCVUniverseFunction reco_func = &UNIVERSE::GetDummyVar,
+               PointerToCVUniverseFunction true_func = &UNIVERSE::GetDummyVar);
 
   // uniform binning
   VariableBase(const std::string name, const std::string xaxis_label,
                const int nbins, const double xmin, const double xmax,
+               PointerToCVUniverseFunction reco_func = &UNIVERSE::GetDummyVar,
+               PointerToCVUniverseFunction true_func = &UNIVERSE::GetDummyVar);
+  
+  VariableBase(const std::string name, const std::string xaxis_label,
+               const int nbins, const double xmin, const double xmax,
+               const int nrecobins, const double xminreco, const double xmaxreco,
                PointerToCVUniverseFunction reco_func = &UNIVERSE::GetDummyVar,
                PointerToCVUniverseFunction true_func = &UNIVERSE::GetDummyVar);
 
@@ -50,8 +63,13 @@ class VariableBase {
   std::string GetName() const;
   std::string GetAxisLabel() const;
   int GetNBins() const;
+  int GetNRecoBins() const;
+  bool HasRecoBinning (){ return m_has_reco_binning;} // flag to tell if you need to bother with reco bins
+  void SetRecoBinning (const bool has){m_has_reco_binning = has;}
   std::vector<double> GetBinVec() const;
+  std::vector<double> GetRecoBinVec() const;
   void PrintBinning() const;
+  void PrintRecoBinning() const;
 
   //============================================================================
   // GetValue
@@ -64,7 +82,9 @@ class VariableBase {
   // hms - make protected so can overload in derived classes without introducing dependencies
   std::string m_xaxis_label;
   std::string m_name;
+  bool m_has_reco_binning;
   std::vector<double> m_binning;
+  std::vector<double> m_reco_binning;
   PointerToCVUniverseFunction m_pointer_to_GetRecoValue;
   PointerToCVUniverseFunction m_pointer_to_GetTrueValue;
 
@@ -77,6 +97,9 @@ class VariableBase {
   // Helper functions
   std::vector<double> MakeUniformBinning(const int nbins, const double min,
                                          const double max);
+  
+  std::vector<double> SplitBinning(const std::vector<double> binning, const int split);
+  
   std::vector<double> GetSortedVector(const std::vector<double>& vin);
 };
 #endif  // __CINT__

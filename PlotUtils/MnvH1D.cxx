@@ -444,7 +444,7 @@ bool MnvH1D::AddVertErrorBand( const std::string& name, const std::vector<TH1D*>
 
   // Set the ErrorBand
   fVertErrorBandMap[name] = new MnvVertErrorBand( errName, (TH1D*)this, base );
-
+ 
   return true;
 }
 
