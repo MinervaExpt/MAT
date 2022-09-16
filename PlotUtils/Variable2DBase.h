@@ -33,8 +33,14 @@ class Variable2DBase {
   int GetNBinsY() const;
   std::vector<double> GetBinVecX() const;
   std::vector<double> GetBinVecY() const;
+  int GetNRecoBinsX() const;
+  int GetNRecoBinsY() const;
+  std::vector<double> GetRecoBinVecX() const;
+  std::vector<double> GetRecoBinVecY() const;
   void PrintBinningX() const;
   void PrintBinningY() const;
+  void PrintRecoBinningX() const;
+  void PrintRecoBinningY() const;
 
   //============================================================================
   // Get Value

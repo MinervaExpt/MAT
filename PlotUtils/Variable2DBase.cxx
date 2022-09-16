@@ -90,6 +90,36 @@ void Variable2DBase<UNIVERSE>::PrintBinningY() const {
   m_var_y->PrintBinning();
 }
 
+template <class UNIVERSE>
+int Variable2DBase<UNIVERSE>::GetNRecoBinsX() const {
+  return m_var_x->GetNRecoBins();
+}
+
+template <class UNIVERSE>
+int Variable2DBase<UNIVERSE>::GetNRecoBinsY() const {
+  return m_var_y->GetNRecoBins();
+}
+
+template <class UNIVERSE>
+std::vector<double> Variable2DBase<UNIVERSE>::GetRecoBinVecX() const {
+  return m_var_x->GetRecoBinVec();
+}
+
+template <class UNIVERSE>
+std::vector<double> Variable2DBase<UNIVERSE>::GetRecoBinVecY() const {
+  return m_var_y->GetRecoBinVec();
+}
+
+template <class UNIVERSE>
+void Variable2DBase<UNIVERSE>::PrintRecoBinningX() const {
+  m_var_x->PrintRecoBinning();
+}
+
+template <class UNIVERSE>
+void Variable2DBase<UNIVERSE>::PrintRecoBinningY() const {
+  m_var_y->PrintRecoBinning();
+}
+
 //==============================================================================
 // GetValues
 //==============================================================================
