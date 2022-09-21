@@ -4871,7 +4871,8 @@ bool MnvPlotter::DrawErrorSummary(
         const std::string& errorGroupName /* = "" */,
         const bool  asfrac  /* = false */,
         const std::string &Ytitle,
-        bool ignoreUngrouped
+        bool ignoreUngrouped,
+        const std::string& histDrawOption
         )
 {
     if ( ! h )
@@ -4919,7 +4920,7 @@ bool MnvPlotter::DrawErrorSummary(
     if (!asfrac )hTotalErr->GetYaxis()->SetTitle( Ytitle.c_str() );
     if (errorGroupName == "") {
         if (!asfrac) hTotalErr->Scale( hTotalErr->GetBinWidth(1), "width" );
-        hTotalErr->Draw( "HIST" );
+        hTotalErr->Draw( histDrawOption.c_str() );
         const string totalName = ( includeStat ? "Total Uncertainty" : "Total Sys. Uncertainty" );
         hists.push_back( hTotalErr );
         names.push_back( totalName );
@@ -4934,7 +4935,7 @@ bool MnvPlotter::DrawErrorSummary(
         statErr->SetLineColor( 12 );//dark gray
         statErr->SetLineStyle( 2 ); //dashed
         statErr->SetLineWidth( 3 );
-        statErr->Draw("HIST SAME");
+        statErr->Draw((histDrawOption + " SAME").c_str());
         hists.push_back( statErr );
         names.push_back( stat_error_name );
         opts.push_back( "l" );
@@ -5043,14 +5044,14 @@ bool MnvPlotter::DrawErrorSummary(
 
       hErr->SetLineWidth( mc_line_width );
       if (drawn_already) {
-        hErr->Draw( "HIST SAME" );
+        hErr->Draw( (histDrawOption + " SAME").c_str() );
       }
       else {
         drawn_already = true;
         hTmpErr->GetYaxis()->SetTitle( "Fractional Uncertainty" );
         if (!asfrac) hTmpErr->GetYaxis()->SetTitle( Ytitle.c_str() );
         if (!asfrac) hTmpErr->Scale(hTmpErr->GetBinWidth(1),"width");
-        hTmpErr->Draw("HIST");
+        hTmpErr->Draw(histDrawOption.c_str());
 	
         ApplyAxisStyle(hErr);
         ////respect max/min setting the user may have used
@@ -5070,7 +5071,7 @@ bool MnvPlotter::DrawErrorSummary(
         hErr->GetYaxis()->SetTitle( "Fractional Uncertainty" );
         if (!asfrac) hErr->GetYaxis()->SetTitle( Ytitle.c_str() );
         //if (!asfrac) hErr->Scale(hErr->GetBinWidth(1),"width");
-        hErr->Draw("HIST SAME");
+        hErr->Draw((histDrawOption + " SAME").c_str());
       }
       hists.push_back( hErr );
       names.push_back( *it_name );
@@ -5098,7 +5099,7 @@ bool MnvPlotter::DrawErrorSummary(
 
         hist->SetLineWidth( mc_line_width );
         if (!asfrac)hist->Scale(hist->GetBinWidth(1),"width");
-        hist->Draw( "HIST SAME" );
+        hist->Draw( (histDrawOption + " SAME").c_str() );
         hists.push_back( hist );
         names.push_back( name );
         opts.push_back( "l" );
