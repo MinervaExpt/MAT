@@ -137,7 +137,7 @@ void MnvPlotter::SetRootEnv()
     gStyle->SetPadTopMargin(0.09);
     gStyle->SetPadBottomMargin(0.15);
     gStyle->SetPadLeftMargin(0.15);
-    gStyle->SetPadRightMargin(0.15);
+    gStyle->SetPadRightMargin(0.05);
     gStyle->SetFrameLineWidth(2);
     gStyle->SetHistLineWidth(2);
 
@@ -163,7 +163,7 @@ void MnvPlotter::SetRootEnv()
     gStyle->SetMarkerSize(data_marker_size);
     gStyle->SetMarkerColor(data_color);
 
-    gStyle->SetEndErrorSize(2);
+    //gStyle->SetEndErrorSize(2);
     gStyle->SetErrorX(0.5);
 }
 
@@ -277,6 +277,10 @@ void MnvPlotter::ApplyStyle( PlotUtils::t_PlotStyle style /* = kDefaultStyle */ 
     good_colors = MnvColors::GetColors(MnvColors::kOkabeItoPalette);
     good_colors.insert(good_colors.begin(), kBlack);
 
+    p36_colors.clear();
+    p36_colors= MnvColors::GetColors(MnvColors::k36Palette);
+    //p36_colors.insert(p36_colors.begin(), kBlack);
+    //p36_colors[0]= kBlack;
     //-- define colors of the standard errors
     error_color_map.clear();
     error_color_map["Flux_Tertiary"]  = kYellow-3;
@@ -435,12 +439,14 @@ void MnvPlotter::ApplyStyle( PlotUtils::t_PlotStyle style /* = kDefaultStyle */ 
     mc_line_width = 5; //make these thicker now that everyone has 4k UHD monitors...
     mc_bkgd_style = 3002; //change the hatched histogram
     data_bkgd_style = 22;//triangle
-    gStyle->SetEndErrorSize(0.0); //DO NOT WANT
+    //gStyle->SetEndErrorSize(0.0); //DO NOT WANT
+    gStyle->SetEndErrorSize(5);
     legend_text_size = .04;
 
-    axis_draw_grid_x = true;
-    axis_draw_grid_y = true;
-    legend_border_size      = 1;
+    axis_title_offset_y = 1.;// less white space
+    axis_draw_grid_x = false;//true;
+    axis_draw_grid_y = false;//true;
+    legend_border_size      = 0;//1;
     legend_fill_color       = 10;
 
     //change the BG color scheme
@@ -2667,7 +2673,20 @@ void MnvPlotter::AddChi2Label(
         const bool useOnlyShapeErrors
         )
 {
-    AddChi2Label( dataHist, mcHist, 1.0, opts, 0.04, 0.0, useDataErrorMatrix, useOnlyShapeErrors );
+  AddChi2Label( dataHist, mcHist, 1.0, opts, 0.04, 0.0, useDataErrorMatrix, useOnlyShapeErrors, /*useModelStat*/ true );
+}
+
+void MnvPlotter::AddChi2Label(
+        const MnvH1D* dataHist,
+        const MnvH1D* mcHist,
+        const std::string& opts,
+        const bool useDataErrorMatrix,
+        const bool useOnlyShapeErrors,
+	const bool useModelStat
+        )
+{
+  std::cout<<"useModelStat set as "<<useModelStat<<std::endl;
+  AddChi2Label( dataHist, mcHist, 1.0, opts, 0.04, 0.0, useDataErrorMatrix, useOnlyShapeErrors, useModelStat );
 }
 
 void MnvPlotter::AddChi2Label(
@@ -2701,6 +2720,7 @@ void MnvPlotter::AddChi2Label(
         double yOffset,
         const bool useDataErrorMatrix,
         const bool useOnlyShapeErrors,
+	const bool useModelStat, /*=true*/
         const std::string& pre_tag /*=""*/
         )
 {
@@ -2710,7 +2730,7 @@ void MnvPlotter::AddChi2Label(
     yLabel += yOffset;
 
     Int_t ndf;
-    Double_t chi2 = Chi2DataMC( dataHist, mcHist, ndf, mcScale, useDataErrorMatrix, useOnlyShapeErrors );
+    Double_t chi2 = Chi2DataMC( dataHist, mcHist, ndf, mcScale, useDataErrorMatrix, useOnlyShapeErrors, useModelStat );
 
     char *words = Form("%s #chi^{2}/ndf = %3.2f/%d = %3.2f", pre_tag.c_str(), chi2, ndf, chi2/(Double_t)ndf);
     AddPlotLabel( words, xLabel, yLabel, size, 1, 62, align );
@@ -2752,7 +2772,8 @@ void MnvPlotter::AddCutArrow(
 void MnvPlotter::ApplyNextLineStyle(
         TH1* h,
         bool startOver /* = false */,
-        bool changeStyle /* = true */
+        bool changeStyle /* = true */,
+	bool usePalette36Colors /* = false */
         )const
 {
     static unsigned int nseen = 0;
@@ -2764,7 +2785,7 @@ void MnvPlotter::ApplyNextLineStyle(
 
     //! Pick the next good color and apply it to the line
     h->SetLineColor( good_colors[ nseen % good_colors.size() ] );
-
+    if(usePalette36Colors)     h->SetLineColor( p36_colors[ nseen % p36_colors.size() ] );
     //! If changing the line style, apply a new style
     if ( changeStyle )
         h->SetLineStyle( nseen % 10 + 1 );
@@ -2852,6 +2873,7 @@ void MnvPlotter::DrawDataMC(
         AddToTmp( leg );
 
         leg->SetBorderSize( legend_border_size );
+        leg->SetLineWidth( legend_border_size );//I think this is actually what "SetBorderSize" is trying to do.
         leg->SetFillColor( legend_fill_color );
         if ( legend_fill_color < 0 )
             leg->SetFillStyle(0);
@@ -2873,18 +2895,18 @@ void MnvPlotter::DrawDataMC(
 // draw MC with error band + data points on current Pad - MnvH1D overload.
 //==========================================================
 
-void MnvPlotter::DrawDataMCWithErrorBand(
-        const MnvH1D* dataHist,
-        const MnvH1D* mcHist,
-        const Double_t mcScale /*= 1.0*/,
-        const std::string& legPos /*= "L"*/,
-        const bool useHistTitles /*=false*/,
-        const MnvH1D* bkgdHist /*= NULL*/,
-        const MnvH1D* dataBkgdHist /*= NULL*/,
-        const bool covAreaNormalize/*= false, Area Normalize considerations for covariance matrix*/,
-        const bool statPlusSys /* = false */,
-        const bool isSmooth /* = false */)
-{
+//void MnvPlotter::DrawDataMCWithErrorBand(
+//        const MnvH1D* dataHist,
+//        const MnvH1D* mcHist,
+//        const Double_t mcScale /*= 1.0*/,
+//        const std::string& legPos /*= "L"*/,
+//        const bool useHistTitles /*=false*/,
+//        const MnvH1D* bkgdHist /*= NULL*/,
+//        const MnvH1D* dataBkgdHist /*= NULL*/,
+//        const bool covAreaNormalize/*= false, Area Normalize considerations for covariance matrix*/,
+//        const bool statPlusSys /* = false */,
+//        const bool isSmooth /* = false */)
+/*{
 
     TH1Ptr tmpData;
     TH1Ptr tmpDataStat;
@@ -2944,6 +2966,88 @@ void MnvPlotter::DrawDataMCWithErrorBand(
         tmpDataStat->DrawCopy("SAME E1 X0");
     }
 
+}
+*/
+//==========================================================
+// draw MC with error band + data points on current Pad - MnvH1D overload.
+//==========================================================
+//My version
+void MnvPlotter::DrawDataMCWithErrorBand(
+        const MnvH1D* dataHist,
+        const MnvH1D* mcHist,
+        const Double_t mcScale /*= 1.0*/,
+        const std::string& legPos /*= "L"*/,
+        const bool useHistTitles /*=false*/,
+        const MnvH1D* bkgdHist /*= NULL*/,
+        const MnvH1D* dataBkgdHist /*= NULL*/,
+        const bool covAreaNormalize/*= false, Area Normalize considerations for covariance matrix*/,
+        const bool statPlusSys /* = false */,
+        const bool isSmooth /* = false */,
+	const int mcStatOnlyInt /* = -1 */
+					 )
+{
+
+    TH1Ptr tmpData;
+    TH1Ptr tmpDataStat;
+    bool mcStatOnly;
+    if(mcStatOnlyInt!=-1) mcStatOnly=mcStatOnlyInt; //if explicitly set, use setting
+    else if(bkgdHist==NULL && dataBkgdHist==NULL) mcStatOnly=true; //if you have background still you want the systematics on the MC
+    else mcStatOnly=false;
+
+    if (statPlusSys)
+    {
+        tmpData = TH1Ptr( (TH1*)dataHist->GetCVHistoWithError(true, covAreaNormalize).Clone( "mnv_tmp_data_statplussys" ) );
+        tmpDataStat = TH1Ptr( (TH1*)dataHist->GetCVHistoWithStatError().Clone( "mnv_tmp_data_statonly" ) );
+	//gStyle->SetEndErrorSize(4); //for some reason these weren't showing up
+    }
+    else
+        tmpData = TH1Ptr( (TH1*)dataHist->GetCVHistoWithError(true, covAreaNormalize).Clone( "mnv_tmp_data" ) );
+    TH1Ptr tmpMC;
+    if(mcStatOnly) tmpMC= TH1Ptr( (TH1*)mcHist->GetCVHistoWithStatError().Clone( "mnv_tmp_mc_statonly"   ) );
+    else tmpMC= TH1Ptr( (TH1*)mcHist->GetCVHistoWithError(true, covAreaNormalize).Clone( "mnv_tmp_mc"   ) );
+    if (covAreaNormalize && tmpData->Integral() > 0)
+        tmpMC->Scale(tmpData->Integral() / tmpMC->Integral());
+    if ( draw_normalized_to_bin_width )
+    {
+      if ( dataHist->GetNormBinWidth() > 0 )
+        {
+	  cout<<"Scaling bin with per "<<dataHist->GetNormBinWidth()<<" units"<<endl;
+            tmpData->Scale( dataHist->GetNormBinWidth(), "width" );
+            if ((tmpDataStat != NULL) && statPlusSys){
+	      tmpDataStat->Scale( dataHist->GetNormBinWidth(), "width" );
+	    }
+        }
+        if ( mcHist->GetNormBinWidth() > 0 )
+            tmpMC->Scale( mcHist  ->GetNormBinWidth(), "width" );
+    }
+    if ( bkgdHist != NULL )
+    {
+        TH1Ptr tmpBK = TH1Ptr( (TH1*)bkgdHist->GetCVHistoWithError(true, covAreaNormalize).Clone( Form("mnv_tmp_bkgd_%d", __LINE__ ) ) );
+        if ( draw_normalized_to_bin_width && bkgdHist->GetNormBinWidth() > 0  )
+            tmpBK->Scale( bkgdHist->GetNormBinWidth(), "width" );
+        if ( dataBkgdHist != NULL )
+        {
+            TH1Ptr tmpDataBK = TH1Ptr( (TH1*)dataBkgdHist->GetCVHistoWithError(true, covAreaNormalize).Clone( "mnv_tmp_data_bkgd" ) );
+            if ( draw_normalized_to_bin_width  && dataBkgdHist->GetNormBinWidth() > 0 )
+                tmpDataBK->Scale( dataBkgdHist->GetNormBinWidth(), "width" );
+
+            DrawDataMCWithErrorBand( tmpData, tmpMC, mcScale, legPos, useHistTitles, tmpBK, tmpDataBK );
+        } // if (dataBkgdHist != NULL)
+        else
+            DrawDataMCWithErrorBand( tmpData, tmpMC, mcScale, legPos, useHistTitles, tmpBK );
+    } // if ( bkgdHist != NULL )
+    else
+        DrawDataMCWithErrorBand( tmpData, tmpMC, mcScale, legPos, useHistTitles, NULL, NULL, isSmooth);
+    if (statPlusSys)
+      {
+        tmpDataStat->SetMarkerStyle(data_marker);
+        tmpDataStat->SetMarkerSize(data_marker_size);
+        tmpDataStat->SetMarkerColor(data_color);
+        tmpDataStat->SetLineWidth(data_line_width);
+        tmpDataStat->SetLineStyle(data_line_style);
+        tmpDataStat->SetLineColor(data_color);
+        tmpDataStat->DrawCopy("SAME E1 X0"); 
+    }
 }
 
 //==========================================================
@@ -3014,7 +3118,6 @@ void MnvPlotter::DrawDataMCWithErrorBand(
         const double oldMax = axis_maximum;
         axis_minimum = tmpMC->GetMinimum();
         axis_maximum = tmpMC->GetMaximum();
-
         if (bkgdHist)
             DrawMCWithErrorBand( tmpMC, mcScale, tmpBkgd, isSmooth );
         else
@@ -3039,8 +3142,10 @@ void MnvPlotter::DrawDataMCWithErrorBand(
     {
         const string data_name    = (useHistTitles ? tmpData->GetTitle() : "Data" );
         const string mc_name      = (useHistTitles ? tmpMC->GetTitle()     : "Simulation" );
-        const string data_bg_name = (bkgdHist && useHistTitles ? tmpDataBkgd->GetTitle() : "Data Background" );
-        const string bg_name      = (bkgdHist     && useHistTitles ? tmpBkgd->GetTitle()     : "Sim. Background" );
+        //const string data_bg_name = (bkgdHist && useHistTitles ? tmpDataBkgd->GetTitle() : "Data Background" );
+	const string data_bg_name = (bkgdHist && useHistTitles ? tmpDataBkgd->GetTitle() : "Tuned Background" );
+        //const string bg_name      = (bkgdHist     && useHistTitles ? tmpBkgd->GetTitle()     : "Sim. Background" );
+	const string bg_name      = (bkgdHist     && useHistTitles ? tmpBkgd->GetTitle()     : "Untuned Background" );
 
         //figure out where to put the legend
         double x1, y1, x2, y2;
@@ -3067,6 +3172,7 @@ void MnvPlotter::DrawDataMCWithErrorBand(
         AddToTmp( leg );
 
         leg->SetBorderSize( legend_border_size );
+	leg->SetLineWidth( legend_border_size );//I think this is actually what "SetBorderSize" is trying to do.
         leg->SetFillColor( legend_fill_color );
         if ( legend_fill_color < 0 )
             leg->SetFillStyle(0);
@@ -3149,6 +3255,7 @@ void MnvPlotter::DrawMCWithErrorBand(
     tmpMC->SetMarkerStyle(0);
     // No errors for smooth curve
     if (!isSmooth) {
+      //cout<<"Drawing E2: MCerr: "<<tmpMC->GetBinError(1)<<endl;
         tmpMC->DrawCopy("E2");
         tmpMC->Draw("SAME AXIS");
     }
@@ -3263,6 +3370,8 @@ void MnvPlotter::DrawDataMCRatio(
 
     tmpRatio->Divide(tmpData, tmpMC);
 
+    tmpRatio->GetXaxis()->SetTitle( mcHist->GetXaxis()->GetTitle() );
+    //Trying to make this label work
     tmpRatio->GetYaxis()->SetTitle( yaxisLabel );
     tmpRatio->GetXaxis()->SetTitleFont(axis_title_font_x);
     tmpRatio->GetYaxis()->SetTitleFont(axis_title_font_y);
@@ -3312,7 +3421,8 @@ void MnvPlotter::DrawDataMCRatio(
 // draw MC with error band + data points on current Pad with stat error
 // draw sys error band as an envelope around 1
 //=====================================================================
-void MnvPlotter::DrawDataMCRatio(
+
+void MnvPlotter::DrawDataMCRatio_orig(
         const MnvH1D* dataHist,
         const MnvH1D *mcHist,
         const Double_t mcScale,     /*= 1.0*/
@@ -3439,6 +3549,168 @@ void MnvPlotter::DrawDataMCRatio(
     gPad->Update();
 }
 
+//=====================================================================
+// draw MC with error band + data points on current Pad with stat error
+// draw sys error band as an envelope around 1
+//=====================================================================
+//my version
+void MnvPlotter::DrawDataMCRatio(
+        const MnvH1D* dataHist,
+        const MnvH1D *mcHist,
+        const Double_t mcScale,     /*= 1.0*/
+        const bool     drawSysLines, /*= true*/
+	const bool     dataStatPlusSys,  /*=false*/
+        const bool     drawOneLine,  /*= true*/
+        const double   plotMin,      /*=-1 (auto)*/
+        const double   plotMax,      /*=-1 (auto)*/
+        const char*    yaxisLabel,    /*="Data / MC"*/
+        const bool     covAreaNormalize /*= false*/
+        )
+{
+    if (!gPad)
+      throw std::runtime_error("MnvPlotter requires a TCanvas. Please make one first.");
+
+    //!make clones
+    TH1Ptr tmpData( (TH1*)dataHist->Clone("tmp_data") );
+    TH1Ptr tmpMC  ( (TH1*)mcHist  ->Clone("tmp_mc"  ) );
+  
+    MnvH1D* mcNoErrors=new MnvH1D( mcHist->GetCVHistoWithStatError() );
+    for ( int b = 1; b <= mcNoErrors->GetNbinsX(); ++b ) mcNoErrors->SetBinError(b, 0.);
+    mcNoErrors->AddMissingErrorBandsAndFillWithCV(*dataHist);
+    MnvH1D* mnvratio= dataHist->Clone();
+    mnvratio->Divide(dataHist,mcNoErrors, 1.0/mcScale);
+    //gStyle->SetEndErrorSize(4); 
+    
+    if ( draw_normalized_to_bin_width )
+    {
+        if ( dataHist->GetNormBinWidth() > 0 )
+            tmpData->Scale( dataHist->GetNormBinWidth(), "width" );
+
+        if ( mcHist->GetNormBinWidth() > 0 )
+            tmpMC  ->Scale( mcHist  ->GetNormBinWidth(), "width" );
+    }
+    
+    //scale MC to data
+    tmpMC->Scale(mcScale);
+
+    //get the ratio
+    TH1Ptr tmpRatio=TH1Ptr( (TH1*)mnvratio->GetCVHistoWithStatError().Clone("tmp_ratio_sys") ); //get the total systematic error as a fraction of the CV//( (TH1*)tmpMC->Clone("tmp_ratio") );
+    //tmpRatio->Divide(tmpData, tmpMC);
+    
+    TH1Ptr tmpRatioSys; 
+    if(dataStatPlusSys) tmpRatioSys=TH1Ptr( (TH1*)mnvratio->GetCVHistoWithError(true, covAreaNormalize).Clone("tmp_ratio_sys") ); //get the total systematic error as a fraction of the CV
+    TH1D sysErr;
+    //if (drawSysLines)sysErr= mcHist->GetTotalError(false, true, covAreaNormalize); //no stat error, get as fraction -- but like why?? Not sure why you would want sys and not stat systematics. Changing it.
+    if (drawSysLines)sysErr= mcHist->GetTotalError(true, true, covAreaNormalize); //yes stat error, get as fraction
+    else sysErr=mcHist->GetStatError(true); //Get as fraction. Theres now no way to turn off the error band around 1 though, so could potentially be an issue in other code. Options are either 1) stat+sys MC error band, or 2) just stat MC error band;
+
+    //!set the max bin based on the taller of the ratio or error
+    double setMax = headroom * max(
+            tmpRatio->GetBinContent( tmpRatio->GetMaximumBin() ),
+            1. + sysErr.GetBinContent( sysErr.GetMaximumBin() )
+            );
+
+    tmpRatio->SetMaximum( setMax );
+    if ( plotMin != -1 )
+        tmpRatio->SetMinimum( plotMin );
+    if ( plotMax != -1 )
+        tmpRatio->SetMaximum( plotMax );
+
+
+    //apply style
+    tmpRatio->GetYaxis()->SetTitle( yaxisLabel );
+    tmpRatio->GetXaxis()->SetTitleFont(axis_title_font_x);
+    tmpRatio->GetYaxis()->SetTitleFont(axis_title_font_y);
+    tmpRatio->GetXaxis()->SetTitleSize(axis_title_size_x);
+    tmpRatio->GetYaxis()->SetTitleSize(axis_title_size_y);
+    tmpRatio->GetXaxis()->SetLabelFont(axis_label_font);
+    tmpRatio->GetYaxis()->SetLabelFont(axis_label_font);
+    tmpRatio->GetXaxis()->SetLabelSize(axis_label_size);
+    tmpRatio->GetYaxis()->SetLabelSize(axis_label_size);
+    tmpRatio->GetXaxis()->CenterTitle(kTRUE);
+    tmpRatio->SetMarkerStyle(ratio_marker);
+    tmpRatio->SetMarkerSize(ratio_marker_size);
+    tmpRatio->SetLineWidth(ratio_line_width);
+    tmpRatio->SetLineColor(ratio_color);
+    tmpRatio->GetXaxis()->SetNdivisions(509);
+    tmpRatio->DrawCopy("X0");
+
+    if(dataStatPlusSys){
+      tmpRatioSys->SetMarkerStyle(ratio_marker);
+      tmpRatioSys->SetMarkerSize(ratio_marker_size);
+      tmpRatioSys->SetLineWidth(ratio_line_width);
+      tmpRatioSys->SetLineColor(ratio_color);
+    }
+
+    //add sys error lines if desired
+    //if ( drawSysLines )//not sure why you would wanna include mc sys but not stats? --- because the stats are already being counted in the data stats
+    //{
+        //get the total sys error.  then fill a histogram of total negative sys error for the lower lines
+        sysErr.SetMaximum( setMax );
+
+        //content of sys error histogram should be 1 (data=MC)
+        //error should be the error
+        int firstNonZeroBin = 0 ;
+        int lastNonZeroBin = 0 ;
+        for ( int ibin = 1; ibin <= sysErr.GetNbinsX(); ++ibin )
+        {
+            if ( firstNonZeroBin == 0 && sysErr.GetBinContent(ibin) > 0 )
+                firstNonZeroBin = ibin;
+            if ( sysErr.GetBinContent(ibin) > 0 )
+                lastNonZeroBin = ibin;
+
+            double err = sysErr.GetBinContent(ibin);
+            sysErr.SetBinContent( ibin, 1. );
+            sysErr.SetBinError( ibin, err );
+        }
+
+        if ( lastNonZeroBin < 0 ) //just in case
+            lastNonZeroBin = sysErr.GetNbinsX();
+
+        if ( firstNonZeroBin != lastNonZeroBin ) {
+
+            sysErr.GetXaxis()->SetRange( firstNonZeroBin, lastNonZeroBin );
+            sysErr.SetFillColor( mc_error_color );
+            sysErr.SetFillStyle( mc_error_style );
+            sysErr.SetLineColor( mc_error_color );
+            sysErr.SetLineWidth( mc_line_width );
+            sysErr.SetMarkerStyle( 0 );
+            sysErr.DrawCopy("E2 same ][");
+	    tmpRatio->DrawCopy("X0 same");
+	    if( dataStatPlusSys){
+	      tmpRatioSys->DrawCopy("SAME E1 X0");
+	    }
+            tmpRatio->DrawCopy("SAME AXIS");//get tickmarks back
+            tmpRatio->DrawCopy("SAME E1 X0"); //need to draw the ratio again
+        }
+	//}
+
+	//if( dataStatPlusSys){
+	//tmpRatioSys->SetMarkerStyle(ratio_marker);
+	//tmpRatioSys->SetMarkerSize(ratio_marker_size);
+	// tmpRatioSys->SetLineWidth(ratio_line_width);
+	// tmpRatioSys->SetLineColor(ratio_color);
+	//tmpRatioSys->DrawCopy("SAME X0");
+	//}
+
+    //draw line at 1. if desired
+    if ( drawOneLine )
+    {
+        const TAxis *axis = tmpRatio->GetXaxis();
+        double lowX  = axis->GetBinLowEdge( axis->GetFirst() );
+        double highX = axis->GetBinUpEdge(  axis->GetLast() );
+
+        TLine line;
+        line.SetLineStyle(2);
+        line.SetLineWidth(3);
+        line.SetLineColor(36);
+        line.DrawLine(lowX, 1., highX, 1.); //creates a new line which is owned by gPad
+    }
+
+    gPad->RedrawAxis();
+    gPad->Update();
+}
+
 //==============================================================
 // calculate the chi2 between two MnvH2Ds
 //==============================================================
@@ -3453,6 +3725,7 @@ Double_t MnvPlotter::Chi2DataMC(
 	TMatrixD *Chi2ByBin
         )
 {
+  cout<<"Chi2DataMC: dataerr? "<<useDataErrorMatrix<<"\t shapeonly? "<<useOnlyShapeErrors<<"\t useModelStat? "<<useModelStat<<endl;
     ndf=0; // This will be filled with the number of degrees of freedom
 
     //We get the number of bins and make sure it's the same in data and MC
@@ -4131,6 +4404,7 @@ void MnvPlotter::DrawDataMCVariations(
     AddToTmp( leg );
 
     leg->SetBorderSize( legend_border_size );
+    leg->SetLineWidth( legend_border_size );//I think this is actually what "SetBorderSize" is trying to do.
     leg->SetFillColor( legend_fill_color );
     if ( legend_fill_color < 0 )
         leg->SetFillStyle(0);
@@ -4317,6 +4591,7 @@ void MnvPlotter::AddPlotLegend(
     AddToTmp( leg );
 
     leg->SetBorderSize( legend_border_size );
+    leg->SetLineWidth( legend_border_size );//I think this is actually what "SetBorderSize" is trying to do.
     leg->SetFillColor( legend_fill_color );
     if ( legend_fill_color < 0 )
         leg->SetFillStyle(0);
@@ -4668,7 +4943,7 @@ std::vector<TH1*> MnvPlotter::GetSysErrorGroupHists(
         const MnvVertErrorBand *errBand = h->GetVertErrorBand(vertNames[i]);
         TH1D *hErr = (TH1D*)errBand->GetErrorBand( doFractional, covAreaNormalize ).Clone(Form("tmp_vert_error%d_%d", i, __LINE__) );
         hErr->SetTitle( vertNames[i].c_str() );
-
+        hErr->SetFillStyle(0);
         //is this histogram part of a group?
         bool inGroup = false;
         for (ErrorSummaryGroupMap::const_iterator itGroup = error_summary_group_map.begin(); itGroup != error_summary_group_map.end(); ++itGroup )
@@ -4809,7 +5084,7 @@ std::vector<TH1*> MnvPlotter::GetSysErrorGroupHists(
     for ( map<string,TH1D*>::iterator itGroup = errGroupHists.begin(); itGroup != errGroupHists.end(); ++itGroup )
     {
         TH1* hist = itGroup->second;
-
+	hist->SetFillStyle(0);
         if ( 0 < ignoreThreshold && hist->GetBinContent( hist->GetMaximumBin() ) < ignoreThreshold )
         {
             //throw away an error group if it is too small, or it will leak
@@ -4864,12 +5139,14 @@ bool MnvPlotter::DrawErrorSummary(
 
     //! Get the total error and apply styles
     TH1D *hTotalErr = (TH1D*)h->GetTotalError( includeStat, asfrac, covAreaNormalize ).Clone( Form("h_total_err_errSum_%d", __LINE__) );
+    hTotalErr->SetFillStyle(0);
     AddToTmp( hTotalErr );
     ApplyAxisStyle(hTotalErr);
 
     //Error("DrawDataMCErrorSummary", Form("Total Err Max: %.2f",hTotalErr->GetMaximum() ) );
-
-    ApplyNextLineStyle( hTotalErr, true, useDifferentLineStyles );
+    bool  usePalette36Colors= (errorGroupName!="");
+    //cout<<"DrawErrSummary \t use36Palette: "<<usePalette36Colors<<"\t groupname: "<<errorGroupName<<endl;
+    ApplyNextLineStyle( hTotalErr, true, useDifferentLineStyles,  usePalette36Colors );
 
     //respect max/min setting the user may have used
     if ( MnvHist::IsAutoAxisLimit( axis_minimum ) )
@@ -4885,7 +5162,11 @@ bool MnvPlotter::DrawErrorSummary(
     hTotalErr->GetYaxis()->SetTitle( "Fractional Uncertainty" );
     if (!asfrac )hTotalErr->GetYaxis()->SetTitle( Ytitle.c_str() );
     if (errorGroupName == "") {
-        if (!asfrac) hTotalErr->Scale( hTotalErr->GetBinWidth(1), "width" );
+      //if (!asfrac) hTotalErr->Scale( hTotalErr->GetBinWidth(1), "width" );
+      if (!asfrac){
+	cout<<"NOT scaling by bin width in DrawErrorSummary absolute uncertainty, hopefully you already did that"<<endl;
+	//hTotalErr->Scale( h->GetNormBinWidth(), "width" );
+      }
         hTotalErr->Draw( "HIST" );
         const string totalName = ( includeStat ? "Total Uncertainty" : "Total Sys. Uncertainty" );
         hists.push_back( hTotalErr );
@@ -4896,6 +5177,7 @@ bool MnvPlotter::DrawErrorSummary(
     if ( includeStat && errorGroupName == "")
     {
         TH1D *statErr = (TH1D*)h->GetStatError(asfrac).Clone( Form("this_stat_err_%d", __LINE__) );
+        statErr->SetFillStyle(0);
         AddToTmp( statErr );
 
         statErr->SetLineColor( 12 );//dark gray
@@ -4910,6 +5192,7 @@ bool MnvPlotter::DrawErrorSummary(
     TH1D *hTmpErr = (TH1D*)hTotalErr->Clone( Form("h_tmp_err_errSum_%d", __LINE__) );
     hTmpErr->Reset();
     map<string,TH1D*> errGroupHists;
+    hTmpErr->SetFillStyle(0);
 
     // plot each of the fractional contributions from all the errors.
     // first, we make a list of error bands to plot...
@@ -4994,15 +5277,18 @@ bool MnvPlotter::DrawErrorSummary(
       else if ( errorGroupName != "" && !inGroup)
         continue;
 
+      hErr->SetFillStyle(0);
       AddToTmp( hErr );
 
       // don't draw any errors that have no bins above threshold
       if ( 0 < ignoreThreshold && hErr->GetBinContent( hErr->GetMaximumBin() ) < ignoreThreshold )
         continue;
 
-      ApplyNextLineStyle( hErr, false, useDifferentLineStyles);
+      ApplyNextLineStyle( hErr, false, useDifferentLineStyles, usePalette36Colors);
 
       hErr->GetXaxis()->SetTitle(h->GetXaxis()->GetTitle());
+      hErr->SetFillStyle(0);
+      hTmpErr->SetFillStyle(0);
 
       map<string,int>::const_iterator itErrCol = error_color_map.find( *it_name );
       if ( error_color_map.end() != itErrCol )
@@ -5016,7 +5302,7 @@ bool MnvPlotter::DrawErrorSummary(
         drawn_already = true;
         hTmpErr->GetYaxis()->SetTitle( "Fractional Uncertainty" );
         if (!asfrac) hTmpErr->GetYaxis()->SetTitle( Ytitle.c_str() );
-        if (!asfrac) hTmpErr->Scale(hTmpErr->GetBinWidth(1),"width");
+        //if (!asfrac) hTmpErr->Scale(hTmpErr->GetBinWidth(1),"width");
         hTmpErr->Draw("HIST");
 
         //ApplyAxisStyle(hErr);
@@ -5057,14 +5343,15 @@ bool MnvPlotter::DrawErrorSummary(
             continue;
         }
 
-        ApplyNextLineStyle( hist, false, useDifferentLineStyles);
+        ApplyNextLineStyle( hist, false, useDifferentLineStyles, usePalette36Colors);
+        hist->SetFillStyle(0);
 
         map<string,int>::const_iterator itErrCol = error_color_map.find( name );
         if ( error_color_map.end() != itErrCol )
             hist->SetLineColor( itErrCol->second );
 
         hist->SetLineWidth( mc_line_width );
-        if (!asfrac)hist->Scale(hist->GetBinWidth(1),"width");
+        //if (!asfrac)hist->Scale(hist->GetBinWidth(1),"width");
         hist->Draw( "HIST SAME" );
         hists.push_back( hist );
         names.push_back( name );
@@ -5129,6 +5416,7 @@ void MnvPlotter::DrawStackedMC(
 
     leg->SetNColumns( legend_n_columns );
     leg->SetBorderSize( legend_border_size );
+    leg->SetLineWidth( legend_border_size );//I think this is actually what "SetBorderSize" is trying to do.
     leg->SetFillColor( legend_fill_color );
     if ( legend_fill_color < 0 )
         leg->SetFillStyle(0);
@@ -5274,6 +5562,7 @@ void MnvPlotter::DrawDataStackedMC(
     AddToTmp(leg);
 
     leg->SetBorderSize( legend_border_size );
+    leg->SetLineWidth( legend_border_size );//I think this is actually what "SetBorderSize" is trying to do.
     leg->SetFillColor( legend_fill_color );
     if ( legend_fill_color < 0 )
         leg->SetFillStyle(0);
@@ -5446,6 +5735,7 @@ void MnvPlotter::DrawDataStackedMC(
     AddToTmp(leg);
 
     leg->SetBorderSize( legend_border_size );
+    leg->SetLineWidth( legend_border_size );//I think this is actually what "SetBorderSize" is trying to do.
     leg->SetFillColor( legend_fill_color );
     if ( legend_fill_color < 0 )
         leg->SetFillStyle(0);

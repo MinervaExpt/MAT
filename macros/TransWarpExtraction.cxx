@@ -1,7 +1,7 @@
 #include "TransWarpExtraction.h" 
 #include "MinervaUnfold/MnvUnfold.h"
 #include "RooUnfold/RooUnfold.h"
-#include "Cintex/Cintex.h"
+//#include "Cintex/Cintex.h"
 
 #include "PlotUtils/TargetUtils.h"
 #include "PlotUtils/MnvPlotter.h"
@@ -29,6 +29,7 @@
 // Dan Ruterbories wrote this
 // Aaron Bercellie editted it and came up with the Star Trek reference
 //////////////////////////////////////////////////////////////////////////
+using namespace std;
 void split(const std::string& s,std::vector<string>& v, char delim) {
     int i = 0;
     std::size_t pos = s.find(delim);
@@ -58,8 +59,6 @@ namespace PlotUtils
     bookHistos( m_truth      , truth_file, truth_name     );
     bookHistos( m_migration  , migration_file, migration_name );
     m_migration_original = m_migration->Clone("Original_Migration");
-    //    m_reco_original = m_reco->Clone("Original_Reco");
-    //    m_truth_original = m_truth->Clone("Original_Truth");
     for(uint it = 0; it<iterations.size(); ++it)
     {
        m_avg_unfoldingCovMatrices[it] = NULL;
@@ -611,7 +610,9 @@ namespace PlotUtils
           cout<< "Now unfolding statistical universe " << su << "/" << m_nStatUniverses-1 << " with " << *num_iter << " iterations"<< endl;
           cout<< "---------------------------------------"  << endl;
           bool data_unfolded2 = false;
-          data_unfolded2 = UnfoldData( h_data_unfolded, stat_varied, m_reco, m_truth, m_migration, *num_iter );
+          data_unfolded2 = m_fakes?
+            UnfoldDataWithFakes( h_data_unfolded, stat_varied, m_reco, m_truth, m_migration, *num_iter ):
+            UnfoldData( h_data_unfolded, stat_varied, m_reco, m_truth, m_migration, *num_iter );
           if( !data_unfolded2 )
           {
             std::cout << "Unfolding failed for either data or MC. Please check " << std::endl;
@@ -623,6 +624,52 @@ namespace PlotUtils
       }
     }
   }
+
+  template <class MnvH> bool TransWarpExtraction<MnvH>::UnfoldDataWithFakes( MnvH* &h_data_unfolded, MnvH* stat_varied, MnvH* h_reco, MnvH* h_truth, MnvH2D* h_migration, int num_iter) {
+    bool data_unfolded = false;
+    TMatrixD CovMatrix;
+    //unfold.setUseBetterStatErrorCalc(true);
+    data_unfolded = unfold.UnfoldHistoWithFakes( h_data_unfolded, CovMatrix, h_migration, stat_varied, h_reco, h_truth, nullptr, num_iter, false,false);
+    if( !data_unfolded)
+      {
+        std::cout << "Unfolding failed for either data or MC. Please check " << std::endl;
+        return false;  
+      }
+    for (int i =0;i<CovMatrix.GetNrows();++i) {
+      CovMatrix[i][i]=0;
+      for(uint bin=0; bin<m_exclude_chi2_bins.size(); ++bin)
+        {
+          CovMatrix[i][m_exclude_chi2_bins[bin]] = 0;
+          CovMatrix[m_exclude_chi2_bins[bin]][i] = 0;
+        }
+    }
+    m_unfoldingCovMatrices[num_iter].push_back(CovMatrix);
+    //h_data_unfolded->PushCovMatrix("unfoldingCov",CovMatrix);
+    if( !m_avg_data_unfolded[num_iter] ) {
+      m_avg_data_unfolded[num_iter] = new MnvH( h_data_unfolded->GetCVHistoWithStatError() );
+      m_avg_data_unfolded[num_iter]->SetName( Form("Avg_Iter%d", num_iter) );
+    }
+    else {
+      MnvH* h_tmp_unfold = new MnvH(h_data_unfolded->GetCVHistoWithStatError());
+      m_avg_data_unfolded[num_iter]->Add( h_tmp_unfold );
+    }
+    int nCovCols = CovMatrix.GetNcols();
+    int nCovRows = CovMatrix.GetNrows();
+    if( !m_avg_unfoldingCovMatrices[num_iter] ) m_avg_unfoldingCovMatrices[num_iter] = new TMatrixD( nCovRows, nCovCols );
+    TMatrixD* avg_unfoldingCovMatrix = m_avg_unfoldingCovMatrices[num_iter];
+    for( int row = 0; row < nCovRows; ++row)
+      {
+        for( int col = 0; col < nCovCols; ++col)
+          {
+            avg_unfoldingCovMatrix[0][row][col] += (double)CovMatrix(row,col);
+          }
+      }
+    m_avg_unfoldingCovMatrices[num_iter] = avg_unfoldingCovMatrix; 
+
+    return true;
+
+  } 
+
   template <class MnvH> bool TransWarpExtraction<MnvH>::UnfoldData( MnvH1D* &h_data_unfolded, MnvH1D* stat_varied, MnvH1D* h_reco, MnvH1D* h_truth, MnvH2D* h_migration, int num_iter ) 
   {
     bool data_unfolded = false;
@@ -647,9 +694,20 @@ namespace PlotUtils
         unfoldingCovMatrixOrig[m_exclude_chi2_bins[bin]][i] = 0;
       }
     }
+
+    if( m_corr_factor > 0){
+      double uncmod = (1 + 1/m_corr_factor); //To apply to the covariance matrix
+      double sqrtmod = sqrt(uncmod); //To apply to the diagonal error stored in the CV TH
+  
+      //covariance first
+      unfoldingCovMatrixOrig *= uncmod;
+     	
+      //TH
+      for( int i = 0; i < h_data_unfolded->GetNbinsX() + 2; i++ ) h_data_unfolded->SetBinError( i, h_data_unfolded->GetBinError(i)*sqrtmod );	
+    }
     m_unfoldingCovMatrices[num_iter].push_back(unfoldingCovMatrixOrig);
     h_data_unfolded->PushCovMatrix("unfoldingCov",unfoldingCovMatrixOrig);
-    
+
     //Getting hists and covariance matrix for average chi2 calculations
     if( !m_avg_data_unfolded[num_iter] ){
        m_avg_data_unfolded[num_iter] = new MnvH( h_data_unfolded->GetCVHistoWithStatError() );
@@ -699,6 +757,20 @@ namespace PlotUtils
       {
         unfoldingCovMatrixOrig[i][m_exclude_chi2_bins[bin]] = 0;
         unfoldingCovMatrixOrig[m_exclude_chi2_bins[bin]][i] = 0;
+      }
+    }
+    if( m_corr_factor > 0){
+      double uncmod = (1 + 1/m_corr_factor); //To apply to the covariance matrix
+      double sqrtmod = sqrt(uncmod); //To apply to the diagonal error stored in the CV TH
+  
+      //covariance first
+      unfoldingCovMatrixOrig *= uncmod;
+     	
+      //TH
+      for( int i = 0; i < h_data_unfolded->GetNbinsX() + 2; i++ ){
+        for( int j = 0; j < h_data_unfolded->GetNbinsY() + 2; j++ ){
+          h_data_unfolded->SetBinError( i, j, h_data_unfolded->GetBinError(i, j)*sqrtmod );
+        }
       }
     }
     m_unfoldingCovMatrices[num_iter].push_back(unfoldingCovMatrixOrig);
@@ -1398,10 +1470,6 @@ namespace PlotUtils
       return myhist;
     }
 
-
-    //Reset the reco and truth distributions to reflect the thrown migration matrix
-    m_reco->Reset();
-    m_truth->Reset();
     string classname = m_reco->ClassName();
     cout << "I'm working with classname\t" << classname << endl;
     //Make containers for the new throws
@@ -1456,41 +1524,32 @@ namespace PlotUtils
       //This is for 2D encoded results
       //Loop over migration and set yb/xb bin
       //The 2D convention is NO ufof in the actual matrix, (they are encoded in the standard bins)
-      for(int i=1;i<m_migration->GetNbinsX()+1;i++){
-	for(int j=1;j<m_migration->GetNbinsY()+1;j++){
+      for(int i=0;i<m_migration->GetNbinsX()+2;i++){
+	for(int j=0;j<m_migration->GetNbinsY()+2;j++){
 	  int yb = (j)/(myhist->GetNbinsX()+2); //Blocks of yb by bins of Xb which includes ufof
 	  int xb = (j)%(myhist->GetNbinsX()+2); //Remainder is xb bin
-	  int bin = myhist->GetBin(xb,yb);
-	  m_truth->AddBinContent(bin,m_migration->GetBinContent(i,j));
+	  int bin = myhist->GetBin(xb,yb, 0);//Adding third 0 argument to silence errors for MnvH3Ds
 	  myhist_truth->AddBinContent(bin,m_migration->GetBinContent(i,j));
-	}
-      }
-      for(int i=1;i<m_migration->GetNbinsX()+1;i++){
-	for(int j=1;j<m_migration->GetNbinsY()+1;j++){
-	  int yb = (i)/(myhist->GetNbinsX()+2); //Blocks of yb by bins of Xb which includes ufof
-	  int xb = (i)%(myhist->GetNbinsX()+2); //Remainder is xb bin
-	  int bin = hist->GetBin(xb,yb);
-	  m_reco->AddBinContent(bin,m_migration_original->GetBinContent(i,j));
 	}
       }
       myhist_truth->Divide(myhist_truth,m_data_truth);
       //Loop over migration and set yb/xb bin
-      for(int i=1;i<m_migration->GetNbinsX()+1;i++){
-	for(int j=1;j<m_migration->GetNbinsY()+1;j++){
+      for(int i=0;i<m_migration->GetNbinsX()+2;i++){
+	for(int j=0;j<m_migration->GetNbinsY()+2;j++){
 	  int yb = (i)/(myhist->GetNbinsX()+2);//Blocks of yb by bins of Xb which includes ufof
 	  int xb = (i)%(myhist->GetNbinsX()+2); //Remainder is xb bin
 	  
 	  int yb_j = (j)/(myhist->GetNbinsX()+2);//Blocks of yb by bins of Xb which includes ufof
 	  int xb_j = (j)%(myhist->GetNbinsX()+2); //Remainder is xb bin
-	  
-	  int bin = myhist->GetBin(xb,yb);
-	  int bin_truth = myhist->GetBin(xb_j,yb_j);
+	  //Adding third 0 argument to silence errors for MnvH3Ds
+	  int bin = myhist->GetBin(xb,yb, 0);
+	  int bin_truth = myhist->GetBin(xb_j,yb_j, 0);
 	  double correction = myhist_truth->GetBinContent(bin_truth)>0?1/myhist_truth->GetBinContent(bin_truth):1;
 	  myhist->AddBinContent(bin,m_migration->GetBinContent(i,j)*correction);
 	}
       }
       for(int i=0;i<hist->fN;i++){
-	myhist->SetBinError(i,sqrt(myhist->GetBinContent(i)));
+      myhist->SetBinError(i,sqrt(myhist->GetBinContent(i)));
       }
       myhist->SetEntries(1);
     } //End 2D
@@ -1500,13 +1559,7 @@ namespace PlotUtils
       cout << "1D analysis stat throw (migration plus fakedata)" << endl;
       for(int i=0;i<m_migration->GetNbinsX()+2;i++){//reco axis
 	for(int j=0;j<m_migration->GetNbinsY()+2;j++){//truth axis
-	  m_truth->AddBinContent(j,m_migration->GetBinContent(i,j));
 	  myhist_truth->AddBinContent(j,m_migration->GetBinContent(i,j));
-	}
-      }
-      for(int i=0;i<m_migration->GetNbinsX()+2;i++){//reco axis
-	for(int j=0;j<m_migration->GetNbinsY()+2;j++){//truth axis
-	  m_reco->AddBinContent(i,m_migration_original->GetBinContent(i,j));
 	}
       }
       myhist_truth->Divide(myhist_truth,m_data_truth);
@@ -1534,14 +1587,13 @@ namespace PlotUtils
     }
 
     //Now put the migration matrix back in the original configuration for unfolding the thrown universe.
-    for(int i=1;i<m_migration->GetNbinsX()+1;i++){
-      for(int j=1;j<m_migration->GetNbinsY()+1;j++){
+    for(int i=0;i<m_migration->GetNbinsX()+2;i++){
+      for(int j=0;j<m_migration->GetNbinsY()+2;j++){
 	double spec_err = sqrt(m_migration->GetBinContent(i,j)*m_stat_scale);
 	m_migration->SetBinContent(i,j,m_migration_original->GetBinContent(i,j));
 	m_migration->SetBinError(i,j,spec_err);
       }
     }
-    
 
     return myhist;
   }
@@ -1568,10 +1620,10 @@ namespace PlotUtils
 using namespace PlotUtils;
 int main( int argc, char **argv)
 {
-  ROOT::Cintex::Cintex::Enable();
+  //ROOT::Cintex::Cintex::Enable();
   TH1::AddDirectory(false);
 
-  const char* const short_options = "o:D:d:I:i:M:m:R:r:T:t:n:lLu:z:c:C:p:P:f:x:s:vVh";
+  const char* const short_options = "o:D:d:I:i:M:m:R:r:T:t:n:lLu:z:c:C:p:P:f:F:x:s:vVhb";
   static struct option long_options[]=
   {
     {"output_file",     required_argument, nullptr ,'o'},
@@ -1595,10 +1647,12 @@ int main( int argc, char **argv)
     {"pot_scale",       required_argument, nullptr, 'p'},
     {"data_pot_norm",   required_argument, nullptr, 'P'},
     {"stat_scale",      required_argument, nullptr, 'f'},
+    {"corr_factor",     required_argument, nullptr, 'F'},
     {"exclude_bins",    required_argument, nullptr, 'x'},
     {"random_seed",     required_argument, nullptr, 's'},
     {"verbhist",        no_argument,       nullptr, 'V'},
     {"help",            no_argument,       nullptr, 'h'},
+    {"withfakes",       no_argument,       nullptr, 'b'},
     {nullptr,           0,                 nullptr, 0}
   };
 
@@ -1616,6 +1670,7 @@ int main( int argc, char **argv)
   string num_iter        ;
   string exclude_bins    ;
   bool bIterLogScale = false;
+  bool fakes = false;
   bool bLinearize = false;
   int num_uni      = 1;
   int num_dim      = 1;
@@ -1624,6 +1679,7 @@ int main( int argc, char **argv)
   double pot_scale = 1.0;
   double data_pot_norm = 1.0;
   double stat_scale = -999; //Negative means standard throwing
+  double corr_factor = -999; //Negative means no correction in covariance matrix and unfolded data histogram
   int random_seed = -1;
   bool verbhist    = false;
 
@@ -1652,9 +1708,11 @@ int main( int argc, char **argv)
       case 'p': pot_scale       = atof(optarg); break;
       case 'P': data_pot_norm   = atof(optarg); break;
       case 'f': stat_scale      = atof(optarg); break;
+      case 'F': corr_factor     = atof(optarg); break;
       case 'V': verbhist        = true; break;
       case 'x': exclude_bins    = std::string(optarg); break;
       case 's': random_seed     = atoi(optarg); break;
+      case 'b' : fakes          = true; break;
       case '?':
       case 'h':
       default:
@@ -1700,7 +1758,9 @@ int main( int argc, char **argv)
              << "|   -P, --data_pot_norm   : POT norm of data (playlist norm) (Default: 1)           |" << endl
              << "|                         : You'll want to use this to scale your data              |" << endl
              << "|                         : to the entire ME playlist, for example                  |" << endl
-	     << "|   -f, --stat_scale      : Used to rescale unctertainty in migration matrix bins   |" << endl
+	     << "|   -f, --stat_scale      : Used to rescale uncertainty in migration matrix bins    |" << endl
+	     << "|   -F, --corr_factor     : Used to apply a correction to the cov matrix and the    |" << endl
+             << "|                         : diagonal uncertainty stored in the unfolded data hist   |" << endl
              << "|   -x, --exclude_bins    : List of global bins to exclude from chi2 calculation    |" << endl
              << "|                         : Can input bins, comma separated                         |" << endl
              << "|                         : Use FindBin(x,y,z) to get global bin number             |" << endl
@@ -1742,10 +1802,12 @@ int main( int argc, char **argv)
        << " Max Chi2:                  " << max_chi2       << endl
        << " Step Chi2:                 " << step_chi2      << endl
        << " Data POT/MC POT:           " << pot_scale      << endl
-       << " Data POT Scale:            " << data_pot_norm << endl
+       << " Data POT Scale:            " << data_pot_norm  << endl
        << " Stat. Unc. Scale:          " << stat_scale     << endl
-       << " Excluded Bins:             " << exclude_bins  << endl
-       << " Random Seed (if -1 random) " << random_seed   << endl;
+       << " Correction Factor:         " << corr_factor    << endl
+       << " Excluded Bins:             " << exclude_bins   << endl
+       << " Random Seed (if -1 random) " << random_seed    << endl
+       << " With Fakes?                " << fakes          <<endl;
   
   //Splicing up the number of iterations
   std::vector<std::string> str_iterations;
@@ -1763,12 +1825,14 @@ int main( int argc, char **argv)
     case 1: 
     {
       TransWarpExtraction< MnvH1D > excelsior(data_file, data, data_truth_file, data_truth, reco_file, reco, truth_file, truth, migration_file, migration, iterations, exclude_chi2_bins, random_seed, num_uni, bIterLogScale );
+      excelsior.m_fakes=fakes;
       excelsior.ClearInputErrorBands();
       excelsior.ScalePOT( pot_scale ); 
       excelsior.ScaleDataPOT( data_pot_norm ); 
       //      excelsior.ScaleMigStatUnc( stat_scale );
       excelsior.SetChi2MaxAndStep( max_chi2, step_chi2 );
       excelsior.SetStatScale(stat_scale);
+      excelsior.SetCorrFactor(corr_factor);
       excelsior.Setup2DChi2Hists();
       excelsior.UnfoldStatUniverses( );
       excelsior.CalcChi2( );
@@ -1783,12 +1847,14 @@ int main( int argc, char **argv)
     case 2: 
     {
       TransWarpExtraction< MnvH2D > excelsior(data_file, data, data_truth_file, data_truth, reco_file, reco, truth_file, truth, migration_file, migration, iterations, exclude_chi2_bins, random_seed, num_uni, bIterLogScale );
+      excelsior.m_fakes=fakes;
       excelsior.ClearInputErrorBands();
       excelsior.ScalePOT( pot_scale ); 
       excelsior.ScaleDataPOT( data_pot_norm );
       //      excelsior.ScaleMigStatUnc( stat_scale ); 
       excelsior.SetChi2MaxAndStep( max_chi2, step_chi2 );
       excelsior.SetStatScale(stat_scale);
+      excelsior.SetCorrFactor(corr_factor);
       excelsior.Setup2DChi2Hists();
       excelsior.UnfoldStatUniverses( );
       excelsior.CalcChi2( );

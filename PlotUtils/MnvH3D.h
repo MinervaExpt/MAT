@@ -71,6 +71,8 @@ namespace PlotUtils
       where thisBinArea = thisbinWidthX*thisbinWidthY (nonpositive means use MnvH3D's default if set)
       @return A copy of this MnvH3D which has its bin content/error normalized to bin width
       */
+      //A nonsense function so I can get TransWarpExtractor to compile without figuring out how this was working with the CVS version
+      //virtual Int_t GetBin(Int_t binx, Int_t biny){std::cout<<"ERROR: TRYING TO GET 3D BIN USING ONLY X ANY Y. RETURNING 0;"<<std::endl; return 0;  }
       MnvH3D GetBinNormalizedCopy( Double_t normBinWidthX = -1., Double_t normBinWidthY = -1., Double_t normBinWidthZ = -1.) const;
       
       MnvH1D *ProjectionX(const char* name = "_px", Int_t firstybin = 0, Int_t lastybin = -1, Int_t firstzbin = 0, Int_t lastzbin = -1, Option_t* option = "") const;

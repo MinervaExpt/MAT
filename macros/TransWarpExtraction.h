@@ -29,6 +29,7 @@ namespace PlotUtils
       void ClearInputErrorBands();
       void SetChi2MaxAndStep( double MaxChi2, double Chi2Step ){ m_ChiSquareGuess = MaxChi2; m_ChiSquareStep = Chi2Step; }; 
       void SetStatScale( double stat_scale ){ m_stat_scale = stat_scale; }; 
+      void SetCorrFactor( double corr_factor ){ m_corr_factor = corr_factor; }; 
       void ScalePOT( double pot_scale ); 
       void ScaleDataPOT( double data_pot_scale ); 
       void ScaleMigStatUnc( double stat_scale );
@@ -39,13 +40,15 @@ namespace PlotUtils
       bool UnfoldData( MnvH3D* &h_data_unfolded, MnvH3D* stat_varied, MnvH3D* h_reco, MnvH3D* h_truth, MnvH2D* h_migration, int num_iter ); 
       TMatrixD UnfoldDummy( MnvH1D* stat_varied, MnvH1D* h_data_unfolded, MnvH1D* h_reco, MnvH1D* h_truth, MnvH2D* h_migration, int num_iter ); 
       TMatrixD UnfoldDummy( MnvH2D* stat_varied, MnvH2D* h_data_unfolded, MnvH2D* h_reco, MnvH2D* h_truth, MnvH2D* h_migration, int num_iter ); 
-      TMatrixD UnfoldDummy( MnvH3D* stat_varied, MnvH3D* h_data_unfolded, MnvH3D* h_reco, MnvH3D* h_truth, MnvH2D* h_migration, int num_iter ); 
+      TMatrixD UnfoldDummy( MnvH3D* stat_varied, MnvH3D* h_data_unfolded, MnvH3D* h_reco, MnvH3D* h_truth, MnvH2D* h_migration, int num_iter );
+      bool UnfoldDataWithFakes( MnvH* &h_data_unfolded, MnvH* stat_varied, MnvH* h_reco, MnvH* h_truth, MnvH2D* h_migration, int num_iter);
       void CalcChi2();
       void MakeBinChi2Dists();
       void MakeMedianChi2Dists( double percentile = 0.5 );
       void MakeTruncatedChi2Dists( double nStdDev = 2.0 );
       void MakeErrorHists( );
       void MakeRatioHists( );
+      bool m_fakes = false;
   
     protected:
       MnvH* throwStat(MnvH* hist, TRandom3 *gen, int myuni, std::string prefix);
@@ -59,6 +62,7 @@ namespace PlotUtils
       void FillChi2Dists( int stat_uni, MnvH* h_data_unfolded, MnvH* input_truth, MnvH* unfoldtruth, int num_iter );
 
       double m_stat_scale;
+      double m_corr_factor;
       bool doTailAvgThrows;
       uint m_nStatUniverses;
       double m_ChiSquareGuess;

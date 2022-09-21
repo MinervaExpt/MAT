@@ -1272,11 +1272,11 @@ bool MnvH1D::FillSysErrorMatrix(const std::string& name, const TMatrixD& matrix)
   
   
   if (!HasErrorMatrix(name)){
-    std::cout << "MnvH1D::FillSysErrorMatrix: " << GetName() << " creating systematic error matrix "<< name << endl;
+    //std::cout << "MnvH1D::FillSysErrorMatrix: " << GetName() << " creating systematic error matrix "<< name << endl;
     fSysErrorMatrix[name] = new TMatrixD(matrix);
     return true;
   }
-  std::cout << "MnvH1D::FillSysErrorMAtrix: " << GetName() << " modifying systematic error matrix " << name << endl;
+  //std::cout << "MnvH1D::FillSysErrorMAtrix: " << GetName() << " modifying systematic error matrix " << name << endl;
   delete fSysErrorMatrix[name];
   fSysErrorMatrix[name] = new TMatrixD(matrix);
   return true;
@@ -2963,7 +2963,14 @@ void MnvH1D::Add( const TH1* h1, const Double_t c1 /*= 1.*/ )
       {
         //todo: a better way would be to add content but keep error equal to the one hist that has error
         Warning("MnvH1D::Add", Form("Additive MnvH1D lacks %s uncorrelated error.  Add central value to all universes.", it->first.c_str()) );
-        it->second->TH1D::Add( (const TH1D*)h1, c1 );
+        //it->second->TH1D::Add( (const TH1D*)h1, c1 );
+	//This is taking the stat error on the second histogram as the uncorrelated error. Meaning you can add two histograms with no uncorrelated error uncertainty, and end up with something that does have an uncertainty. Setting the error on the second histogram to zero if the UncorrError is missing
+	TH1 *uncorrHist = dynamic_cast<TH1*>( h1->TH1::Clone( it->first.c_str() ) );
+	//replace the errors with 0
+	for( int i = 0; i <= uncorrHist->GetNbinsX()+1; ++i )
+	  uncorrHist->SetBinError(i, 0.);
+	it->second->TH1D::Add( (const TH1D*)uncorrHist, c1 );
+
       }
       else
       {

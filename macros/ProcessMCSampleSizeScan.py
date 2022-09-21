@@ -1,6 +1,6 @@
 import os,sys
-import PlotUtils
 import ROOT
+from ROOT import PlotUtils
 import optparse
 
 def applyCorrection(covmatrix,histobj,factor):
@@ -12,9 +12,13 @@ def applyCorrection(covmatrix,histobj,factor):
     histobj.PopSysErrorMatrix("unfoldingCov")
     m_cov = covmatrix
     m_cov*=correction
-    for i in range(0,histobj.GetNbinsX()+2):
-        for j in range(0,histobj.GetNbinsY()+2):
-            histobj.SetBinError(i,j,histobj.GetBinError(i,j)*sqrtcorrection)
+    if(histobj.GetNbinsY()==1): #1D
+        for i in range(0,histobj.GetNbinsX()+2):
+            histobj.SetBinError(i,histobj.GetBinError(i)*sqrtcorrection)
+    else: #2D
+        for i in range(0,histobj.GetNbinsX()+2):
+            for j in range(0,histobj.GetNbinsY()+2):
+                histobj.SetBinError(i,j,histobj.GetBinError(i,j)*sqrtcorrection)
     histobj.PushCovMatrix("unfoldingCov",m_cov)
     return histobj.Clone()
 
@@ -40,7 +44,7 @@ parser.add_option("--f_option_used_transwarp",dest="mcfrac",help="What -f option
 ROOT.TH1.AddDirectory(False)
 plotter = PlotUtils.MnvPlotter()
 f_input = ROOT.TFile(options.input_file)
-n_uni = int(options.n_uni)
+n_uni = int(options.n_uni) + 1
 myiters = getIterations(options.iters)
 factor = float(options.uncfactor)
 mcfactor = float(options.mcfrac)

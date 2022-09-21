@@ -60,6 +60,43 @@ const std::vector<int>& MnvColors::GetColors(int palette) {
   };
 
   const int Palette36Colors[] = {
+    TColor::GetColor("#5A5156"),//0 grey
+    // TColor::GetColor("#E4E1E3"), // much too light
+    TColor::GetColor("#F6222E"),//1 red
+    TColor::GetColor("#FE00FA"),//2 hot pink
+    TColor::GetColor("#0ABD24"),//3 lime green    //TColor::GetColor("#16FF32"),//3 lime green
+    TColor::GetColor("#3283FE"),//4 medium blue
+    TColor::GetColor("#ed9c00"),//5 darker amber  //"#FEAF16"),//5 amber 
+    TColor::GetColor("#1C8356"),//6 dark teal green 
+    TColor::GetColor("#0BEDBC"),//7 turqoise //"#1CFFCE"),//7 turqoise, kinda light 
+    TColor::GetColor("#FF28A7"),//8 dark pink //TColor::GetColor("#B00068"),//slighly purpley maroon
+    TColor::GetColor("#2ED9FF"),//9 light blue
+    TColor::GetColor("#AA0DFE"),//10 purple 
+    TColor::GetColor("#c673f0"),//11 slighly pink light lavendar
+    TColor::GetColor("#F8A19F"),//12 peach 
+    TColor::GetColor("#325A9B"),//13 light navy
+    TColor::GetColor("#C4451C"),//14 burt sienna
+    TColor::GetColor("#1CBE4F"),//15 kelly green
+    TColor::GetColor("#85660D"),//16 greenish light brown
+    TColor::GetColor("#B10DA1"),//17redish purple 
+    TColor::GetColor("#FBE426"),//18light yellow 
+    TColor::GetColor("#B5EFB5"),//19 very light green
+    TColor::GetColor("#16FF32"),//20 lime green
+    TColor::GetColor("#B00068"),//21 slighly purpley maroon
+    TColor::GetColor("#F7E1A0"),//beige
+    TColor::GetColor("#C075A6"),//violetish lavender
+    TColor::GetColor("#782AB6"),//24 purple violet
+    TColor::GetColor("#AAF400"),//chartreus
+    TColor::GetColor("#BDCDFF"),//very pale blue
+    TColor::GetColor("#822E1C"),//brownish red
+    TColor::GetColor("#90AD1C"),//olive green
+    TColor::GetColor("#7ED7D1"),//light baby blue 
+    TColor::GetColor("#1C7F93"),//dark sky blue
+    TColor::GetColor("#D85FF7"),//lilac
+    TColor::GetColor("#683B79"),//dark plum (grayish tint)
+    TColor::GetColor("#66B0FF"),//sky blue
+    TColor::GetColor("#3B00FB"),//blue-indigo blue
+    /*
       TColor::GetColor("#5A5156"),
       // TColor::GetColor("#E4E1E3"), // much too light
       TColor::GetColor("#F6222E"),
@@ -96,6 +133,7 @@ const std::vector<int>& MnvColors::GetColors(int palette) {
       TColor::GetColor("#683B79"),
       TColor::GetColor("#66B0FF"),
       TColor::GetColor("#3B00FB"),
+    */
   };
 
   const int GlasbeyColors[] = {

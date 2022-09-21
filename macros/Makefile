@@ -6,11 +6,15 @@
 
 CXX = g++
 CXXFLAGS = -g -Wall -fPIC
-ROOTFLAGS = `root-config --cflags --glibs` -lCintex
-INCLUDE += -I$(PLOTUTILSROOT)/ -I$(UNFOLDUTILSROOT)/
-LDLIBS += -L$(PLOTUTILSROOT)/$(CMTCONFIG) -lplotutils -L$(UNFOLDUTILSROOT)/$(CMTCONFIG) -lUnfoldUtils
+ROOTFLAGS = `root-config --cflags --glibs`
+# -lCintex
+#INCLUDE += -I$(PLOTUTILSROOT)/ -I$(UNFOLDUTILSROOT)/
+INCLUDE += -I$(PLOTUTILSROOT)/../include -I$(UNFOLDUTILSROOT)/
+#LDLIBS += -L$(PLOTUTILSROOT)/$(CMTCONFIG) -lplotutils -L$(UNFOLDUTILSROOT)/$(CMTCONFIG) -lUnfoldUtils
+LDLIBS += -L$(PLOTUTILSROOT) -lMAT -lMAT-MINERvA -lTreePlayer  -L$(UNFOLDUTILSROOT)/$(CMTCONFIG) -lUnfoldUtils
 
-BINARIES = PrintMassTable madd tryToRead tryToWrite TransWarpExtraction 
+#BINARIES = PrintMassTable madd tryToRead tryToWrite TransWarpExtraction 
+BINARIES = TransWarpExtraction PrintMassTable madd tryToRead tryToWrite 
 
 #--- if using 'make all' ---#
 all : $(BINARIES)

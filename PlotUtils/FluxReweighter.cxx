@@ -552,8 +552,8 @@ namespace PlotUtils
     ret->SetDirectory(0);
     return ret;
   }
-
-
+  
+  /*
   //============================================================================
   MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
                                               std::string tar_mat,
@@ -677,6 +677,215 @@ namespace PlotUtils
     return h_param;    
 
   }
+  */
+
+// assumes files in
+// /data/flux_daisy/neutrinos AND /data/flux_daisy/antineutrinos
+
+
+  MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
+                                              std::string tar_mat,
+                                              std::string project_dir)
+  {
+  
+    if( !m_applyNuEConstraint ) {
+      std::cout << "FRW: Target fluxes have been generated for FHC + RHC nu-e + IMD constraints only" <<std::endl;
+      std::exit(1);
+    }
+	
+    //const char* plotutils=gSystem->Getenv("PLOTUTILSROOT");
+    const char* plotutils= "/minerva/app/users/afilkins/cmtuser/Minerva_v22r1p1_ME_git/opt/etc/MParamFiles/";
+    if (!plotutils || !strlen(plotutils)) {
+      std::cout << "$PLOTUTILSROOT is not set. Can't find flux histograms" << std::endl;
+      std::exit(1);
+    }
+
+    //NOTE: Target fluxes are made with gen2thin and g4numiv6 - 17/02/2022
+	
+    // define file variables
+    TString tracker_filename;
+    TString tarfilename;
+    TString histName;
+    MnvH1D* tracker_flux;
+    MnvH1D* tar_flux;
+    MnvH1D* h_flux;
+    MnvH1D* ratio_flux;
+
+    //{
+
+    if( nuPDG == 14 ) {
+      std::cout << "FRW: Using target fluxes for muon NEUTRINOS" <<std::endl;
+	  
+      tracker_filename = TString::Format("%s/data/flux_daisy/neutrinos/%s/flux_with_errors/flux_tracker.root",
+					 plotutils,
+					 project_dir.c_str(),
+					 tar_mat.c_str());
+
+      tarfilename = TString::Format("%s/data/flux_daisy/neutrinos/%s/flux_with_errors/flux_%s.root",
+				    plotutils,
+				    project_dir.c_str(),
+				    tar_mat.c_str());
+      /*
+											 
+      // Old fluxes that have been generated for FHC nu-e constraint only										 
+      TString tracker_filename = TString::Format("%s/data/flux_daisy/%s/flux_with_errors/flux_tracker.root",
+      plotutils,
+      project_dir.c_str(),
+      tar_mat.c_str());
+
+      TString tarfilename = TString::Format("%s/data/flux_daisy/%s/flux_with_errors/flux_%s.root",
+      plotutils,
+      project_dir.c_str(),
+      tar_mat.c_str());
+											 
+											 
+      */
+											 
+      histName = TString::Format("flux");
+
+      tracker_flux = GetMnvH1D(tracker_filename, histName);
+      tar_flux     = GetMnvH1D(tarfilename, histName);
+
+      //Will use ratio of target/tracker to supply a weight to make the correct flux universes
+
+      h_flux       = (MnvH1D*)m_fluxReweightNu->Clone(Form("flux_%s",tar_mat.c_str()));
+      ratio_flux   = (MnvH1D*)m_fluxReweightNu->Clone(Form("tmp_flux_ratio_%s",tar_mat.c_str())); 
+      
+    }
+	
+    else if( nuPDG == -14 ) {
+      std::cout << "FRW: Using target fluxes for muon ANTINEUTRINOS" <<std::endl;
+	  
+      tracker_filename = TString::Format("%s/data/flux_daisy/antineutrinos/%s/flux_with_errors/flux_tracker.root",
+					 plotutils,
+					 project_dir.c_str(),
+					 tar_mat.c_str());
+
+      tarfilename = TString::Format("%s/data/flux_daisy/antineutrinos/%s/flux_with_errors/flux_%s.root",
+				    plotutils,
+				    project_dir.c_str(),
+				    tar_mat.c_str());
+											 
+      histName = TString::Format("flux");
+
+      tracker_flux = GetMnvH1D(tracker_filename, histName);
+      tar_flux     = GetMnvH1D(tarfilename, histName);
+
+      //Will use ratio of target/tracker to supply a weight to make the correct flux universes
+
+      h_flux       = (MnvH1D*)m_fluxReweightNubar->Clone(Form("flux_%s",tar_mat.c_str()));
+      ratio_flux   = (MnvH1D*)m_fluxReweightNubar->Clone(Form("tmp_flux_ratio_%s",tar_mat.c_str())); 
+      
+    }
+	
+    else {
+      std::cout << "FRW: Cannot use target fluxes for given PDG (not generated). " <<std::endl;
+		
+    }
+
+
+    ratio_flux->ClearAllErrorBands();
+    ratio_flux->Reset();
+	
+    
+    //Create a ratio of targets/tracker
+    for( int iBin = 0; iBin < ratio_flux->GetNbinsX()+2; ++iBin )
+      {
+	double binCenter = ratio_flux->GetBinCenter(iBin);
+	
+	int iBinTracker  = tracker_flux->FindBin(binCenter);
+	int iBinTarget   = tar_flux->FindBin(binCenter);
+	
+	double content_tracker = tracker_flux->GetBinContent(iBinTracker);
+	double content_target  = tar_flux->GetBinContent(iBinTarget);
+	
+	ratio_flux->SetBinContent( iBin, content_tracker > 0 ? content_target/content_tracker : 1.0 );
+	ratio_flux->SetBinError(   iBin, 0.0 );
+      }
+    
+    ratio_flux->AddMissingErrorBandsAndFillWithCV( *h_flux );
+    h_flux->Multiply( h_flux, ratio_flux );
+    
+    //std::vector< std::string > vert_error_names = h_flux->GetVertErrorBandNames();
+    //for( auto &name : vert_error_names ) {
+    //  if( strcmp( name.c_str(), "Flux" ) != 0 ) h_flux->PopVertErrorBand(name);
+    //}
+    
+    //std::vector< std::string > lat_error_names  = h_flux->GetLatErrorBandNames();
+    //for( auto &name : lat_error_names ) {
+    //  if( strcmp( name.c_str(), "Flux" ) != 0 ) h_flux->PopLatErrorBand(name);
+    //}
+    
+    return h_flux;
+    
+  }
+
+    //============================================================================
+  MnvH1D* FluxReweighter::GetDaisyParamMnvH1D(int nuPDG,
+                                              std::string tar_mat,
+                                              std::string project_dir)
+  {
+    
+    if( !m_applyNuEConstraint ) {
+      std::cout << "FRW: Target fluxes have been generated for FHC + RHC nu-e + IMD constraints only" <<std::endl;
+      std::exit(1);
+    }
+
+    //const char* plotutils=gSystem->Getenv("PLOTUTILSROOT");
+    //std::string tmpdir=gSystem->Getenv("MPARAMFILES");
+    const char* plotutils= "/minerva/app/users/afilkins/cmtuser/Minerva_v22r1p1_ME_git/opt/etc/MParamFiles/";//tmpdir.substr(0, tmpdir.find("/data") ).c_str();
+
+
+      if (!plotutils || !strlen(plotutils)) {
+	std::cout << "$PLOTUTILSROOT is not set. Can't find daisy reweights" << std::endl;
+	std::exit(1);
+      }
+
+    MnvH1D* h_param;
+
+    if( strcmp( tar_mat.c_str(), "tracker" ) == 0 ) {
+      h_param = new MnvH1D("tracker_param_hist", "tracker_param_hist;Flux Bin;Weight", 12, 0., 12.);
+      for( int iBin = 1; iBin <= 12; ++iBin ) {
+        h_param->SetBinContent(iBin, 1);
+        h_param->SetBinError(iBin, 0);
+      }
+    }
+    else{
+      TString filename;
+	  
+      if( nuPDG == 14 ){
+	std::cout << "Using tracker flux weights for muon NEUTRINOS" <<std::endl;
+	filename = TString::Format("%s/data/flux_daisy/neutrinos/%s/out_%s_000100.root",
+				   plotutils,
+				   project_dir.c_str(),
+				   tar_mat.c_str());
+
+      }
+	  
+      else if ( nuPDG == -14 ){
+	std::cout << "Using tracker flux weights for muon ANTINEUTRINOS" <<std::endl;
+	filename = TString::Format("%s/data/flux_daisy/antineutrinos/%s/out_%s_000100.root",
+				   plotutils,
+				   project_dir.c_str(),
+				   tar_mat.c_str());
+		  
+      }
+      else{
+	std::cout << "Tracker flux weights were not generated for given PDG. " <<std::endl;
+	std::exit(1);
+	  	
+      }
+		
+
+      TString histName = TString::Format("param_hist");
+
+      //std::cout<<"FRW: Getting daisy reweight parameters"<<std::endl;
+      h_param = GetMnvH1D(filename, histName);
+    }
+    return h_param;    
+
+  }
+  
   //============================================================================
   MnvH1D* FluxReweighter::GetFluxMnvH1D(int nuPDG,
       enum EPlaylist playlist,
@@ -974,9 +1183,10 @@ namespace PlotUtils
   //============================================================================
   MnvH1D* FluxReweighter::GetRebinnedFluxReweighted_FromInputFlux(MnvH1D* input_flux,
                                                                   MnvH1D* template_hist)
+
   {
     MnvH1D* h_flux = (MnvH1D*)input_flux->Clone("input_flux"); //this->GetFluxReweighted(nuPDG);
-
+    std::cout<<"FluxReweighter::GetRebinnedFluxReweighted_FromInputFlux from Minerva_v22r1p1_ME_git."<<std::endl;
     MnvH1D* h_flux_rebinned =
         (MnvH1D*)template_hist->Clone("reweightedflux_rebinned");
     h_flux_rebinned->ClearAllErrorBands();
@@ -988,7 +1198,6 @@ namespace PlotUtils
         new TH1D(h_flux_rebinned->GetCVHistoWithStatError());
 
     FluxReweighter::RebinFluxHist(tmp_flux_cv,tmp_template_cv);
-
     //CV first
     for(int i=0;i<h_flux_rebinned->GetNbinsX()+2;i++)
       h_flux_rebinned->SetBinContent(i,tmp_template_cv->GetBinContent(i));
@@ -997,7 +1206,67 @@ namespace PlotUtils
     delete tmp_flux_cv;
     delete tmp_template_cv;
 
+    //Adding in vertical error bands part from GetRebinnedFluxReweigted
+    //Now Flux Universes // DON'T Assume Flux is the only error
+    std::cout<<"FluxReweighter::l1003"<<std::endl;
+    if(propErrors){// GENIE XSecExtractor breaks here cause its really a TH1D
+      std::vector<std::string> vertNames = h_flux->GetVertErrorBandNames();
+      for(unsigned int k=0; k<vertNames.size(); ++k ) {
+	MnvVertErrorBand *errBand = h_flux->GetVertErrorBand( vertNames[k] );
+	const int universes = errBand->GetNHists();
+	std::vector<TH1D*> vert_hists;
+	for(int u=0;u<universes;++u) {
+	  TH1D* tmp_flux = new TH1D(*errBand->GetHist( u ));
+	  TH1D* tmp_template = new TH1D(h_flux_rebinned->GetCVHistoWithStatError());
+	  tmp_template->SetName(Form("Flux_rebinned_universe_%d",u));
+	  RebinFluxHist(tmp_flux,tmp_template);
+	  vert_hists.push_back(tmp_template);
+	}
+	h_flux_rebinned->AddVertErrorBand( vertNames[k],vert_hists);
+	//clean my mess
+	for(std::vector<TH1D*>::iterator itHist = vert_hists.begin();
+	    itHist != vert_hists.end(); ++itHist)
+	  delete *itHist;
+      }
+      //AddMissingError with CV
+      CheckAndFixFluxErrorBand( h_flux_rebinned );
+    }
+
     h_flux_rebinned->AddMissingErrorBandsAndFillWithCV(*template_hist);
+
+    //if (m_applyNuEConstraint) {
+    //  std::cout << "Applying flux constraint to rebinned histogram" << std::endl;
+    //  h_flux_rebinned = Constrainer().ConstrainHisto<MnvH1D, MnvVertErrorBand>( h_flux_rebinned );
+    //}
+
+    return h_flux_rebinned;
+  }
+
+
+  //============================================================================
+  TH1D* FluxReweighter::GetRebinnedFluxReweighted_FromInputFlux(TH1D* input_flux,
+								TH1D* template_hist)
+
+  {
+    TH1D* h_flux = (TH1D*)input_flux->Clone("input_flux"); //this->GetFluxReweighted(nuPDG);
+    TH1D* h_flux_rebinned = (TH1D*)template_hist->Clone("reweightedflux_rebinned");
+    //h_flux_rebinned->ClearAllErrorBands();
+    h_flux_rebinned->Reset();
+
+    TH1D* tmp_flux_cv     =(TH1D*)h_flux->Clone();
+    //new TH1D(h_flux_rebinned->GetCVHistoWithStatError());
+    TH1D* tmp_template_cv = (TH1D*)h_flux_rebinned->Clone();
+    //  new TH1D(h_flux_rebinned->GetCVHistoWithStatError());
+
+    FluxReweighter::RebinFluxHist(tmp_flux_cv,tmp_template_cv);
+    //CV first
+    for(int i=0;i<h_flux_rebinned->GetNbinsX()+2;i++)
+      h_flux_rebinned->SetBinContent(i,tmp_template_cv->GetBinContent(i));
+
+    //clean my mess
+    delete tmp_flux_cv;
+    delete tmp_template_cv;
+
 
     //if (m_applyNuEConstraint) {
     //  std::cout << "Applying flux constraint to rebinned histogram" << std::endl;

@@ -220,14 +220,22 @@ bool MnvLatErrorBand2D::Fill( const double xval, const double yval, const double
     //! Now that we know the bin, add the weight to its content
     int bin = GetBin(x_bin, y_bin);
     */
+    double wgtU = cvweight;
     if( 0==weights )
     {
       fHists[i]->AddBinContent( bin, cvweight );
+
     }
     else
     {
       fHists[i]->AddBinContent( bin, cvweight*weights[i] );
+      wgtU *= weights[i];
     }
+      //The 1D lat error band fills the errors on the universe histogrms but the 2D doesn't? its weird.
+      //const double err = fHists[i]->GetBinError(bin);
+      //const double newerr2 = err*err + wgtU*wgtU;
+      //const double newerr = (0.<newerr2) ? sqrt(newerr2) : 0.;
+      //fHists[i]->SetBinError( bin, newerr );
 
   }
 

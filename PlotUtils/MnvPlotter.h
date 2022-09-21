@@ -48,7 +48,7 @@ namespace PlotUtils
 #ifndef MNVROOT6
   enum EColorPalette {kDeepSea=51,          kGreyScale=52,    kDarkBodyRadiator=53,
                       kBlueYellow= 54, /* PAR removed kRainbow */   kInvertedDarkBodyRadiator=56,
-                      kBird=57,             kCubehelix=58,    kGreenRedViolet=59,
+                      //kBird=57,             kCubehelix=58,    kGreenRedViolet=59,
                       kBlueRedYellow=60,    kOcean=61,        kColorPrintableOnGrey=62,
                       kAlpine=63,           kAquamarine=64,   kArmy=65,
                       kAtlantic=66,         kAurora=67,       kAvocado=68,
@@ -210,6 +210,7 @@ namespace PlotUtils
       typedef std::map<std::string, std::vector<std::string> > ErrorSummaryGroupMap;
       //! Vector of good ROOT colors
       std::vector<int> good_colors;
+      std::vector<int> p36_colors;
       //! Map from sys error name to ROOT color
       std::map<std::string,int> error_color_map;
       //! Name of a group of systematics that will be added in quadrature for the summary
@@ -302,7 +303,8 @@ namespace PlotUtils
         void ApplyNextLineStyle(
             TH1* h,
             bool startOver = false,
-            bool changeStyle = true
+            bool changeStyle = true,
+	    bool usePalette36Colors =false
             ) const;
 
         //@}
@@ -406,8 +408,17 @@ namespace PlotUtils
             const std::string& opts,
             const bool useDataErrorMatrix = false,
             const bool useOnlyShapeErrors = false
+	    //const bool useModelStat = true
             );
 
+        void AddChi2Label(
+            const MnvH1D* dataHist,
+            const MnvH1D* mcHist,
+            const std::string& opts,
+            const bool useDataErrorMatrix,
+            const bool useOnlyShapeErrors,
+	    const bool useModelStat
+            );
         //! writes the chi2/ndf between two histograms on the plot
         void AddChi2Label(
             const TH1* dataHist,
@@ -428,6 +439,7 @@ namespace PlotUtils
             double yOffset = 0.0,
             const bool useDataErrorMatrix = false,
             const bool useOnlyShapeErrors = false,
+	    const bool useModelStat= true,
             const std::string& pre_tag = ""
             );
 
@@ -594,7 +606,7 @@ namespace PlotUtils
 
 
         //! draw MC with error band + data points on current Pad - MnvH1D overload.
-        void DrawDataMCWithErrorBand(
+        /*void DrawDataMCWithErrorBand(
             const MnvH1D* dataHist,
             const MnvH1D* mcHist,
             const Double_t mcScale = 1.0,
@@ -605,6 +617,22 @@ namespace PlotUtils
             const bool covAreaNormalize = false,
             const bool statPlusSys = false,
             const bool isSmooth = false
+            );*/
+
+        //! draw MC with error band + data points on current Pad - MnvH1D overload.
+        //my version
+        void DrawDataMCWithErrorBand(
+            const MnvH1D* dataHist,
+            const MnvH1D* mcHist,
+            const Double_t mcScale = 1.0,
+            const std::string& legPos = "L",
+            const bool useHistTitles = false,  //default is to use Data/MC/Background
+            const MnvH1D* bkgdHist = NULL,
+            const MnvH1D* dataBkgdHist = NULL,
+            const bool covAreaNormalize = false,
+            const bool statPlusSys = false,
+            const bool isSmooth = false,
+            const int mcStatOnlyInt = -1// = false
             );
 
         //! draw data/MC ratio in current pad
@@ -638,11 +666,25 @@ namespace PlotUtils
             );  // Default to setting plot min and max automatically.
 
         //! Draw data/MC ratio in current pad with a sysematic error envelope
+        void DrawDataMCRatio_orig(
+            const MnvH1D *dataHist,
+            const MnvH1D *mcHist,
+            const Double_t mcScale = 1.0,
+            const bool drawSysLines = true,
+            const bool drawOneLine  = true,
+            const double plotMin = -1.0,    // Default to setting plot min and max automatically.
+            const double plotMax = -1.0,
+            const char* yaxisLabel = "Data / MC",
+            const bool covAreaNormalize = false
+            );  // Default to setting plot min and max automatically.
+
+        //! Draw data/MC ratio in current pad with a sysematic error envelope
         void DrawDataMCRatio(
             const MnvH1D *dataHist,
             const MnvH1D *mcHist,
             const Double_t mcScale = 1.0,
             const bool drawSysLines = true,
+	    const bool dataStatPlusSys = false, //for my version
             const bool drawOneLine  = true,
             const double plotMin = -1.0,    // Default to setting plot min and max automatically.
             const double plotMax = -1.0,

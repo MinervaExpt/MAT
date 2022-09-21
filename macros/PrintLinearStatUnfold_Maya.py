@@ -1,5 +1,7 @@
 from ROOT import *
-from PlotUtils import *
+from ROOT import PlotUtils
+from ROOT.PlotUtils import *
+from ROOT.PlotUtils import MnvH1D
 from collections import namedtuple
 from OrderedDict import OrderedDict
 from array import array
@@ -24,8 +26,11 @@ def bookHistos( filename, histnames, titles, newnames =[]):
     for i,name in enumerate(histnames):
       getfile = TFile(filename[i])
       tmphist=getfile.Get(name)
-      if titles[i]!="":
-        tmphist.SetTitle(titles[i])
+      tmphist.Print("all")
+      #if tmphist is None:
+      print "Hist doesn't exist: " + name+ "in file: "+filename[i]
+      #if titles[i]!="":
+      #  tmphist.SetTitle(titles[i])
       tmphist.SetDirectory(0)
       if len(newnames)==0:
         ret[name]=tmphist
@@ -51,6 +56,7 @@ def LinearizeHist(hist):
   return rethist
 
 #filenames = ["MayaUnfold_Closure_BjorkenX_IT1000_SU1000","MayaUnfold_Closure_Enu_IT1000_SU1000","MayaUnfold_BjorkenX_IT1000_SU1000","MayaUnfold_Enu_IT1000_SU1000"]
+#/minerva/data/users/afilkins/NukeHists/TransWarpStudies_210117/AllNuME
 filenames = ["MayaUnfold_New_Closure_BjorkenX_IT1000_SU1000","MayaUnfold_New_Closure_Enu_IT1000_SU1000","MayaUnfold_New_BjorkenX_IT1000_SU1000","MayaUnfold_New_Enu_IT1000_SU1000"]
 #filenames = ["StupidBinErrorMayaUnfold_New_Closure_BjorkenX_IT1000_SU1000","StupidBinErrorMayaUnfold_New_Closure_Enu_IT1000_SU1000","StupidBinErrorMayaUnfold_New_BjorkenX_IT1000_SU1000","StupidBinErrorMayaUnfold_New_Enu_IT1000_SU1000"]
 #filenames = ["StupidBinErrorMayaUnfold_New_Enu_IT1000_SU1000"]
@@ -77,8 +83,9 @@ gStyle.SetLegendBorderSize(0)
 set_palette()
 ###NOTE!  NEED TO WORRY ABOUT CHI2 avg (derived quanity
 
-#migfile="/minerva/data/users/wospakrk/NukeHists/v1_TargetCode/minervame1D/Hists_Migration_t4_z82_Nu_v1_TargetCode.root"
-migfile="/minerva/data/users/wospakrk/NukeHists/v1_Unfolding_FullSample/AllNuME/Hists_TrueEnergy_MC_t4_z82_Nu_v1_Unfolding_FullSample.root"
+#migfile="/minerva/data/users/$USER/NukeHists/v1_TargetCode/minervame1D/Hists_Migration_t4_z82_Nu_v1_TargetCode.root"
+migfile=sys.argv[1]
+#migfile="/minerva/data/users/${USER}/NukeHists/v1_Unfolding_FullSample/AllNuME/Hists_TrueEnergy_MC_t4_z82_Nu_v1_Unfolding_FullSample.root"
 migcollect=OrderedDict()
 migcollect["Enu"]=histcollect(migfile,"reco_dis_v_true_dis_MC_Enu_t4_z82",";Reco Migration;True",kBlack,1,1)
 migcollect["x"  ]=histcollect(migfile,"reco_dis_v_true_dis_MC_x_t4_z82",";Reco Migration;True",kBlack, 1,1)
@@ -98,7 +105,7 @@ for filename in filenames:
   dt=filename
   if filename.find("Closure")>-1:
     dt="Closure"+filename
-  #InputFile="/minerva/data/users/wospakrk/NukeHists/v1_TargetCode/minervame1D/Hists_TrueEnergy_MC_t4_z82_Nu_v1_TargetCode.root"
+  #InputFile="/minerva/data/users/$USER/NukeHists/v1_TargetCode/minervame1D/Hists_TrueEnergy_MC_t4_z82_Nu_v1_TargetCode.root"
   InputFile=migfile
   InputCollect=OrderedDict()
   InputCollect["DataTruthClosure"+filename]= histcollect(InputFile,"sample_true_mat_MC_{0}_t4_z82".format(titleKey),"",kGreen+3,26,1)
