@@ -202,7 +202,7 @@ namespace PlotUtils
       MnvH1D* GetRebinnedFluxGenerated(int nuPDG, MnvH1D* template_hist);
       MnvH1D* GetRebinnedFluxReweighted(int nuPDG, MnvH1D* template_hist);
       MnvH1D* GetRebinnedFluxReweighted_FromInputFlux(MnvH1D* input_flux, MnvH1D* template_hist);
-
+      TH1D* GetRebinnedFluxReweighted_FromInputFlux(TH1D* input_flux, TH1D* template_hist);
       //! Get a rebinned version of the unweighted flux using the input histogram binning. Returns an MnvH1D with all flux universes populated and any other error bands filled with CV
       //	MnvH1D* GetRebinnedFluxGenerated(int nuPDg, MnvH1D* template_hist);
 

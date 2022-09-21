@@ -1242,6 +1242,38 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
     return h_flux_rebinned;
   }
 
+  //============================================================================
+  TH1D* FluxReweighter::GetRebinnedFluxReweighted_FromInputFlux(TH1D* input_flux,
+                                                                TH1D* template_hist)
+
+  {
+    TH1D* h_flux = (TH1D*)input_flux->Clone("input_flux"); //this->GetFluxReweighted(nuPDG);
+    TH1D* h_flux_rebinned = (TH1D*)template_hist->Clone("reweightedflux_rebinned");
+    //h_flux_rebinned->ClearAllErrorBands();
+    h_flux_rebinned->Reset();
+
+    TH1D* tmp_flux_cv     =(TH1D*)h_flux->Clone();
+    //new TH1D(h_flux_rebinned->GetCVHistoWithStatError());
+    TH1D* tmp_template_cv = (TH1D*)h_flux_rebinned->Clone();
+    //  new TH1D(h_flux_rebinned->GetCVHistoWithStatError());
+
+    FluxReweighter::RebinFluxHist(tmp_flux_cv,tmp_template_cv);
+    //CV first
+    for(int i=0;i<h_flux_rebinned->GetNbinsX()+2;i++)
+      h_flux_rebinned->SetBinContent(i,tmp_template_cv->GetBinContent(i));
+
+    //clean my mess
+    delete tmp_flux_cv;
+    delete tmp_template_cv;
+
+
+    //if (m_applyNuEConstraint) {
+    //  std::cout << "Applying flux constraint to rebinned histogram" << std::endl; 
+    //  h_flux_rebinned = Constrainer().ConstrainHisto<MnvH1D, MnvVertErrorBand>( h_flux_rebinned );
+    //}
+
+    return h_flux_rebinned;
+  }
 
   //============================================================================
   void FluxReweighter::RebinFluxHist(TH1D* h_flux, TH1D*&h_rebinned_flux)
