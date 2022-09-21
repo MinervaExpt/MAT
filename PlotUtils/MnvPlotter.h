@@ -538,6 +538,22 @@ namespace PlotUtils
             TMatrixD *Chi2ByBin = NULL
             );
 
+
+	//! calculate the chi2 between tow histograms
+	//! using the total error matrix
+	//! non-standard binning schemes assuming encoded space (2D -> 1D non-grid)
+	Double_t Chi2DataMCNonStandardBins(
+                                const MnvH1D* dataHist,
+                                const MnvH1D* mcHist,
+                                const Double_t mcScale,
+                                const bool useDataErrorMatrix,
+                                const bool useOnlyShapeErrors,
+                                const bool useModelStat,
+				const MnvH2D* templateHist,
+                                TMatrixD *Chi2ByBin
+	  );
+
+
         //! calculate the chi2 between two histograms
         //! each with a full covariance matrix
         //! using the total Error Matrix
@@ -668,7 +684,8 @@ namespace PlotUtils
             const bool dataAsPoints = true,
             const bool allSolidLines = false,
             const bool leaveStyleAlone = false,
-            const bool covAreaNormalize = false
+            const bool covAreaNormalize = false,
+            bool useDataHistTitle = true
             );
 
         //! adds a legend to the plot

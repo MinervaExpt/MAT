@@ -8,7 +8,7 @@ from PlotUtils import *
 from array import array
 
 def SyncBands2(hist):
- print (hist.GetName())
+ #print (hist.GetName())
  
  theCVhisto = MnvH2D()
  theCVHisto = hist.Clone()
@@ -34,7 +34,7 @@ def SyncBands2(hist):
 binwidth = True  # correct for bindwidth
 
 full = False # full precision
-
+Fractional = True # show individual error bands as fractions
 xtra = ""
 
 if binwidth:
@@ -67,9 +67,10 @@ if len(sys.argv)< 3:
   print ("viewer args are filename histname")
   sys.exit(1)
 file = sys.argv[1]
-dir = "./"
-if os.path.dirname(file) != "":
-  dir = os.path.dirname(file)+"/"
+localdir = os.path.dirname(file)
+dir= os.path.join(localdir,os.path.basename(file).replace(".root","_csvdump"))
+if not os.path.exists(dir):
+  os.makedirs(dir)
 hist = sys.argv[2]
 histname = hist
 newname = sys.argv[2]
@@ -78,52 +79,43 @@ if len(sys.argv)>3:
   oldname = sys.argv[3]
 if len(sys.argv)>4:
   newname = sys.argv[4]
-print ("----",hist,"-----")
+#print ("----",hist,"-----")
 xtra = ""
 if binwidth:
   xtra = "_binwidth"
 if not full:
   xtra += "_short"
 f = TFile.Open(file,"READONLY")
-f.ls()
-#f.ls()
-#h = MnvH2D()
+
 h = f.Get(hist)
-if h == 0:
+if h == None:
   print ("no ",sys.argv[2]," in ", sys.argv[1])
   sys.exit(1)
+
+# hack to fix escape characters
+h.GetXaxis().SetTitle(h.GetXaxis().GetTitle().replace("\nu","\\nu"))
+h.GetYaxis().SetTitle(h.GetYaxis().GetTitle().replace("\nu","\\nu"))
+h.SetTitle(h.GetTitle().replace("\nu","\\nu"))
 print ("name is ",h.GetName(),h.GetTitle())
 
-size = h.GetBinContent(1,1)
-if h.GetBinContent(1,1) > 1.E20:
-    h.Scale(1.E-41)
-if h.GetBinContent(1,1) <  1.E-20:
-    h.Scale(1.E41)
+
 central = h.GetCVHistoWithStatError()
+central.SetDirectory(0)
 cx = central.ProjectionX()
 cy = central.ProjectionY()
-m = h.GetSysErrorMatrix("unfoldingCov")
-#m.Print()
 
-#print "size is ", size, dir
-
-# don't do percentage for 2D
-# MnvH2D::MnvH2DToCSV(std::string name, std::string directory, double scale, bool fullprecision, bool syserrors, bool percentage,bool binwidth)
-
-#print " print out CSV"
-h.MnvH2DToCSV(h.GetName()+xtra,dir,1.,full,True,False,binwidth)
-
-#print "going to ",h.GetName()+xtra
+h.MnvH2DToCSV(h.GetName()+xtra,dir,1.E44,full,True,Fractional,binwidth)
 
 b0 = h.Clone()
+b0.SetDirectory(0)
 #b = SyncBands2(b0)
-b = b0
 #b0.Print("ALL")
-bx = b.ProjectionX()
-by = b.ProjectionY()
-
-bx.MnvH1DToCSV(bx.GetName()+xtra,dir,1.,full,True,False,binwidth)
-by.MnvH1DToCSV(by.GetName()+xtra,dir,1.,full,True,False,binwidth)
+bx = b0.ProjectionX()
+bx.GetXaxis().SetTitle(h.GetXaxis().GetTitle())
+by = b0.ProjectionY()
+by.GetXaxis().SetTitle(h.GetYaxis().GetTitle())
+bx.MnvH1DToCSV(bx.GetName()+xtra,dir,1.e44,full,True,Fractional,binwidth)
+by.MnvH1DToCSV(by.GetName()+xtra,dir,1.e44,full,True,Fractional,binwidth)
 fname = file[0:-5]
 
 if not binwidth:
@@ -135,6 +127,7 @@ o.cd()
 
 
 cv = TH2D(h.GetCVHistoWithStatError())
+cv.SetDirectory(0)
 if binwidth:
   cv.Scale(1.0,"width")
   cx.Scale(1.0,"width")

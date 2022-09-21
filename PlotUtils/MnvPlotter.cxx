@@ -1335,11 +1335,15 @@ else if(style == kCCInclusiveHeliumStyle){
     error_summary_group_map["Others"] = other;
   }
   
+  // =================
+  // Gonzalo's special
+  // =================
   else if ( style == kCCPi0AnaStyle ) {
     // Apply compact style first
     ApplyStyle(kCompactStyle);
     
-    // Keep this as default unless otherwise
+    // Keep this as default unless specified otherwise
+    // (NOTE: This might change based on Heidi and Dan's discussion of bin width normalization)
     draw_normalized_to_bin_width = true;
     
     // MC and data histogram settings
@@ -1349,7 +1353,7 @@ else if(style == kCCInclusiveHeliumStyle){
     ratio_marker_size = 1.3;
     
     // Axis options
-//     hist_min_zero     = true;
+    // hist_min_zero     = true;
     axis_draw_grid_x    = true;
     axis_draw_grid_y    = true;
     axis_max_digits     = 3;
@@ -1364,9 +1368,9 @@ else if(style == kCCInclusiveHeliumStyle){
     axis_title_size_z   = 0.05;
     axis_label_font     = 42;
     axis_label_size     = 0.045;
-//     axis_minimum      = MnvHist::AutoAxisLimit;
-//     axis_maximum      = MnvHist::AutoAxisLimit;
-//     axis_maximum_group= MnvHist::AutoAxisLimit; //0.5;
+    // axis_minimum      = MnvHist::AutoAxisLimit;
+    // axis_maximum      = MnvHist::AutoAxisLimit;
+    // axis_maximum_group= MnvHist::AutoAxisLimit; //0.5;
     
     // Legend settings
     height_nspaces_per_hist = 1.0;
@@ -1383,98 +1387,126 @@ else if(style == kCCInclusiveHeliumStyle){
     extra_right_margin = -1.0;
     
     // Systematics map
+    // ---------------
     error_summary_group_map.clear();
     
+    // Flux
     std::vector<std::string> flux;
     flux.push_back("Flux");
     error_summary_group_map["Neutrino Flux"] = flux;
     
-    std::vector<std::string> genie_interaction_model;
-    genie_interaction_model.push_back("GENIE_AhtBY");
-    genie_interaction_model.push_back("GENIE_BhtBY");
-    genie_interaction_model.push_back("GENIE_CCQEPauliSupViaKF");
-    genie_interaction_model.push_back("GENIE_CV1uBY");
-    genie_interaction_model.push_back("GENIE_CV2uBY");
-    genie_interaction_model.push_back("GENIE_MaCCQE");
-    genie_interaction_model.push_back("GENIE_MaNCEL");
-    genie_interaction_model.push_back("GENIE_MaRES");
-    genie_interaction_model.push_back("GENIE_MvRES");
-    genie_interaction_model.push_back("GENIE_EtaNCEL");
-    genie_interaction_model.push_back("GENIE_NormDISCC");
-    genie_interaction_model.push_back("GENIE_NormNCRES");
-    genie_interaction_model.push_back("GENIE_Rvn1pi");
-    genie_interaction_model.push_back("GENIE_Rvn2pi");
-    genie_interaction_model.push_back("GENIE_Rvp1pi");
-    genie_interaction_model.push_back("GENIE_Rvp2pi");
-    genie_interaction_model.push_back("GENIE_VecFFCCQEshape");
-    genie_interaction_model.push_back("GENIE_D2_MaRES");
-    genie_interaction_model.push_back("GENIE_D2_NormCCRES");
-    genie_interaction_model.push_back("GENIE_EP_MvRES");
-    error_summary_group_map["GENIE Interaction Models"] = genie_interaction_model;
+    // Elastic + CCQE + 2p2h + RPA cross-section models
+    std::vector<std::string> el_ccqe_xsec_model;
+    el_ccqe_xsec_model.push_back("GENIE_MaNCEL");
+    el_ccqe_xsec_model.push_back("GENIE_EtaNCEL");
+    el_ccqe_xsec_model.push_back("GENIE_MaCCQE");
+    el_ccqe_xsec_model.push_back("GENIE_CCQEPauliSupViaKF");
+    el_ccqe_xsec_model.push_back("GENIE_VecFFCCQEshape");
+    el_ccqe_xsec_model.push_back("Low_Recoil_2p2h_Tune");
+    el_ccqe_xsec_model.push_back("RPA_HighQ2");
+    el_ccqe_xsec_model.push_back("RPA_LowQ2");
+    error_summary_group_map["X-Sec: EL/CCQE/2p2h/RPA"] = el_ccqe_xsec_model;
     
-    std::vector<std::string> genie_nucleon_fsi;
-    genie_nucleon_fsi.push_back("GENIE_FrAbs_N");
-    genie_nucleon_fsi.push_back("GENIE_FrCEx_N");
-    genie_nucleon_fsi.push_back("GENIE_FrElas_N");
-    genie_nucleon_fsi.push_back("GENIE_FrInel_N");
-    genie_nucleon_fsi.push_back("GENIE_FrPiProd_N");
-    genie_nucleon_fsi.push_back("GENIE_MFP_N");
-    error_summary_group_map["GENIE Nucleon FSI"] = genie_nucleon_fsi;
+    // RES pion prod. cross-section models
+    std::vector<std::string> respi_xsec_model;
+    respi_xsec_model.push_back("GENIE_MaRES");
+    respi_xsec_model.push_back("GENIE_MvRES");
+    respi_xsec_model.push_back("GENIE_NormNCRES");
+    respi_xsec_model.push_back("GENIE_RDecBR1gamma");
+    respi_xsec_model.push_back("GENIE_Theta_Delta2Npi");
+    respi_xsec_model.push_back("GENIE_D2_MaRES");
+    respi_xsec_model.push_back("GENIE_D2_NormCCRES");
+    respi_xsec_model.push_back("GENIE_EP_MvRES");
+    respi_xsec_model.push_back("LowQ2Pi");
+    error_summary_group_map["X-Sec: RES pion"] = respi_xsec_model;
     
-    std::vector<std::string> genie_pion_fsi;
-    genie_pion_fsi.push_back("GENIE_AGKYxF1pi");
-    genie_pion_fsi.push_back("GENIE_FrAbs_pi");
-    genie_pion_fsi.push_back("GENIE_FrCEx_pi");
-    genie_pion_fsi.push_back("GENIE_FrElas_pi");
-    genie_pion_fsi.push_back("GENIE_FrPiProd_pi");
-    genie_pion_fsi.push_back("GENIE_MFP_pi");
-    genie_pion_fsi.push_back("GENIE_RDecBR1gamma");
-    genie_pion_fsi.push_back("GENIE_Theta_Delta2Npi");
-    error_summary_group_map["GENIE Pion FSI"] = genie_pion_fsi;
+    // Non-RES pion prod. cross-section models
+    std::vector<std::string> nonrespi_xsec_model;
+    nonrespi_xsec_model.push_back("GENIE_Rvn1pi");
+    nonrespi_xsec_model.push_back("GENIE_Rvn2pi");
+    nonrespi_xsec_model.push_back("GENIE_Rvp1pi");
+    nonrespi_xsec_model.push_back("GENIE_Rvp2pi");
+    error_summary_group_map["X-Sec: Non-RES pion"] = nonrespi_xsec_model;
     
-    std::vector<std::string> mnvgenie;
-    mnvgenie.push_back("Low_Recoil_2p2h_Tune");
-    mnvgenie.push_back("RPA_HighQ2");
-    mnvgenie.push_back("RPA_LowQ2");
-    mnvgenie.push_back("LowQ2Pi");
-    error_summary_group_map["MnvGENIE Tune"] = mnvgenie;
+    // DIS cross-section models
+    std::vector<std::string> dis_xsec_model;
+    dis_xsec_model.push_back("GENIE_AhtBY");
+    dis_xsec_model.push_back("GENIE_BhtBY");
+    dis_xsec_model.push_back("GENIE_CV1uBY");
+    dis_xsec_model.push_back("GENIE_CV2uBY");
+    dis_xsec_model.push_back("GENIE_AGKYxF1pi");
+    dis_xsec_model.push_back("GENIE_NormDISCC");
+    error_summary_group_map["X-Sec: DIS"] = dis_xsec_model;
     
-    std::vector<std::string> muon;
-    muon.push_back("Muon_Energy_MINERvA");
-    muon.push_back("Muon_Energy_MINOS");
-    muon.push_back("Muon_Energy_Resolution");
-    muon.push_back("MuonAngleXResolution");
-    muon.push_back("MuonAngleYResolution");
-    muon.push_back("BeamAngleX");
-    muon.push_back("BeamAngleY");
-    muon.push_back("MINOS_Reconstruction_Efficiency");
-    error_summary_group_map["Muon Reconstruction"] = muon;
+    // Nucleon FSI model
+    std::vector<std::string> nucleon_fsi;
+    nucleon_fsi.push_back("GENIE_MFP_N");
+    nucleon_fsi.push_back("GENIE_FrElas_N");
+    nucleon_fsi.push_back("GENIE_FrInel_N");
+    nucleon_fsi.push_back("GENIE_FrAbs_N");
+    nucleon_fsi.push_back("GENIE_FrCEx_N");
+    nucleon_fsi.push_back("GENIE_FrPiProd_N");
+    error_summary_group_map["FSI: Nucleons"] = nucleon_fsi;
     
-    std::vector<std::string> detector;
-    detector.push_back("GEANT_Neutron");
-    detector.push_back("GEANT_Pion");
-    detector.push_back("GEANT_Proton");
-    detector.push_back("MichelEfficiency");
-    error_summary_group_map["Detector Model"] = detector;
+    // Pion FSI model
+    std::vector<std::string> pion_fsi;
+    pion_fsi.push_back("GENIE_MFP_pi");
+    pion_fsi.push_back("GENIE_FrElas_pi");
+    pion_fsi.push_back("GENIE_FrAbs_pi");
+    pion_fsi.push_back("GENIE_FrCEx_pi");
+    pion_fsi.push_back("GENIE_FrPiProd_pi");
+    error_summary_group_map["FSI: Pions"] = pion_fsi;
     
+    // Muon reconstruction
+    std::vector<std::string> muon_reco;
+    muon_reco.push_back("Muon_Energy_MINERvA");
+    muon_reco.push_back("Muon_Energy_MINOS");
+    muon_reco.push_back("Muon_Energy_Resolution");
+    muon_reco.push_back("MuonAngleXResolution");
+    muon_reco.push_back("MuonAngleYResolution");
+    muon_reco.push_back("BeamAngleX");
+    muon_reco.push_back("BeamAngleY");
+    muon_reco.push_back("MINOS_Reconstruction_Efficiency");
+    error_summary_group_map["Muon Reconstruction"] = muon_reco;
+    
+    // Calorimetric energy particle response
+    std::vector<std::string> part_response;
+    part_response.push_back("response_low_proton");
+    part_response.push_back("response_mid_proton");
+    part_response.push_back("response_high_proton");
+    part_response.push_back("response_low_neutron");
+    part_response.push_back("response_mid_neutron");
+    part_response.push_back("response_high_neutron");
+    part_response.push_back("response_meson");
+    part_response.push_back("response_em");
+    part_response.push_back("response_other");
+    error_summary_group_map["Particle Response"] = part_response;
+    
+    // Other
     std::vector<std::string> other;
+    other.push_back("GEANT_Neutron");
+    other.push_back("GEANT_Pion");
+    other.push_back("GEANT_Proton");
     other.push_back("Target_Mass_CH");
     other.push_back("Target_Mass_C");
     other.push_back("Target_Mass_H2O");
     other.push_back("Target_Mass_Fe");
     other.push_back("Target_Mass_Pb");
+    other.push_back("MichelEfficiency");
     error_summary_group_map["Other"] = other;
     
     // Systematics color scheme
     error_color_map.clear();
-    error_color_map["Neutrino Flux"]            = kRed+2;
-    error_color_map["GENIE Interaction Models"] = kGreen+1;
-    error_color_map["GENIE Nucleon FSI"]        = kBlue+2;
-    error_color_map["GENIE Pion FSI"]           = kMagenta+1;
-    error_color_map["MnvGENIE Tune"]            = kOrange+2;
-    error_color_map["Muon Reconstruction"]      = kCyan+2;
-    error_color_map["Detector Model"]           = kViolet+6;
-    error_color_map["Other"]                    = kPink+2;
+    error_color_map["Neutrino Flux"]           = kOrange+2;
+    error_color_map["X-Sec: EL/CCQE/2p2h/RPA"] = kCyan+3;
+    error_color_map["X-Sec: RES pion"]         = kRed;
+    error_color_map["X-Sec: Non-RES pion"]     = kRed+2;
+    error_color_map["X-Sec: DIS"]              = kViolet-1;
+    error_color_map["FSI: Nucleons"]           = kGreen+1;
+    error_color_map["FSI: Pions"]              = kYellow+2;
+    error_color_map["Muon Reconstruction"]     = kBlue+1;
+    error_color_map["Particle Response"]       = kAzure-8;
+    error_color_map["Other"]                   = kGray+1;
   }
 
   else {
@@ -4068,6 +4100,160 @@ Double_t MnvPlotter::Chi2DataMC(
     return chi2;
 }
 
+Double_t MnvPlotter::Chi2DataMCNonStandardBins(
+                                const MnvH1D* dataHist,
+                                const MnvH1D* mcHist,
+                                const Double_t mcScale,
+                                const bool useDataErrorMatrix,
+                                const bool useOnlyShapeErrors,
+                                const bool useModelStat,
+				const MnvH2D* templateHist,
+                                TMatrixD *Chi2ByBin)
+{
+    //We get the number of bins and make sure it's compatible with the NxN matrix given
+    if ( dataHist->GetNbinsX() != mcHist->GetNbinsX() )
+    {
+        Error("MnvPlotter::Chi2DataMC", "The number of bins from Data and MC histograms differ. Returning -1.");
+        return -1.;
+    }
+
+    //only consider the plotted range
+    const int lowBin  = chi2_use_overflow_err ? 0 : mcHist->GetXaxis()->GetFirst();
+    const int highBin = chi2_use_overflow_err ? mcHist->GetNbinsX()+1 : mcHist->GetXaxis()->GetLast();
+
+    //Scaling MC to Data
+    MnvH1D* tmpMCHist = (MnvH1D*) mcHist->Clone("tmpMCHist");
+    tmpMCHist->Scale(mcScale);
+
+    MnvH1D* tmpDataHist = (MnvH1D*) dataHist->Clone("tmpDataHist");
+
+    // Defining Error Matrix dimensions
+    // Either use the requested range or the full error matrix with under/overflow
+    Int_t Nbins = highBin - lowBin + 1;
+    if ( chi2_use_overflow_err )
+        Nbins = tmpMCHist->GetNbinsX()+2;
+
+
+    vector<int> encoded_ufofbins;
+    for(int i=1;i<tmpDataHist->GetNbinsX()+1;i++){
+      int lowedge_encoded = tmpDataHist->GetBinLowEdge(i);
+      int orig_x,orig_y,orig_z;
+      templateHist->GetBinXYZ(lowedge_encoded,orig_x,orig_y,orig_z);
+      if(orig_x<1 || orig_x>templateHist->GetNbinsX()){
+	encoded_ufofbins.push_back(i);
+	tmpDataHist->SetBinContent(i,0);
+	tmpDataHist->SetBinError(i,0);
+	tmpMCHist->SetBinContent(i,0);
+	tmpMCHist->SetBinError(i,0);
+      }
+      if(orig_y<1 || orig_y>templateHist->GetNbinsY()){
+	encoded_ufofbins.push_back(i);
+	tmpDataHist->SetBinContent(i,0);
+	tmpDataHist->SetBinError(i,0);
+	tmpMCHist->SetBinContent(i,0);
+	tmpMCHist->SetBinError(i,0);
+      }
+      
+    }
+      
+
+    //get the covariance matrix
+    TMatrixD covMatrix(Nbins, Nbins);
+    {
+        const Int_t NbinsTotal = tmpMCHist->GetNbinsX() + 2; //+2 for under/overflow
+        TMatrixD covMatrixTmp( NbinsTotal, NbinsTotal );
+        const bool includeStatError = true;
+        const bool errorAsFraction  = false;
+
+        // Use Error Matrix from Data or MC?
+        if ( useDataErrorMatrix )
+        {
+            covMatrixTmp = tmpDataHist->GetTotalErrorMatrix( includeStatError, errorAsFraction, useOnlyShapeErrors);
+            if (useModelStat) covMatrixTmp += tmpMCHist->GetStatErrorMatrix( );
+        }
+        else
+        {
+            covMatrixTmp = tmpMCHist->GetTotalErrorMatrix(  includeStatError, errorAsFraction, useOnlyShapeErrors);
+            if (useModelStat) covMatrixTmp += tmpDataHist->GetStatErrorMatrix( );
+        }
+
+        //select only covariance elements in the histogram range
+        // unless using the contributions to covariance from overflow
+        if ( chi2_use_overflow_err )
+        {
+            covMatrix = covMatrixTmp;
+        }
+        else
+        {
+            for ( int i = 0; i != Nbins; ++i )
+            {
+                for ( int j = 0; j != Nbins; ++j )
+                {
+		  if(find(encoded_ufofbins.begin(),encoded_ufofbins.end(),i)!=encoded_ufofbins.end()) continue;
+		  if(find(encoded_ufofbins.begin(),encoded_ufofbins.end(),j)!=encoded_ufofbins.end()) continue;
+		  covMatrix[i][j] = covMatrixTmp[i+lowBin][j+lowBin];
+                }
+            }
+        }
+
+    }// end of block to get covarance
+
+    //Now, we invert the covariance error Matrix and store the result in "errorMatrix"
+    // Note: TDecompSVD can handle singular matrices
+
+    //Now, we invert the covariance error Matrix and store the result in "errorMatrix"
+    // Note: TDecompSVD can handle singular matrices
+
+    covMatrix*=1e80;//ROOT can't seem to handle small entries with lots of zeros? Suggested scaling the histogram and then rescaling the inverted matrix
+
+    TDecompSVD error(covMatrix);
+    TMatrixD errorMatrix(covMatrix);
+    if ( ! error.Invert( errorMatrix ) )
+    {
+        Warning("MnvPlotter::Chi2DataMC", "Cannot invert total covariance matrix.  Using statistical errors only for Chi2 calculation.");
+        return Chi2DataMC( (TH1D*)tmpDataHist, (TH1D*)tmpMCHist,  mcScale );
+    }
+    errorMatrix*=1e80;//ROOT can't seem to handle small entries with lots of zeros? Suggested scaling the histogram and then rescaling the inverted matrix
+
+    if (Chi2ByBin) {
+        //cout << "Resizing the matrix you gave me for the chi2. Orignal size " << Chi2ByBin->GetNrows()<<endl;
+        Chi2ByBin->ResizeTo(Nbins,Nbins);
+        //cout << "New size row " << Chi2ByBin->GetNrows()<<endl;
+    }
+
+    //Calculating chi2
+    int ndf = 0;
+    Double_t chi2 = 0.;
+    // under/overflow bins not taken into account in the chi2 calculation
+    for (int i=lowBin; i<=highBin ; ++i)
+    {
+        const int iErrBin = i - lowBin;
+        const Double_t x_data_i = tmpDataHist->GetBinContent(i);
+        const Double_t x_mc_i   = tmpMCHist->GetBinContent(i);
+
+        for (int j=lowBin; j<=highBin; ++j)
+        {
+            const int jErrBin = j - lowBin;
+            const Double_t x_data_j = tmpDataHist->GetBinContent(j);
+            const Double_t x_mc_j   = tmpMCHist->GetBinContent(j);
+            const double chi2_ij = (x_data_i - x_mc_i) * errorMatrix[iErrBin][jErrBin] * (x_data_j - x_mc_j);
+            if (Chi2ByBin) Chi2ByBin[0][iErrBin][jErrBin]=chi2_ij;//Dunno why this work... TBD
+            chi2 += chi2_ij;
+        }
+        ++ndf; // Is this the right way to calcualte ndf?
+    }
+
+    // if this is a shape comparison, subtract one degree of freedom?
+    if (useOnlyShapeErrors)
+        --ndf;
+
+    delete tmpMCHist;
+
+    return chi2;
+}
+
+
+
 
 Double_t MnvPlotter::Chi2MCMC(
         const MnvH1D* histA,
@@ -4123,7 +4309,8 @@ void MnvPlotter::DrawDataMCVariations(
         const bool dataAsPoints     /*= true  */,
         const bool allSolidLines    /*= false */,
         const bool leaveStyleAlone  /*= false */,
-        const bool covAreaNormalize /*=false*/
+        const bool covAreaNormalize /*=false*/,
+        bool useDataHistTitle /*=true*/
         )
 {
     if (!gPad)
@@ -4199,9 +4386,9 @@ void MnvPlotter::DrawDataMCVariations(
     }
     //Add data to the legend first
     if ( dataAsPoints )
-        leg->AddEntry(tmpData,tmpData->GetTitle(),"ple");
+        leg->AddEntry(tmpData,useDataHistTitle ? tmpData->GetTitle() : "Data","ple");
     else
-        leg->AddEntry(tmpData,tmpData->GetTitle(),"l");
+        leg->AddEntry(tmpData,useDataHistTitle ? tmpData->GetTitle() : "Data","l");
 
 
 
