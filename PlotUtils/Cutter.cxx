@@ -43,8 +43,10 @@ namespace PlotUtils
                                                                  //with this optimization.
       {
         fCVPassedCuts = checkSelection(univ, event, weight, isSignalForCuts);
+        fCVEvent = event;
         fLastEntryCVChecked = univ.GetEntry();
       }
+      event = fCVEvent; //TODO: else if might be more efficient
       return fCVPassedCuts;
     }
 
@@ -332,6 +334,7 @@ namespace PlotUtils
     getMCStats(univ, weight, isSignalForCuts, true);
                                                                                                                     
     fCVPassedCuts = checkSelection(univ, event, weight, isSignalForCuts);
+    fCVEvent = event;
     return fCVPassedCuts;
   }
 

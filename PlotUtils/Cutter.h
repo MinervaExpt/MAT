@@ -76,6 +76,7 @@ namespace PlotUtils
       //Have I checked whether the CV passes all cuts for this event?  If so, I can assume the same
       //for all IsVertical() universes.
       std::bitset<64> fCVPassedCuts;
+      EVENT fCVEvent;
       int fLastEntryCVChecked;
       std::bitset<64> checkSelection(const UNIVERSE& univ, EVENT& event, double weight = 1., const bool isSignalForCuts = true);
       void getMCStats(const UNIVERSE& univ, double& weight, bool& isSignalForCuts, const bool isThisTheCV);
