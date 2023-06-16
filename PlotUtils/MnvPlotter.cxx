@@ -5119,6 +5119,8 @@ bool MnvPlotter::DrawErrorSummary(
         TH1D *statErr = (TH1D*)h->GetStatError(asfrac).Clone( Form("this_stat_err_%d", __LINE__) );
         AddToTmp( statErr );
 
+        // Increase count to avoid reusing line style 2
+        if (useDifferentLineStyles) ApplyNextLineStyle(statErr, false, useDifferentLineStyles);
         statErr->SetLineColor( 12 );//dark gray
         statErr->SetLineStyle( 2 ); //dashed
         statErr->SetLineWidth( 3 );
