@@ -25,10 +25,14 @@
 
 namespace PlotUtils
 {
+  //Ugly hack to allow us to include both Cut.h and Reweighter.h (from MAT-MINERvA) in the same file or either one individually.  The right solution is usually to create another file, but I don't want to confuse people with a file that just creates an empty structure :(
+  #ifndef PLOTUTILS_DETAIL_EMPTY
+  #define PLOTUTILS_DETAIL_EMPTY
   namespace detail
   {
     struct empty {};
   }
+  #endif //PLOTUTILS_DETAIL_EMPTY
 
   //Intended for reconstructed quantities
   template <class UNIVERSE, class EVENT = detail::empty>
