@@ -90,7 +90,8 @@ namespace PlotUtils {
         virtual bool IsValid(const std::string& branchName)
         {/** check to see if a branch is valid */
             itLaB it = leavesAndBranches.find(branchName);
-            if (!AddBranch(branchName,true)) return 0;  // does a silent attempt to find the branch
+            if (it != leavesAndBranches.end()) return 1; 
+            if ( !AddBranch(branchName,true)) return 0;  // does a silent attempt to find the branch
             return (it != leavesAndBranches.end());
         }
         
