@@ -82,12 +82,18 @@ namespace PlotUtils {
                It is now unneccessary to call this function. It'll happen automagically
                on first call of GetValue.
             */
-        virtual bool AddBranch(const std::string& branchName);
+        virtual bool AddBranch(const std::string& branchName, const bool silent=false);
             /**
                Get the value of branch \a branchName in tree entry \a ientry.
                Use non-zero \a leafVal for leaves that are arrays
             */
-
+        virtual bool IsValid(const std::string& branchName)
+        {/** check to see if a branch is valid */
+            itLaB it = leavesAndBranches.find(branchName);
+            if (!AddBranch(branchName,true)) return 0;  // does a silent attempt to find the branch
+            return (it != leavesAndBranches.end());
+        }
+        
         virtual double GetValue(const std::string& branchName, Long64_t ientry, int leafVal=0)
         {
           return (double) GetLeaf(branchName,ientry)->GetValue(leafVal);

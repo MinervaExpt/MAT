@@ -42,7 +42,7 @@ PlotUtils::TreeWrapper::TreeWrapper(TTree* t)
 
 //======================================================================
 
-bool PlotUtils::TreeWrapper::AddBranch(const string& branchName)
+bool PlotUtils::TreeWrapper::AddBranch(const string& branchName, const bool silent)
 {
   // Sometimes FindBranch works, sometimes GetBranch works. Don't know
   // why, so just try both
@@ -51,11 +51,11 @@ bool PlotUtils::TreeWrapper::AddBranch(const string& branchName)
   TLeaf* l=tree->FindLeaf(branchName.c_str());
   if (!l) l=tree->GetLeaf(branchName.c_str());
   if (!b) {
-    cerr << "Can't find branch " << branchName << endl;
+    if (!silent) cerr << "Can't find branch " << branchName << endl;
     return false;
   }
   if (!l) {
-    cerr << "Can't find leaf " << branchName << endl;
+    if (!silent) cerr << "Can't find leaf " << branchName << endl;
     return false;
   }
   tree->SetBranchStatus(branchName.c_str(), 1);
