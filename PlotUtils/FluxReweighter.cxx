@@ -1186,7 +1186,7 @@ namespace PlotUtils
 
   {
     MnvH1D* h_flux = (MnvH1D*)input_flux->Clone("input_flux"); //this->GetFluxReweighted(nuPDG);
-    std::cout<<"FluxReweighter::GetRebinnedFluxReweighted_FromInputFlux from Minerva_v22r1p1_ME_git."<<std::endl;
+    //std::cout<<"FluxReweighter::GetRebinnedFluxReweighted_FromInputFlux from Minerva_v22r1p1_ME_git."<<std::endl;
     MnvH1D* h_flux_rebinned =
         (MnvH1D*)template_hist->Clone("reweightedflux_rebinned");
     h_flux_rebinned->ClearAllErrorBands();
@@ -1208,29 +1208,28 @@ namespace PlotUtils
 
     //Adding in vertical error bands part from GetRebinnedFluxReweigted
     //Now Flux Universes // DON'T Assume Flux is the only error
-    std::cout<<"FluxReweighter::l1003"<<std::endl;
-    if(propErrors){// GENIE XSecExtractor breaks here cause its really a TH1D
-      std::vector<std::string> vertNames = h_flux->GetVertErrorBandNames();
-      for(unsigned int k=0; k<vertNames.size(); ++k ) {
-	MnvVertErrorBand *errBand = h_flux->GetVertErrorBand( vertNames[k] );
-	const int universes = errBand->GetNHists();
-	std::vector<TH1D*> vert_hists;
-	for(int u=0;u<universes;++u) {
-	  TH1D* tmp_flux = new TH1D(*errBand->GetHist( u ));
-	  TH1D* tmp_template = new TH1D(h_flux_rebinned->GetCVHistoWithStatError());
-	  tmp_template->SetName(Form("Flux_rebinned_universe_%d",u));
-	  RebinFluxHist(tmp_flux,tmp_template);
-	  vert_hists.push_back(tmp_template);
-	}
-	h_flux_rebinned->AddVertErrorBand( vertNames[k],vert_hists);
-	//clean my mess
-	for(std::vector<TH1D*>::iterator itHist = vert_hists.begin();
-	    itHist != vert_hists.end(); ++itHist)
-	  delete *itHist;
+    //std::cout<<"FluxReweighter::l1003"<<std::endl;
+    std::vector<std::string> vertNames = h_flux->GetVertErrorBandNames();
+    for(unsigned int k=0; k<vertNames.size(); ++k ) {
+      MnvVertErrorBand *errBand = h_flux->GetVertErrorBand( vertNames[k] );
+      const int universes = errBand->GetNHists();
+      std::vector<TH1D*> vert_hists;
+      for(int u=0;u<universes;++u) {
+	TH1D* tmp_flux = new TH1D(*errBand->GetHist( u ));
+	TH1D* tmp_template = new TH1D(h_flux_rebinned->GetCVHistoWithStatError());
+	tmp_template->SetName(Form("Flux_rebinned_universe_%d",u));
+	RebinFluxHist(tmp_flux,tmp_template);
+	vert_hists.push_back(tmp_template);
       }
-      //AddMissingError with CV
-      CheckAndFixFluxErrorBand( h_flux_rebinned );
+      h_flux_rebinned->AddVertErrorBand( vertNames[k],vert_hists);
+      //clean my mess
+      for(std::vector<TH1D*>::iterator itHist = vert_hists.begin();
+	  itHist != vert_hists.end(); ++itHist)
+	delete *itHist;
     }
+    //AddMissingError with CV
+    CheckAndFixFluxErrorBand( h_flux_rebinned );
+    
 
     h_flux_rebinned->AddMissingErrorBandsAndFillWithCV(*template_hist);
 
