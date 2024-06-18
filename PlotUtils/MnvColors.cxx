@@ -152,10 +152,16 @@ const std::vector<int>& MnvColors::GetColors(int palette) {
 
   // From Color Universal Design (CUD): https://jfly.uni-koeln.de/color/
   const int OkabeItoColors[] = {
-      TColor::GetColor("#E69F00"), TColor::GetColor("#56B4E9"),
+      TColor::GetColor("#332288"), TColor::GetColor("#117733"),
+      TColor::GetColor("#44AA99"), TColor::GetColor("#88CCEE"),
+      TColor::GetColor("#DDCC77"), TColor::GetColor("#CC6677"),
+      TColor::GetColor("#AA4499"), TColor::GetColor("#882255"),
+      TColor::GetColor("#d2b29b"), TColor::GetColor("#6AA0BB"),
+      TColor::GetColor("#CBCDCE"), TColor::GetColor("#444546")      };
+      /*TColor::GetColor("#E69F00"), TColor::GetColor("#56B4E9"),
       TColor::GetColor("#009E73"), TColor::GetColor("#F0E442"),
       TColor::GetColor("#0072B2"), TColor::GetColor("#D55E00"),
-      TColor::GetColor("#CC79A7"), TColor::GetColor("#000000")};
+      TColor::GetColor("#CC79A7"), TColor::GetColor("#000000")};*/
 
   const int OkabeItoLightColors[] = {
       TColor::GetColor("#EBB233"), TColor::GetColor("#78C3ED"),
@@ -233,7 +239,7 @@ const std::vector<int>& MnvColors::GetColors(int palette) {
           first_color = TolLightColors;
           break;
         case 9:
-          ncolors = 8;
+          ncolors = 12;
           first_color = OkabeItoColors;
           break;
         case 10:
