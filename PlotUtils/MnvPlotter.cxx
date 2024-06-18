@@ -233,15 +233,15 @@ void MnvPlotter::ApplyStyle( PlotUtils::t_PlotStyle style /* = kDefaultStyle */ 
     axis_draw_grid_x = false;
     axis_draw_grid_y = false;
     axis_max_digits   = 3;
-    axis_title_font_x = 62;
-    axis_title_font_y = 62;
-    axis_title_font_z = 62;
+    axis_title_font_x = 42;
+    axis_title_font_y = 42;
+    axis_title_font_z = 42;
     axis_title_offset_x = 1.15;
-    axis_title_offset_y = 1.2;
+    axis_title_offset_y = 1.25;
     axis_title_offset_z = .75;
-    axis_title_size_x = 0.06;
-    axis_title_size_y = 0.06;
-    axis_title_size_z = 0.06;
+    axis_title_size_x = 0.05;
+    axis_title_size_y = 0.05;
+    axis_title_size_z = 0.05;
     axis_minimum      = MnvHist::AutoAxisLimit;
     axis_maximum      = MnvHist::AutoAxisLimit;
     axis_maximum_group= MnvHist::AutoAxisLimit; //0.5;
@@ -265,11 +265,11 @@ void MnvPlotter::ApplyStyle( PlotUtils::t_PlotStyle style /* = kDefaultStyle */ 
     width_xspace_per_letter = .5;
     legend_border_size      = 0;
     legend_fill_color       = -1;
-    legend_text_size        = .035;
+    legend_text_size        = .032;
     legend_offset_x         = 0.;
     legend_offset_y         = 0.;
     legend_n_columns        = 1;
-    legend_text_font        = 62;
+    legend_text_font        = 42;
 
     //-- define good colors for general use
     //-- used in particular for DrawErrorSummary
@@ -5124,6 +5124,9 @@ bool MnvPlotter::DrawErrorSummary(
         statErr->SetLineColor( 12 );//dark gray
         statErr->SetLineStyle( 2 ); //dashed
         statErr->SetLineWidth( 3 );
+        for(int i=1; i<statErr->GetNbinsX()+1; ++i){
+            statErr->SetBinContent(i, abs(statErr->GetBinContent(i)));
+        }
         statErr->Draw((histDrawOption + " SAME").c_str());
         hists.push_back( statErr );
         names.push_back( stat_error_name );
