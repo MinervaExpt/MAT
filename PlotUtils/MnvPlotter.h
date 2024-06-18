@@ -264,23 +264,23 @@ namespace PlotUtils
         bool ApplyAxisStyle(
             TH1 *h,
             bool centerXTitle = true,
-            bool centerYTitle = false,
-            bool centerZTitle = false
+            bool centerYTitle = true,
+            bool centerZTitle = true
             ) const;
 
         //! Set the style of all axes in this TDirectory (using the setting of this class)
         bool ApplyAxisStyle(
             TDirectory *td,
             bool centerXTitle = true,
-            bool centerYTitle = false,
-            bool centerZTitle = false
+            bool centerYTitle = true,
+            bool centerZTitle = true
             ) const;
 
         //! Set the style of all axes in gDirectory
         bool ApplyAxisStyle(
             bool centerXTitle = true,
-            bool centerYTitle = false,
-            bool centerZTitle = false
+            bool centerYTitle = true,
+            bool centerZTitle = true
             ) const;
 
         //! Set the axis limits to auto-detect mode
