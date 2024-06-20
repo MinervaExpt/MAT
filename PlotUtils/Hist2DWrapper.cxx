@@ -2,7 +2,6 @@
 #define HIST2DWRAPPER_CXX
 
 #include "PlotUtils/Hist2DWrapper.h"
-#include "PlotUtils/FluxSystematics.h" //flux_reweighter
 
 using namespace PlotUtils;
 
@@ -194,10 +193,7 @@ void Hist2DWrapper<T>::FillErrorBandsWithSysUni(std::vector<T*> univs,
 
   // Add this band to the MnvH2D 
   if(!hist->HasVertErrorBand(name)){
-    if( univs.front()->ShortName() == "Flux" && univs.front()->UseNuEConstraint() ){
-      PlotUtils::flux_reweighter(univs.front()->GetPlaylist(), univs.front()->GetAnalysisNuPDG(), true, univs.front()->GetNFluxUniverses()).AddFluxErrorBand( hist );
-    }
-    else hist->AddVertErrorBand( name, nhists );
+    hist->AddVertErrorBand( name, nhists );
   }
   
   // Connect each band's universe to the corresponding MnvH2D's TH2

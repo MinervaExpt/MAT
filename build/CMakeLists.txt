@@ -45,9 +45,6 @@ PlotUtils/BaseUniverse.cxx
 PlotUtils/ChainWrapper.cxx
 PlotUtils/Cutter.cxx
 PlotUtils/DefaultCVUniverse.cxx
-PlotUtils/FluxReweighter.cxx
-PlotUtils/FluxReweighterWithWiggleFit.cxx
-PlotUtils/FluxSystematics.cxx
 PlotUtils/GeantHadronSystematics.cxx
 PlotUtils/GridCanvas.cxx
 PlotUtils/genie_particle.cxx
@@ -124,9 +121,6 @@ PlotUtils/Cut.h
 PlotUtils/Cutter.h
 PlotUtils/DefaultCVUniverse.h
 PlotUtils/Exceptions.h
-PlotUtils/FluxReweighter.h
-PlotUtils/FluxReweighterWithWiggleFit.h
-PlotUtils/FluxSystematics.h
 PlotUtils/GeantHadronSystematics.h
 PlotUtils/GridCanvas.h
 PlotUtils/genie_particle.h

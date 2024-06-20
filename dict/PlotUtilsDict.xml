@@ -15,7 +15,6 @@
   <class name="PlotUtils::ChainWrapper" />
   <class name="PlotUtils::TreeWrapper" />
   <class name="PlotUtils::GridCanvas" />
-  <class name="PlotUtils::FluxReweighter" />
 
   <!-- exceptions -->
   <class name="PlotUtils::BadUnivWgtError" />

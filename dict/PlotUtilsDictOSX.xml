@@ -22,7 +22,6 @@
 	<class name="PlotUtils::POTCounter" />
 	
 	<class name="PlotUtils::MnvEVD::Event" />
-	<class name="PlotUtils::FluxReweighter" />
 	<class name="PlotUtils::HyperDimLinearizer" />
 	<!-- exceptions -->
 	<class name="PlotUtils::BadUnivWgtError" />
