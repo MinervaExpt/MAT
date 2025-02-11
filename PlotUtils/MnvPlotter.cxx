@@ -3812,7 +3812,10 @@ Double_t MnvPlotter::Chi2DataMC(
             ++ndf;
         }
     }
-
+	
+    delete tmpData;
+    delete tmpMC;
+	
     return chi2;
 
 }
@@ -3849,7 +3852,10 @@ Double_t MnvPlotter::Chi2DataMC(
             ++ndf;
         }
     }
-
+	
+    delete tmpData;
+    delete tmpMC;
+	
     return chi2;
 
 }
