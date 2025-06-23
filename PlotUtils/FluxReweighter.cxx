@@ -813,6 +813,19 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
     //  if( strcmp( name.c_str(), "Flux" ) != 0 ) h_flux->PopLatErrorBand(name);
     //}
 
+    // Apply Asit's correction above 7.5 GeV
+    for (int i = 1; i <= h_flux->GetNbinsX(); ++i) {
+      double E = h_flux->GetBinCenter(i);
+      double weight = AsitsRobFineFluxCorrection(E);
+      double content = h_flux->GetBinContent(i);
+      double error = h_flux->GetBinError(i);
+
+      //std::cout << "E = " << E << ", CV weight = " << weight << std::endl;
+
+      h_flux->SetBinContent(i, content * weight);
+      h_flux->SetBinError(i, error * weight);
+    }
+
     return h_flux;
 
   }
@@ -1301,6 +1314,27 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
   }
 
   //============================================================================
+  double FluxReweighter::AsitsRobFineFluxCorrection(double energy_GeV) const {
+    if (energy_GeV < 7.5) return 1.0;  // no correction below 7.5 GeV
+
+    else if (energy_GeV > 11.0)
+      return 1.14;
+    else {
+      double enupoly[7] = {
+        3.87231297e+00, -3.15154546e+00, 1.39011091e+00,
+        -3.05172082e-01, 3.51611199e-02, -2.03132511e-03, 4.64383480e-05
+      };
+      double ratio = enupoly[0];
+      double powenu = energy_GeV;
+      for (int i = 1; i < 7; ++i) {
+        ratio += enupoly[i] * powenu;
+        powenu *= energy_GeV;
+      }
+      return ratio;
+    }
+  }
+ //============================================================================
+
   template<class MnvHistoType>
   MnvHistoType* FluxReweighter::GetIntegratedFluxReweighted(int nuPDG,
                                                       MnvHistoType* template_hist,
@@ -1319,6 +1353,19 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
     if(m_useStandardFlux){
 
       MnvH1D* h_flux_ppfx = this->GetFluxReweighted(nuPDG);
+
+      // Apply Asit's correction above 7.5 GeV
+      for (int i = 1; i <= h_flux_ppfx->GetNbinsX(); ++i) {
+        double E = h_flux_ppfx->GetBinCenter(i);
+        double weight = AsitsRobFineFluxCorrection(E);
+        double content = h_flux_ppfx->GetBinContent(i);
+        double error = h_flux_ppfx->GetBinError(i);
+
+        //std::cout << "E = " << E << ", CV weight = " << weight << std::endl;
+
+        h_flux_ppfx->SetBinContent(i, content * weight);
+        h_flux_ppfx->SetBinError(i, error * weight);
+      }
 
       //Get bins to integrate over
       int ppfx_b_min = h_flux_ppfx->FindBin( min_energy );
@@ -1345,6 +1392,18 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
       auto flux_sys_hists = GetVector(h_flux_integrated);
       for(int u=0;u<universes;++u) {
         TH1D* tmp_flux = new TH1D(*errBand->GetHist( u ));
+        // Apply Asit's correction above 7.5 GeV for flux universes
+        for (int i = 1; i <= tmp_flux->GetNbinsX(); ++i) {
+          double E = tmp_flux->GetBinCenter(i);
+          double weight = AsitsRobFineFluxCorrection(E);
+          double content = tmp_flux->GetBinContent(i);
+          double error = tmp_flux->GetBinError(i);
+
+          //std::cout << "E = " << E << ", universe " << u << ", uni weight = " << weight << std::endl;
+
+          tmp_flux->SetBinContent(i, content * weight);
+          tmp_flux->SetBinError(i, error * weight);
+        }
         auto tmp_template = h_flux_integrated->GetCVHistoWithStatError();
         tmp_template.SetName(Form("Flux_integrated_universe_%d",u));
         double flux_uni = tmp_flux->Integral(ppfx_b_min,ppfx_b_max,"width");
@@ -1495,6 +1554,17 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
   {
     MnvH1D* h_flux = (MnvH1D*)input_flux->Clone("input_flux");
 
+    // Apply Asit's correction above 7.5 GeV
+    for (int i = 1; i <= h_flux->GetNbinsX(); ++i) {
+        double E = h_flux->GetBinCenter(i);
+        double weight = AsitsRobFineFluxCorrection(E);
+        double content = h_flux->GetBinContent(i);
+        double error = h_flux->GetBinError(i);
+    
+        h_flux->SetBinContent(i, content * weight);
+        h_flux->SetBinError(i, error * weight);
+    }
+
     MnvHistoType* h_flux_integrated =
         (MnvHistoType*)template_hist->Clone("reweightedflux_integrated");
 
@@ -1534,6 +1604,27 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
   {
     MnvH1D* h_flux = GetTargetFluxMnvH1D(nuPDG, tar_mat, project_dir);
     MnvH1D* h_flux_integrated = GetIntegratedFluxReweighted_FromInputFlux( h_flux, template_hist, min_energy, max_energy );
+
+    // Apply the correction to all "Flux" universes (if they exist)
+    if (h_flux->HasVertErrorBand("Flux")) {
+        MnvVertErrorBand* flux_band = h_flux->GetVertErrorBand("Flux");
+        const int nUni = flux_band->GetNHists();
+
+        for (int iUni = 0; iUni < nUni; ++iUni) {
+            TH1D* h_uni = flux_band->GetHist(iUni);
+            // Apply Asit's correction above 7.5 GeV
+            for (int i = 1; i <= h_uni->GetNbinsX(); ++i) {
+                double E = h_uni->GetBinCenter(i);
+                double weight = AsitsRobFineFluxCorrection(E);
+                double content = h_uni->GetBinContent(i);
+                double error = h_uni->GetBinError(i);
+
+                h_uni->SetBinContent(i, content * weight);
+                h_uni->SetBinError(i, error * weight);
+            }
+        }
+    }
+
     
     //Put in the correct flux universes
     if( !h_flux_integrated->HasVertErrorBand("Flux") ) return h_flux_integrated;

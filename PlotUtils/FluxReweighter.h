@@ -238,6 +238,8 @@ namespace PlotUtils
 
 
     protected:
+      // Apply Asit's correction above 7.5 GeV low nu parametrisation
+      double AsitsRobFineFluxCorrection(double energy_GeV) const;
 
       //! Get a singleton MnvHistoConstrainer
       MnvHistoConstrainer& Constrainer();
