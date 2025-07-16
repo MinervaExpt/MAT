@@ -1318,7 +1318,8 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
     if (energy_GeV < 7.5) return 1.0;  // no correction below 7.5 GeV
 
     else if (energy_GeV > 11.0)
-      return 1.14;
+      return 1.14257174; //1.1425717399946567//1.14; 
+      // updated 16/07/2025 to account for IMD;
     else {
       double enupoly[7] = {
         3.87231297e+00, -3.15154546e+00, 1.39011091e+00,
