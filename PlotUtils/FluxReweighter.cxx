@@ -1314,7 +1314,7 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
   }
 
   //============================================================================
-  double FluxReweighter::AsitsRobFineFluxCorrection(double energy_GeV) const {
+  /*double FluxReweighter::AsitsRobFineFluxCorrection(double energy_GeV) const {
     if (energy_GeV < 7.5) return 1.0;  // no correction below 7.5 GeV
 
     else if (energy_GeV > 11.0)
@@ -1333,6 +1333,50 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
       }
       return ratio;
     }
+  }*/
+
+  double FluxReweighter::AsitsRobFineFluxCorrection(double energy_GeV) const {
+    if (energy_GeV < 7.5) return 1.0;  // no correction below 7.5 GeV
+
+    double ratio = 1.0;
+
+    if (energy_GeV < 4.5){
+      ratio = 1.095;
+    }
+    else if (energy_GeV < 12.78){
+      // Polynomial shape from 4.5 to 12.78 GeV
+      double enupoly[6] = {
+        -4.11608956e+00, 3.66971952e+00, -9.73158862e-01,
+        1.21054305e-01, -7.13034149e-03, 1.60919755e-04
+      };
+      double tempratio = enupoly[0];
+      double powenu = energy_GeV;
+      for (int i = 1; i < 6; ++i){
+        tempratio += enupoly[i] * powenu;
+        powenu *= energy_GeV;
+      }
+      ratio = tempratio;
+    }
+    else if (energy_GeV < 26.0){
+      ratio = 1.17;
+    }
+    else if (energy_GeV < 29.0){
+      ratio = 1.17 + (1.09 - 1.17) * (energy_GeV - 26.0) / (29.0 - 26.0);
+    }
+    else if (energy_GeV < 48.0){
+      ratio = 1.09;
+    }
+    else if (energy_GeV < 80.0){
+      ratio = 1.09 + (2.5 - 1.09) * (energy_GeV - 48.0) / (80.0 - 48.0);
+    }
+    else if (energy_GeV < 100.0){
+      ratio = 2.5 + (1.5 - 2.5) * (energy_GeV - 80.0) / (100.0 - 80.0);
+    }
+    else{
+      ratio = 1.5;
+    }
+
+    return ratio;
   }
  //============================================================================
 
