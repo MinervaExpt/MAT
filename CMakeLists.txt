@@ -1,7 +1,7 @@
 #An alternative build system for PlotUtils.
 #Inspired by Heidi Schellman's CMakeLists.txt file in build.
 #Debugged and maintained by Andrew Olivier aolivier@ur.rochester.edu
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.10)
 project(MAT CXX C)
 
 # Include module with function 'write_basic_package_version_file'
