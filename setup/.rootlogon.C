@@ -1,16 +1,14 @@
 {
   if( gSystem->Getenv("PLOTUTILSROOT") )
   {
-    gInterpreter->AddIncludePath( gSystem->ExpandPathName("$PLOTUTILSROOT") );
-    string newpath = string(gROOT->GetMacroPath()) + ":" + string(gSystem->ExpandPathName("$PLOTUTILSROOT")) + "/PlotUtils";
+    string newpath = string(gROOT->GetMacroPath()) + ":" + string("${PLOTUTILSROOT}/../bin" );
     gROOT->SetMacroPath( newpath.c_str() );
-
-    gSystem->Load( "libCintex.so" );  // needed to process the dictionaries for the objects
-    Cintex::Enable();
-    gSystem->Load( gSystem->ExpandPathName("$PLOTUTILSROOT/$CMTCONFIG/libplotutils.so") );
-
-    //gInterpreter->ExecuteMacro("PlotStyle.C");
+    gInterpreter->AddIncludePath( "${PLOTUTILSROOT}/../include" );
+    gInterpreter->AddIncludePath( "${PLOTUTILSROOT}/../include/PlotUtils" );
+    std::vector<std::string> packages = { "MAT", "MAT-MINERvA" };
+    for(const std::string& package: packages)
+    {
+      gSystem->Load( gSystem->ExpandPathName(("$PLOTUTILSROOT/lib" + package + ".so").c_str()) );
+    }
   }
-
 }
-
