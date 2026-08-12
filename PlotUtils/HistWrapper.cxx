@@ -3,8 +3,6 @@
 
 #include "PlotUtils/HistWrapper.h"
 
-#include "PlotUtils/FluxSystematics.cxx"  // PlotUtils::flux_reweighter
-
 using namespace PlotUtils;
 
 // Default Constructor
@@ -302,24 +300,7 @@ void HistWrapper<T>::FillErrorBandsWithSysUni(std::vector<T*> univs, int nhists,
 
   // Add this band to the MnvH1D
   if (!hist->HasVertErrorBand(name)) {
-    if (univs.front()->ShortName() == "Flux" &&
-        univs.front()->UseNuEConstraint()) {
-      const int nflux_universes = univs.front()->GetNFluxUniverses();
-      if(nhists != nflux_universes) {
-        std::cout << "WARNING from HistWrapper::FillErrorBandsWithSysUni\n" 
-            << "  You're attempting to make a HistWrapper with " << nhists 
-            << " flux universes\n  but this is at odds with the number of flux "
-            << "universes you have\n  associated with your CVUniverse "
-            << "(GetNFluxUniverses) " << nflux_universes  << ".\n  Your HW will "
-            << "be constructed with " << nflux_universes << " universes.\n  "
-            << "Change this with MinervaUniverse::SetNFluxUniverses.\n";
-      }
-      PlotUtils::flux_reweighter(univs.front()->GetPlaylist(),
-                                 univs.front()->GetAnalysisNuPDG(), true,
-                                 nflux_universes)
-          .AddFluxErrorBand(hist);
-    } else
-      hist->AddVertErrorBand(name, nhists);
+    hist->AddVertErrorBand(name, nhists);
   }
 
   // Connect each band's universe to the corresponding MnvH1D's TH1

@@ -34,7 +34,6 @@
 #include "../PlotUtils/ChainWrapper.h"
 #include "../PlotUtils/TreeWrapper.h"
 #include "../PlotUtils/GridCanvas.h"
-#include "../PlotUtils/FluxReweighter.h"
 #include "../PlotUtils/BaseUniverse.h"
 
 //TODO: Do I need this?
