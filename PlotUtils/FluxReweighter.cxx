@@ -2122,7 +2122,7 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
         return "minervame1M";
       case minervame1D1M1NWeightedAve:
         return "minervame1D1M1NWeightedAve";
-            case minervame5A:
+      case minervame5A:
         return "minervame5A";
       case minervame6A:
         return "minervame6A";
@@ -2197,7 +2197,7 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
       case minervame1P:
         return 2;
       case minervame1D1M1NWeightedAve:
-                return 2;
+        return 2;
       case minervame5A:
         return 3;
       case minervame6A:
@@ -2279,7 +2279,7 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
       return minervame1N;
     if ( playlist.compare("minervame1d1m1nweightedave")== 0)
       return minervame1D1M1NWeightedAve;
-        if( playlist.compare("minervame5a")== 0)
+    if( playlist.compare("minervame5a")== 0)
       return minervame5A;
     if( playlist.compare("minervame6a")== 0)
       return minervame6A;
