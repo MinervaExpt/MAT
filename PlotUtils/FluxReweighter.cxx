@@ -198,7 +198,7 @@ namespace {
 
     }
     else if (plist == "minervame1d1m1nweightedave") {
-      return
+            return
           new PlotUtils::FluxReweighter( nu_pdg, use_nuE_constraint,
                                          plist,
                                          PlotUtils::FluxReweighter::gen2thin,
@@ -334,9 +334,13 @@ namespace PlotUtils
     d_Playlist = playlist;
     if (applyNuEConstraint) {
       std::cout << "Applying flux constraint to nu histogram" << std::endl;
-      m_fluxReweightNu = Constrainer().ConstrainHisto<MnvH1D, MnvVertErrorBand>( m_fluxReweightNu );
+      MnvH1D* constrainedNu = Constrainer().ConstrainHisto<MnvH1D, MnvVertErrorBand>( m_fluxReweightNu );
+      delete m_fluxReweightNu;
+      m_fluxReweightNu = constrainedNu;
       std::cout << "Applying flux constraint to nubar histogram" << std::endl;
-      m_fluxReweightNubar = Constrainer().ConstrainHisto<MnvH1D, MnvVertErrorBand>( m_fluxReweightNubar );
+      MnvH1D* constrainedNuBar = Constrainer().ConstrainHisto<MnvH1D, MnvVertErrorBand>( m_fluxReweightNubar );
+      delete m_fluxReweightNubar;
+      m_fluxReweightNubar = constrainedNuBar;
     }
 
     // Downstream methods require access to the original set of universe weights, so we will propagate an un-truncated
@@ -398,11 +402,15 @@ namespace PlotUtils
 
     if (applyNuEConstraint) {
       //std::cout << "Applying flux constraint to nu histogram" << std::endl;
-      m_fluxReweightNu =
-          Constrainer().ConstrainHisto<MnvH1D, MnvVertErrorBand>( m_fluxReweightNu );
+      
+      MnvH1D* constrainedNu = Constrainer().ConstrainHisto<MnvH1D, MnvVertErrorBand>( m_fluxReweightNu );
+      delete m_fluxReweightNu;
+      m_fluxReweightNu = constrainedNu;
       //std::cout << "Applying flux constraint to nubar histogram" << std::endl;
-      m_fluxReweightNubar =
-          Constrainer().ConstrainHisto<MnvH1D, MnvVertErrorBand>( m_fluxReweightNubar );
+     
+      MnvH1D* constrainedNuBar = Constrainer().ConstrainHisto<MnvH1D, MnvVertErrorBand>( m_fluxReweightNubar );
+      delete m_fluxReweightNubar;
+      m_fluxReweightNubar = constrainedNuBar;
     }
 
     // Downstream methods require access to the original set of universe
@@ -453,11 +461,13 @@ namespace PlotUtils
 
     if (applyNuEConstraint) {
       std::cout << "Applying flux constraint to nu histogram" << std::endl;
-      m_fluxReweightNu =
-          Constrainer().ConstrainHisto<MnvH1D, MnvVertErrorBand>( m_fluxReweightNu );
+      MnvH1D* constrainedNu =  Constrainer().ConstrainHisto<MnvH1D, MnvVertErrorBand>( m_fluxReweightNu );
+      delete m_fluxReweightNu;
+      m_fluxReweightNu = constrainedNu;
       std::cout << "Applying flux constraint to nubar histogram" << std::endl;
-      m_fluxReweightNubar =
-          Constrainer().ConstrainHisto<MnvH1D, MnvVertErrorBand>( m_fluxReweightNubar );
+      MnvH1D* constrainedNuBar =  Constrainer().ConstrainHisto<MnvH1D, MnvVertErrorBand>( m_fluxReweightNubar );
+      delete m_fluxReweightNubar;
+      m_fluxReweightNubar = constrainedNuBar; 
     }
     m_applyNuEConstraint = applyNuEConstraint;
     m_nFluxUniverses = 1000;
@@ -813,7 +823,9 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
     //  if( strcmp( name.c_str(), "Flux" ) != 0 ) h_flux->PopLatErrorBand(name);
     //}
 
-    // Apply Asit's correction above 7.5 GeV
+    // Apply Asit's correction above 7.5 GeV, to the CV and to every Flux universe,
+    // This is the ONLY place the target flux code path applies it: GetIntegratedFluxReweighted_FromInputFlux
+    // and GetIntegratedTargetFlux take this flux as already corrected, to avoid double applying
     for (int i = 1; i <= h_flux->GetNbinsX(); ++i) {
       double E = h_flux->GetBinCenter(i);
       double weight = AsitsRobFineFluxCorrection(E);
@@ -825,7 +837,22 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
       h_flux->SetBinContent(i, content * weight);
       h_flux->SetBinError(i, error * weight);
     }
+    if (h_flux->HasVertErrorBand(m_fluxErrorName)) {
+      MnvVertErrorBand* flux_band = h_flux->GetVertErrorBand(m_fluxErrorName);
+      for (unsigned int iUni = 0; iUni < flux_band->GetNHists(); ++iUni) {
+        TH1D* h_uni = flux_band->GetHist(iUni);
+        for (int i = 1; i <= h_uni->GetNbinsX(); ++i) {
+          double weight = AsitsRobFineFluxCorrection(h_uni->GetBinCenter(i));
+          h_uni->SetBinContent(i, h_uni->GetBinContent(i) * weight);
+          h_uni->SetBinError(i, h_uni->GetBinError(i) * weight);
+        }
+      }
+    }
 
+    delete tracker_flux;
+    delete tar_flux;
+    delete ratio_flux;
+    
     return h_flux;
 
   }
@@ -1128,6 +1155,7 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
         tmp_template->SetName(Form("Flux_rebinned_universe_%d",u));
         RebinFluxHist(tmp_flux,tmp_template);
         vert_hists.push_back(tmp_template);
+        delete tmp_flux; // Would otherwise leak on every loop iteration, if using quite a few flux universes this can add up
       }
       h_flux_rebinned->AddVertErrorBand( vertNames[k],vert_hists);
       //clean my mess
@@ -1181,6 +1209,7 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
         tmp_template->SetName(Form("Flux_rebinned_universe_%d",u));
         RebinFluxHist(tmp_flux,tmp_template);
         vert_hists.push_back(tmp_template);
+        delete tmp_flux; // Would otherwise leak on every loop iteration, if using quite a few flux universes this can add up
       }
       h_flux_rebinned->AddVertErrorBand( vertNames[k],vert_hists);
       //clean my mess
@@ -1237,6 +1266,7 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
         tmp_template->SetName(Form("Flux_rebinned_universe_%d",u));
         RebinFluxHist(tmp_flux,tmp_template);
         vert_hists.push_back(tmp_template);
+        delete tmp_flux; // Would otherwise leak on every loop iteration, if using quite a few flux universes this can add up
       }
       h_flux_rebinned->AddVertErrorBand( vertNames[k],vert_hists);
       //clean my mess
@@ -1397,7 +1427,9 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
     // "Muon_Energy" or "Muon_Energy_MINOS" systematic universes
     if(m_useStandardFlux){
 
-      MnvH1D* h_flux_ppfx = this->GetFluxReweighted(nuPDG);
+      // Work on a copy: GetFluxReweighted() hands back the member flux histogram, so correcting it in place would
+      // re-apply Asit's correction to m_fluxReweightNu(bar) on every call.
+      MnvH1D* h_flux_ppfx = (MnvH1D*)this->GetFluxReweighted(nuPDG)->Clone("h_flux_ppfx_asitcorr");
 
       // Apply Asit's correction above 7.5 GeV
       for (int i = 1; i <= h_flux_ppfx->GetNbinsX(); ++i) {
@@ -1455,6 +1487,7 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
         for(int i=0;i<h_flux_integrated->GetSize();i++)
           tmp_template.SetBinContent(i,flux_uni);
         flux_sys_hists.push_back(NewHist(tmp_template));
+        delete tmp_flux; // Would otherwise leak on every loop iteration, if using quite a few flux universes this can add up
       }
       // Push the constructed error band into the return hist
       h_flux_integrated->AddVertErrorBand(m_fluxErrorName,flux_sys_hists);
@@ -1505,6 +1538,7 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
 
       }
 
+      delete h_flux_ppfx;
     }
 
     // If the low-nu or high-nu flux is being used, there is a correlated flux
@@ -1597,18 +1631,10 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
                                                                           double min_energy,
                                                                           double max_energy)
   {
+    // input_flux is integrated as given. Asit's correction is NOT applied here: the only caller,
+    // GetIntegratedTargetFlux, passes GetTargetFluxMnvH1D's flux, which already has it (applying it here as well
+    // corrected the target-flux CV twice).
     MnvH1D* h_flux = (MnvH1D*)input_flux->Clone("input_flux");
-
-    // Apply Asit's correction above 7.5 GeV
-    for (int i = 1; i <= h_flux->GetNbinsX(); ++i) {
-        double E = h_flux->GetBinCenter(i);
-        double weight = AsitsRobFineFluxCorrection(E);
-        double content = h_flux->GetBinContent(i);
-        double error = h_flux->GetBinError(i);
-    
-        h_flux->SetBinContent(i, content * weight);
-        h_flux->SetBinError(i, error * weight);
-    }
 
     MnvHistoType* h_flux_integrated =
         (MnvHistoType*)template_hist->Clone("reweightedflux_integrated");
@@ -1627,6 +1653,7 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
 
     h_flux_integrated->AddMissingErrorBandsAndFillWithCV(*template_hist);
     //h_flux_integrated->SaveAs("x_Flux_XSecLooper.root");
+    delete h_flux;
     return h_flux_integrated;
   }
   template MnvH1D* FluxReweighter::GetIntegratedFluxReweighted_FromInputFlux<MnvH1D>(MnvH1D* input_flux,
@@ -1650,27 +1677,8 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
     MnvH1D* h_flux = GetTargetFluxMnvH1D(nuPDG, tar_mat, project_dir);
     MnvH1D* h_flux_integrated = GetIntegratedFluxReweighted_FromInputFlux( h_flux, template_hist, min_energy, max_energy );
 
-    // Apply the correction to all "Flux" universes (if they exist)
-    if (h_flux->HasVertErrorBand("Flux")) {
-        MnvVertErrorBand* flux_band = h_flux->GetVertErrorBand("Flux");
-        const int nUni = flux_band->GetNHists();
+    // Asit's correction is already in h_flux's CV and "Flux" universes (applied in GetTargetFluxMnvH1D)
 
-        for (int iUni = 0; iUni < nUni; ++iUni) {
-            TH1D* h_uni = flux_band->GetHist(iUni);
-            // Apply Asit's correction above 7.5 GeV
-            for (int i = 1; i <= h_uni->GetNbinsX(); ++i) {
-                double E = h_uni->GetBinCenter(i);
-                double weight = AsitsRobFineFluxCorrection(E);
-                double content = h_uni->GetBinContent(i);
-                double error = h_uni->GetBinError(i);
-
-                h_uni->SetBinContent(i, content * weight);
-                h_uni->SetBinError(i, error * weight);
-            }
-        }
-    }
-
-    
     //Put in the correct flux universes
     if( !h_flux_integrated->HasVertErrorBand("Flux") ) return h_flux_integrated;
 
@@ -1698,7 +1706,7 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
     }
 
     h_flux_integrated->AddVertErrorBand("Flux",flux_int_hists);
-
+    //delete h_flux;
     return h_flux_integrated;
 
   }
@@ -1740,7 +1748,7 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
     }
 
     h_flux_integrated->AddVertErrorBand("Flux",flux_int_hists);
-
+    //delete h_flux;
     return h_flux_integrated;
   }
   //============================================================================
@@ -1781,6 +1789,7 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
         }
       }
     }
+    //delete h_param;
     return daisy_sum;
   }
 
@@ -1821,6 +1830,7 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
         }
       }
     }
+    //delete h_param;
     return daisy_sum;
   }
   //============================================================================
@@ -2112,7 +2122,7 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
         return "minervame1M";
       case minervame1D1M1NWeightedAve:
         return "minervame1D1M1NWeightedAve";
-      case minervame5A:
+            case minervame5A:
         return "minervame5A";
       case minervame6A:
         return "minervame6A";
@@ -2187,7 +2197,7 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
       case minervame1P:
         return 2;
       case minervame1D1M1NWeightedAve:
-        return 2;
+                return 2;
       case minervame5A:
         return 3;
       case minervame6A:
@@ -2269,7 +2279,7 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
       return minervame1N;
     if ( playlist.compare("minervame1d1m1nweightedave")== 0)
       return minervame1D1M1NWeightedAve;
-    if( playlist.compare("minervame5a")== 0)
+        if( playlist.compare("minervame5a")== 0)
       return minervame5A;
     if( playlist.compare("minervame6a")== 0)
       return minervame6A;
