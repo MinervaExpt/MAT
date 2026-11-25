@@ -1640,68 +1640,66 @@ MnvH1D* FluxReweighter::GetTargetFluxMnvH1D(int nuPDG,
 
 
   //============================================================================
-  MnvH1D* FluxReweighter::GetIntegratedTargetFlux(int nuPDG, 
-                                                  std::string tar_mat, 
-                                                  MnvH1D* template_hist, 
-                                                  double min_energy, 
-                                                  double max_energy, 
-                                                  std::string project_dir)
-  {
-    MnvH1D* h_flux = GetTargetFluxMnvH1D(nuPDG, tar_mat, project_dir);
-    MnvH1D* h_flux_integrated = GetIntegratedFluxReweighted_FromInputFlux( h_flux, template_hist, min_energy, max_energy );
+  MnvH1D* FluxReweighter::GetIntegratedTargetFlux(int nuPDG,
+                                                std::string tar_mat,
+                                                MnvH1D* template_hist,
+                                                double min_energy,
+                                                double max_energy,
+                                                std::string project_dir)
+{
+  // CV of h_flux already has Asit's correction applied inside GetTargetFluxMnvH1D
+  MnvH1D* h_flux = GetTargetFluxMnvH1D(nuPDG, tar_mat, project_dir);
 
-    // Apply the correction to all "Flux" universes (if they exist)
-    if (h_flux->HasVertErrorBand("Flux")) {
-        MnvVertErrorBand* flux_band = h_flux->GetVertErrorBand("Flux");
-        const int nUni = flux_band->GetNHists();
-
-        for (int iUni = 0; iUni < nUni; ++iUni) {
-            TH1D* h_uni = flux_band->GetHist(iUni);
-            // Apply Asit's correction above 7.5 GeV
-            for (int i = 1; i <= h_uni->GetNbinsX(); ++i) {
-                double E = h_uni->GetBinCenter(i);
-                double weight = AsitsRobFineFluxCorrection(E);
-                double content = h_uni->GetBinContent(i);
-                double error = h_uni->GetBinError(i);
-
-                h_uni->SetBinContent(i, content * weight);
-                h_uni->SetBinError(i, error * weight);
-            }
-        }
+  // Apply Asit's correction to the Flux universes (the CV is already done)
+  if (h_flux->HasVertErrorBand("Flux")) {
+    MnvVertErrorBand* flux_band = h_flux->GetVertErrorBand("Flux");
+    for (int iUni = 0; iUni < flux_band->GetNHists(); ++iUni) {
+      TH1D* h_uni = flux_band->GetHist(iUni);
+      for (int i = 1; i <= h_uni->GetNbinsX(); ++i) {
+        const double w = AsitsRobFineFluxCorrection(h_uni->GetBinCenter(i));
+        h_uni->SetBinContent(i, h_uni->GetBinContent(i) * w);
+        h_uni->SetBinError(i,   h_uni->GetBinError(i)   * w);
+      }
     }
-
-    
-    //Put in the correct flux universes
-    if( !h_flux_integrated->HasVertErrorBand("Flux") ) return h_flux_integrated;
-
-    MnvVertErrorBand* flux_int_band = h_flux_integrated->PopVertErrorBand("Flux");
-    MnvVertErrorBand* flux_band     = h_flux->GetVertErrorBand("Flux");
-
-    const int nUni = flux_int_band->GetNHists();
-    if( flux_int_band->GetNHists() > flux_band->GetNHists() ) 
-    {
-      std::cout<<"FRW: Target flux band only has "<<flux_band->GetNHists()<<" uni while hist has "<<flux_int_band->GetNHists()<<" uni"<<std::endl;
-      std::exit(1);
-    }
-
-    const int b_min = h_flux->FindBin( min_energy );
-    const int b_max = h_flux->FindBin( max_energy );
-    std::vector< TH1D* > flux_int_hists; 
-    for( int iUni = 0; iUni < nUni; ++iUni )
-    {
-      TH1D* tmp_flux_uni = (TH1D*)flux_int_band->GetHist(iUni)->Clone(Form("Custom_flux_integrated_universe_%d",iUni));
-      tmp_flux_uni->Clear();
-
-      double flux_int = flux_band->GetHist(iUni)->Integral( b_min, b_max, "width" );
-      for( int iBin = 0; iBin < tmp_flux_uni->GetSize(); ++iBin ) tmp_flux_uni->SetBinContent( iBin, flux_int );
-      flux_int_hists.push_back(tmp_flux_uni);
-    }
-
-    h_flux_integrated->AddVertErrorBand("Flux",flux_int_hists);
-
-    return h_flux_integrated;
-
   }
+
+  // Build the integrated hist directly (no second correction on the CV)
+  MnvH1D* h_flux_integrated = (MnvH1D*)template_hist->Clone("reweightedflux_integrated");
+  h_flux_integrated->ClearAllErrorBands();
+  h_flux_integrated->Reset();
+
+  const int b_min = h_flux->FindBin(min_energy);
+  const int b_max = h_flux->FindBin(max_energy);
+  const double flux_cv = h_flux->Integral(b_min, b_max, "width");
+  for (int i = 0; i < h_flux_integrated->GetSize(); ++i)
+    h_flux_integrated->SetBinContent(i, flux_cv);
+
+  h_flux_integrated->AddMissingErrorBandsAndFillWithCV(*template_hist);
+
+  // Put in the correct flux universes
+  if (!h_flux_integrated->HasVertErrorBand("Flux")) return h_flux_integrated;
+
+  MnvVertErrorBand* flux_int_band = h_flux_integrated->PopVertErrorBand("Flux");
+  MnvVertErrorBand* flux_band     = h_flux->GetVertErrorBand("Flux");
+
+  const int nUni = flux_int_band->GetNHists();
+  if (nUni > flux_band->GetNHists()) {
+    std::cout << "FRW: Target flux band only has " << flux_band->GetNHists()
+              << " uni while hist has " << nUni << " uni" << std::endl;
+    std::exit(1);
+  }
+
+  std::vector<TH1D*> flux_int_hists;
+  for (int iUni = 0; iUni < nUni; ++iUni) {
+    TH1D* tmp = (TH1D*)flux_int_band->GetHist(iUni)
+                    ->Clone(Form("Custom_flux_integrated_universe_%d", iUni));
+    const double flux_int = flux_band->GetHist(iUni)->Integral(b_min, b_max, "width");
+    for (int iBin = 0; iBin < tmp->GetSize(); ++iBin) tmp->SetBinContent(iBin, flux_int);
+    flux_int_hists.push_back(tmp);
+  }
+  h_flux_integrated->AddVertErrorBand("Flux", flux_int_hists);
+  return h_flux_integrated;
+}
 
   MnvH2D* FluxReweighter::GetIntegratedTargetFlux(int nuPDG, 
                                                         std::string tar_mat, 
